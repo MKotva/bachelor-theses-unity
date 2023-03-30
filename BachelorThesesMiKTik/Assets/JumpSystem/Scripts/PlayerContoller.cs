@@ -1,11 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 
 public class PlayerContoller : MonoBehaviour
 {
+  #region [SerializeField] public float MovePower { get; set; }
+
+  /// <summary>
+  /// Defines strength scale for move.
+  /// </summary>
+  [field: Tooltip("Defines strength scale for move")]
+  [field: SerializeField]
+  public float MovePower { get; set; }
+
+  #endregion
+
   #region [SerializeField] public float JumpPower { get; set; }
 
   /// <summary>
@@ -43,7 +52,7 @@ public class PlayerContoller : MonoBehaviour
     Assert.IsNotNull(_rigidbody);
   }
 
-  private void OnEnable()
+  public void OnEnable()
   {
     _move = _inputActions.Player.Move;
     _jump = _inputActions.Player.Jump;
@@ -52,40 +61,48 @@ public class PlayerContoller : MonoBehaviour
     _jump.Enable();
   }
 
-  private void OnDisable()
+  public void OnDisable()
   {
     _move.Disable();
-    _jump.Enable();
+    _jump.Disable();
   }
 
   // Start is called before the first frame update
   void Start()
   {
+   
   }
 
   // Update is called once per frame
-  void FixedUpdate()
+  private void FixedUpdate()
   {
     Move();
     CheckGrounded();
-    Jump();
   }
 
-  public void Jump()
+  /// <summary>
+  /// This method is invoked by input system.
+  /// If this method is invoked and player stands on the ground, player jumps.
+  /// </summary>
+  public void OnJump()
   {
-    if (_jump.ReadValue<float>() > 0 && IsGrounded)
+    if (IsGrounded)
     {
-      Vector2 up = Vector2.up * JumpPower;
-      _rigidbody.velocity += up;
+      Vector2 opposite = Vector2.up * ( JumpPower );
+      _rigidbody.AddForce(opposite);
     }
   }
+
 
   void Move()
   {
     Vector2 moveDir = _move.ReadValue<Vector2>();
-    _rigidbody.velocity = new Vector2(moveDir.x, moveDir.y) * 2f;
+    _rigidbody.AddForce(moveDir * MovePower);
   }
 
+  /// <summary>
+  /// Checks if player stands on the box.
+  /// </summary>
   void CheckGrounded()
   {
     RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, _groundCheckDistance, LayerMask.GetMask("Box"));
@@ -94,6 +111,7 @@ public class PlayerContoller : MonoBehaviour
     else
       IsGrounded = false;
   }
+
 
   private void OnDrawGizmos()
   {
