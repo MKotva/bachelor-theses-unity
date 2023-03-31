@@ -27,13 +27,25 @@ public class PlayerContoller : MonoBehaviour
   #endregion
 
   #region [SerializeField] public bool IsGrounded { get; private set; }
+  private bool _isGrounded;
 
   /// <summary>
-  /// Defines strength scale for jump
+  /// Checks if player stands on the ground.
   /// </summary>
-  [field: Tooltip("Defines strength scale for jump")]
+  [field: Tooltip("Checks if player stands on the ground.")]
   [field: SerializeField]
-  public bool IsGrounded { get; private set; }
+  public bool IsGrounded 
+  {
+    get 
+    { 
+      return _isGrounded; 
+    } 
+    private set 
+    { 
+      _isGrounded = value;
+      _animator.SetBool("IsJumping", !value);
+    }
+  }
 
   #endregion
 
@@ -41,6 +53,9 @@ public class PlayerContoller : MonoBehaviour
   private InputAction _jump;
   private InputAction _move;
   private Rigidbody2D _rigidbody;
+  private Animator _animator;
+
+  private bool _isFacingRight;
 
   [SerializeField]
   private float _groundCheckDistance;
@@ -49,6 +64,8 @@ public class PlayerContoller : MonoBehaviour
   {
     _inputActions = new PlayerInputActions();
     _rigidbody = GetComponent<Rigidbody2D>();
+    _animator = GetComponent<Animator>();
+
     Assert.IsNotNull(_rigidbody);
   }
 
@@ -73,7 +90,13 @@ public class PlayerContoller : MonoBehaviour
    
   }
 
+
   // Update is called once per frame
+  private void Update()
+  {
+    
+  }
+
   private void FixedUpdate()
   {
     Move();
@@ -94,10 +117,30 @@ public class PlayerContoller : MonoBehaviour
   }
 
 
-  void Move()
+  public void Move()
   {
     Vector2 moveDir = _move.ReadValue<Vector2>();
-    _rigidbody.AddForce(moveDir * MovePower);
+
+    if (moveDir.y != 0 || moveDir.x != 0)
+    {
+      _animator.SetBool("IsMoving", true);
+
+      //if(_rigidbody.velocity.magnitude < 60)
+        _rigidbody.AddForce(moveDir * MovePower);
+
+      if(moveDir.x < 0 && !_isFacingRight)
+      {
+        Flip();
+      }
+      else if (moveDir.x > 0 && _isFacingRight)
+      {
+        Flip();
+      }
+    }
+    else
+    {
+      _animator.SetBool("IsMoving", false);
+    }  
   }
 
   /// <summary>
@@ -112,6 +155,14 @@ public class PlayerContoller : MonoBehaviour
       IsGrounded = false;
   }
 
+
+  void Flip()
+  {
+    Vector3 currentScale = gameObject.transform.localScale;
+    currentScale.x *= -1;
+    gameObject.transform.localScale = currentScale;
+    _isFacingRight = !_isFacingRight;
+  }
 
   private void OnDrawGizmos()
   {
