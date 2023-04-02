@@ -535,7 +535,7 @@ PrefabInstance:
     - target: {fileID: 592718214048264030, guid: e4a37307e264b304ea80d4924f8140c2, type: 3}
       propertyPath: _uncompressClip
       value: 
-      objectReference: {fileID: 8300000, guid: ffa2f0349921eee42b4117286cb92ba4, type: 3}
+      objectReference: {fileID: 8300000, guid: 68542ea7f97c5034c88195294641f975, type: 3}
     - target: {fileID: 592718214048264030, guid: e4a37307e264b304ea80d4924f8140c2, type: 3}
       propertyPath: <SceneToBeLoaded>k__BackingField
       value: GameEditorScene
@@ -853,7 +853,7 @@ PrefabInstance:
     - target: {fileID: 592718214048264030, guid: e4a37307e264b304ea80d4924f8140c2, type: 3}
       propertyPath: _uncompressClip
       value: 
-      objectReference: {fileID: 8300000, guid: 4922ce406a4719942a93a150ada03fb4, type: 3}
+      objectReference: {fileID: 8300000, guid: 68542ea7f97c5034c88195294641f975, type: 3}
     - target: {fileID: 592718214508277245, guid: e4a37307e264b304ea80d4924f8140c2, type: 3}
       propertyPath: m_text
       value: Settings
