@@ -6,7 +6,7 @@
             "id": "bd2f6786-e7da-420f-a882-fc6a681ee21c",
             "actions": [
                 {
-                    "name": "MouseLeftClick",
+                    "name": "AddItem",
                     "type": "Button",
                     "id": "4adb36dc-ba5f-49a2-b304-1c2be332f58e",
                     "expectedControlType": "Button",
@@ -15,7 +15,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "MouseRightClick",
+                    "name": "RemoveItem",
                     "type": "Button",
                     "id": "356ff370-2e61-434a-b73a-e8f9188f774b",
                     "expectedControlType": "Button",
@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "MultiAction",
+                    "type": "Value",
+                    "id": "1fd0a8cc-7b6b-48fe-a30d-5cfff84c9407",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -41,7 +50,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MouseLeftClick",
+                    "action": "AddItem",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -52,7 +61,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MouseRightClick",
+                    "action": "RemoveItem",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -64,6 +73,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "49050fe8-3dd2-4f11-975f-4ffae438e128",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "MultiAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -16,7 +16,7 @@ public class ItemMenuController : MonoBehaviour
   [SerializeField] GameObject TrapsMenu;
   [SerializeField] GameObject DecorationsMenu;
 
-  MenuType _lastShown;
+  MenuType _lastShown = MenuType.Box;
 
   public void HandleBoxClick()
   {
