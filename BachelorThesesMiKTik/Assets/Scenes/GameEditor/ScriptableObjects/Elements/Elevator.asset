@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShownName: Elevator
   Prefab: {fileID: 8952252725014044802, guid: 3bfcd0cdd56232c4295741f0833fc172, type: 3}
+  Id: 3
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 4

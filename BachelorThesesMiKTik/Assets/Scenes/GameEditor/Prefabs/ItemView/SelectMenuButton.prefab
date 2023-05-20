@@ -93,12 +93,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 11
-  m_fontSizeBase: 11
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 10
+  m_fontSizeMax: 20
   m_fontStyle: 3
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 4479481484644480260}
   - component: {fileID: 4479481484644480263}
   - component: {fileID: 4479481484644480262}
-  - component: {fileID: 3026053992050497691}
+  - component: {fileID: 6131284853962133118}
   m_Layer: 5
   m_Name: SelectMenuButton
   m_TagString: Untagged
@@ -257,8 +257,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4479481484644480263}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
---- !u!114 &3026053992050497691
+      m_Calls:
+      - m_Target: {fileID: 6131284853962133118}
+        m_TargetAssemblyTypeName: GroupButtonController, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &6131284853962133118
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -267,6 +279,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4479481484644480256}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d58ade2e43a77be4e9d1bd80b301f0fc, type: 3}
+  m_Script: {fileID: 11500000, guid: e8dbd87ff1ecca649a881a49212fc386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ItemMenu: {fileID: 0}
+  Group: {fileID: 0}

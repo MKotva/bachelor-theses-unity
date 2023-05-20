@@ -1,64 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ItemMenuController : MonoBehaviour
 {
-  enum MenuType 
-  {
-    None,
-    Box,
-    Traps,
-    Decorations
-  }
+    enum MenuType
+    {
+        None,
+        Box,
+        Traps,
+        Decorations
+    }
 
-  [SerializeField] GameObject BoxMenu;
-  [SerializeField] GameObject TrapsMenu;
-  [SerializeField] GameObject DecorationsMenu;
+    [SerializeField] GameObject BoxMenu;
+    [SerializeField] GameObject TrapsMenu;
+    [SerializeField] GameObject DecorationsMenu;
+    [SerializeField] GameObject SelectionInputField;
 
-  MenuType _lastShown = MenuType.Box;
+    public List<GameObject> Groups;
 
-  public void HandleBoxClick()
-  {
-    if (_lastShown != MenuType.Box && _lastShown != MenuType.None)
-      SetNonActive();
-      
-    BoxMenu.SetActive(true);
-    _lastShown = MenuType.Box;
-  }
+    private GameObject _active;
 
-  public void HandleTrapClick()
-  {
-    if (_lastShown != MenuType.Traps && _lastShown != MenuType.None)
-      SetNonActive();
+    public void ShowGroup(GameObject group)
+    {
+        if(_active != null)
+            _active.SetActive(false);
+        
+        _active = group;
+        _active.SetActive(true);
+    }
 
-    TrapsMenu.SetActive(true);
-    _lastShown = MenuType.Traps;
-  }
+    public void OnSelect()
+    {
+        GameObject groupWithMinDistance = null;
+        int minDistance = int.MaxValue;
 
-  public void HandleDecorationsClick()
-  {
-    if (_lastShown != MenuType.Decorations && _lastShown != MenuType.None)
-      SetNonActive();
+        var name = SelectionInputField.GetComponent<TMP_InputField>().text;
+        foreach(var group in Groups)
+        { 
+            var controller = group.GetComponentInChildren<ViewportController>();
 
-    DecorationsMenu.SetActive(true);
-    _lastShown = MenuType.Decorations;
-  }
+            int distance = int.MaxValue;
+            if(controller.SelectBySearch(name, out distance))
+            {
+                ShowGroup(group);
+                return;
+            }
 
-  public void HandleEviromentClick()
-  {
-
-  }
-
-  void SetNonActive()
-  {
-     if(_lastShown == MenuType.Box)
-      BoxMenu.SetActive(false);
-     else if(_lastShown == MenuType.Traps)
-      TrapsMenu.SetActive(false);
-     else if(_lastShown == MenuType.Decorations)
-      DecorationsMenu.SetActive(false);
-
-    _lastShown = MenuType.None;
-  }
+            if (minDistance > distance)
+            {
+                groupWithMinDistance = group;
+                minDistance = distance;
+            }
+        }
+        ShowGroup(groupWithMinDistance);
+    }
 }

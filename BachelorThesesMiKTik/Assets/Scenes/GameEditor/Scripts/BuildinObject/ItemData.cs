@@ -17,6 +17,9 @@ public class ItemData : ScriptableObject
 
   public string ShownName;
   public GameObject Prefab;
+  public int Id;
+
+  //TODO: Refactor
   public Vector2 Size;
   public Vector2 Center;
   public CategoryType Category;

@@ -6,16 +6,7 @@
             "id": "bd2f6786-e7da-420f-a882-fc6a681ee21c",
             "actions": [
                 {
-                    "name": "AddItem",
-                    "type": "Button",
-                    "id": "4adb36dc-ba5f-49a2-b304-1c2be332f58e",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "RemoveItem",
+                    "name": "KeyPressed",
                     "type": "Button",
                     "id": "356ff370-2e61-434a-b73a-e8f9188f774b",
                     "expectedControlType": "Button",
@@ -24,19 +15,10 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "MousePosition",
-                    "type": "Value",
+                    "name": "MousePressed",
+                    "type": "Button",
                     "id": "bf221ef9-19d5-4cd6-b024-ccdbb8d3cd18",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "MultiAction",
-                    "type": "Value",
-                    "id": "1fd0a8cc-7b6b-48fe-a30d-5cfff84c9407",
-                    "expectedControlType": "Vector2",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -45,45 +27,23 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "7fee4bba-79bc-47f1-ba39-82d2b3c78458",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "AddItem",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "3765af28-1a2f-44bf-bcbe-d3d1efacfb9b",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/anyKey",
                     "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "RemoveItem",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "9e6ec331-de84-45a3-b395-088b16fb4f24",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MousePosition",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "49050fe8-3dd2-4f11-975f-4ffae438e128",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "Press",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "MultiAction",
+                    "action": "KeyPressed",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bf88fa6d-9e93-48ad-81ef-c49596681083",
+                    "path": "<Mouse>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

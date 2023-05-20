@@ -5,143 +5,232 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
-using Unity.VisualScripting;
+using System.IO;
+using System;
+using Assets.Scenes.GameEditor.Core.DTOS;
+using static UnityEditor.Progress;
+using UnityEditor.Rendering;
+using UnityEngine.UIElements;
+using System.Linq;
+using Assets.Scenes.GameEditor.Core.EditorActions;
+using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.InputSystem.Controls;
 
 public class GridController : MonoBehaviour
 {
-  enum ActionType
-  {
-    None,
-    Insert,
-    Remove
-  }
+    EditorActionBase _actualAction;
 
-  //TODO: Restructuralize (Some field not needed.) Also change to props.
-  [SerializeField] GameObject Grid;
-  [SerializeField] GameObject Parent;
-  [SerializeField] GameObject _actualPrefab;
-  [SerializeField] Grid GridLayout;
+    //TODO: Restructuralize (Some field not needed.) Also change to props.
+    [SerializeField] public GameObject Parent;
+    [SerializeField] public GameObject MarkerPrefab;
+
+    [SerializeField] public ItemData _actualObject;
+    [SerializeField] public Grid GridLayout;
+
+    [SerializeField] public List<ItemData> AllAvalibleItems;
 
 
-  EditorInputActions _editorActions;
-  InputAction _multiAction;
-  InputAction _insertAction;
-  InputAction _removeAction;
+    private EditorInputActions _editorActions;
+    private InputAction _keyPressed;
+    private InputAction _mousePressed;
 
-  bool _multiActionEnabled;
-  ActionType _actualAction;
-  
-  
-  //Vector3 _mouseStartPos;
-  //Vector3 _mouseEndPos;
+    public Color originalColor = Color.white;
+    public int selectedId = -1;
 
-  private void Awake()
-  {
-    _editorActions = new EditorInputActions();
 
-    _multiAction = _editorActions.Player.MultiAction;
-    _multiAction.started += ctx => _multiActionEnabled = true;
-    _multiAction.canceled += ctx => _multiActionEnabled = false;
+    public Dictionary<Vector3, GameObject> Selected;
+    public Dictionary<int, Dictionary<Vector3, GameObject>> Data;
 
-    _insertAction = _editorActions.Player.AddItem;
-    _insertAction.started += ctx => _actualAction = ActionType.Insert;
-    _insertAction.canceled += ctx => _actualAction = ActionType.None;
 
-    _removeAction = _editorActions.Player.RemoveItem;
-    _removeAction.started += ctx => _actualAction = ActionType.Remove;
-    _removeAction.canceled += ctx => _actualAction = ActionType.None;
-
-  }
-
-  private void OnEnable()
-  {
-    _multiAction.Enable();
-    _insertAction.Enable();
-    _removeAction.Enable();
-
-  }
-
-  private void OnDisable()
-  {
-    _multiAction.Disable();
-    _insertAction.Disable();
-    _removeAction.Disable();
-  }
-
-  private void FixedUpdate()
-  {
-    PerformAction();
-    //if (_multiActionEnabled)
-    //{
-    //  InsertItem();
-    //}
-  }
-
-  private void PerformAction()
-  {
-    switch (_actualAction)
+    private void Awake()
     {
-      case ActionType.Insert: 
-        InsertItem();
-        break;
-      case ActionType.Remove: 
-        this.RemoveItem();
-        break;
+        _editorActions = new EditorInputActions();
+        _keyPressed = _editorActions.Player.KeyPressed;
+        _keyPressed.started += ctx => _actualAction.OnKeyDown(((KeyControl)ctx.control).keyCode);
+        _keyPressed.canceled += ctx => _actualAction.OnKeyUp();
+
+        _mousePressed = _editorActions.Player.MousePressed;
+        _mousePressed.started += ctx => _actualAction.OnMouseDown(GetPressedMouseButton());
+        _mousePressed.canceled += ctx => _actualAction.OnMouseUp();
+
+        Data = new Dictionary<int, Dictionary<Vector3, GameObject>>();
     }
-  }
 
-
-  public void SetPrefab(GameObject prefab)
-  {
-    _actualPrefab = prefab;
-  }
-
-  private void InsertItem() 
-  {
-    Vector3 position = GetWorldMousePosition();
-    GameObject objectAtPos = GetObjectAtPosition(position);
-
-    if (objectAtPos == null)
+    private void OnEnable()
     {
-      Paint(GridLayout, Parent, position);
+
     }
-  }
 
-  private void RemoveItem()
-  {
-    Vector3 position = GetWorldMousePosition();
-    GameObject objectAtPos = GetObjectAtPosition(position);
-
-    if (objectAtPos)
+    private void OnDisable()
     {
-      Destroy(objectAtPos);
-    }
-  }
 
-  private void Paint(Grid grid, GameObject brushTarget, Vector3 position)
-  {
-    if (_actualPrefab)
+    }
+
+    private void FixedUpdate()
     {
-      GameObject newInstance = TileBase.Instantiate(_actualPrefab, grid.GetCellCenterWorld(grid.WorldToCell(position)), Quaternion.identity, brushTarget.transform);
-      newInstance.transform.SetParent(brushTarget.transform);
+        if (_actualAction != null)
+            _actualAction.OnUpdate(GetWorldMousePosition());
     }
-  }
 
-
-  private GameObject GetObjectAtPosition(Vector3 position)
-  {
-    RaycastHit2D hit = Physics2D.Raycast(position, new Vector3(0, 0, 1));
-    if (hit)
+    private MouseButton GetPressedMouseButton()
     {
-      return hit.collider.gameObject;
-    }
-    return null;
-  }
+        if (Input.GetMouseButtonDown(0))
+            return MouseButton.LeftMouse;
 
-  private Vector3 GetWorldMousePosition()
-  {
-    Vector2 m_pos = Input.mousePosition;
-    Vector2 worldMousePos = Camera.main.ScreenToWorldPoint(m_pos);
-    return new Vector3(worldMousePos.x, worldMousePos.y);
-  }
+        if (Input.GetMouseButtonDown(1))
+            return MouseButton.RightMouse;
+
+        return MouseButton.MiddleMouse;
+    }
+
+    public void SetPrefab(int prefabId)
+    {
+        _actualObject = AllAvalibleItems[prefabId];
+    }
+
+    public GameObject CreateMarkAtPosition(Vector3 position)
+    {
+        return Paint(GridLayout, MarkerPrefab, position);
+    }
+
+    public void UnMarkPosition(Vector3 position)
+    {
+        Erase(GetObjectAtPosition(position));
+    }
+
+    public void MarkObject(GameObject gameObject)
+    {
+        gameObject.GetComponent<Renderer>().material.color = new Color(2f, 0f, 0f, 0.7f);
+    }
+
+    public void UnMarkObject(GameObject gameObject)
+    {
+        gameObject.GetComponent<Renderer>().material.color = originalColor;
+    }
+
+    public void InsertToData(Vector3 position, GameObject gameobject)
+    {
+        if (Data.ContainsKey(_actualObject.Id))
+        {
+            Data[_actualObject.Id].Add(position, gameobject);
+        }
+        else
+        {
+            var itemGroup = new Dictionary<Vector3, GameObject>
+            {
+                    { position, gameobject }
+            };
+            Data.Add(_actualObject.Id, itemGroup);
+        }
+    }
+
+    public void RemoveFromData(Vector3 position)
+    {
+        if (Data.ContainsKey(_actualObject.Id))
+        {
+            Data[_actualObject.Id].Remove(position);
+        }
+    }
+
+    public void RemoveFromData(GameObject gameobject)
+    {
+        if (Data.ContainsKey(_actualObject.Id))
+        {
+            var item = Data[_actualObject.Id].First(kvp => kvp.Value == gameObject);
+            Data[_actualObject.Id].Remove(item.Key);
+        }
+    }
+
+    public void RemoveGroupFromData(int id)
+    {
+        if (Data.ContainsKey(id))
+        {
+            Data.Remove(id);
+        }
+    }
+
+    public GameObject Paint(Grid grid, GameObject brushTarget, Vector3 position)
+    {
+        if (_actualObject)
+        {
+            GameObject newInstance = TileBase.Instantiate(_actualObject.Prefab, position, Quaternion.identity, brushTarget.transform);
+            newInstance.transform.SetParent(brushTarget.transform);
+            return newInstance;
+        }
+        return null;
+    }
+
+    public void Erase(GameObject gameobject)
+    {
+        Destroy(gameobject);
+    }
+
+    public void Erase(GameObject gameobject, Vector3 position)
+    {
+        RemoveFromData(position);
+        Destroy(gameobject);
+    }
+
+
+    /// <summary>
+    /// Get GameObject at given world cell center position.
+    /// </summary>
+    [field: Tooltip("Get GameObject at given world cell center position.")]
+    public GameObject GetObjectAtPosition(Vector3 cellCenter)
+    {
+        foreach (var group in Data.Values)
+        {
+            if (group.ContainsKey(cellCenter))
+                return group[cellCenter];
+        }
+        return null;
+    }
+
+    public Vector3 GetWorldMousePosition()
+    {
+        Vector2 m_pos = Input.mousePosition;
+        Vector2 worldMousePos = Camera.main.ScreenToWorldPoint(m_pos);
+        return new Vector3(worldMousePos.x, worldMousePos.y);
+    }
+
+    public Vector3 GetCellCenterPosition(Vector3 mousePosition)
+    {
+        return GridLayout.GetCellCenterWorld(GridLayout.WorldToCell(mousePosition));
+    }
+
+    public void SaveMap()
+    {
+        var _mapData = new MapDataDTO();
+        foreach (var id in Data.Keys)
+        {
+            foreach (var position in Data[id].Keys)
+            {
+                _mapData.mapObjects.Add(new MapObjectDTO(id, position));
+            }
+        }
+
+        string json = JsonUtility.ToJson(_mapData);
+
+        using (var sw = new StreamWriter("MapSaveTest.json"))
+        {
+            sw.Write(json);
+        }
+    }
+
+    public void LoadMap()
+    {
+        string map = "";
+        using (var sr = new StreamReader("MapSaveTest.json"))
+        {
+            map = sr.ReadToEnd();
+        }
+
+        var _mapData = JsonUtility.FromJson<MapDataDTO>(map);
+        foreach (var obj in _mapData.mapObjects)
+        {
+            _actualObject = AllAvalibleItems[obj.Id];
+            var newObject = Paint(GridLayout, Parent, obj.Position);
+            InsertToData(obj.Position, newObject);
+        }
+    }
 }

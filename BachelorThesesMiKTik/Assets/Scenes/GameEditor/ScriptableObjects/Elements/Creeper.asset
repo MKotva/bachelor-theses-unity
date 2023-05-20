@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShownName: Creeper
   Prefab: {fileID: 3136555801967572471, guid: 7fde51c14bb6d1b4990875c45b380727, type: 3}
+  Id: 2
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 3

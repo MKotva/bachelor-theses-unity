@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShownName: SmallBush
   Prefab: {fileID: 7409996923509771982, guid: af3e3fc86712e754a9b3da8df1539add, type: 3}
+  Id: 9
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 3

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShownName: Ivy
   Prefab: {fileID: 6514343787319590212, guid: bfaa4e033d460184e935027558e13f08, type: 3}
+  Id: 6
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 3

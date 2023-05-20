@@ -28,16 +28,7 @@ public partial class @EditorInputActions: IInputActionCollection2, IDisposable
             ""id"": ""bd2f6786-e7da-420f-a882-fc6a681ee21c"",
             ""actions"": [
                 {
-                    ""name"": ""AddItem"",
-                    ""type"": ""Button"",
-                    ""id"": ""4adb36dc-ba5f-49a2-b304-1c2be332f58e"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""RemoveItem"",
+                    ""name"": ""KeyPressed"",
                     ""type"": ""Button"",
                     ""id"": ""356ff370-2e61-434a-b73a-e8f9188f774b"",
                     ""expectedControlType"": ""Button"",
@@ -46,19 +37,10 @@ public partial class @EditorInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""MousePosition"",
-                    ""type"": ""Value"",
+                    ""name"": ""MousePressed"",
+                    ""type"": ""Button"",
                     ""id"": ""bf221ef9-19d5-4cd6-b024-ccdbb8d3cd18"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""MultiAction"",
-                    ""type"": ""Value"",
-                    ""id"": ""1fd0a8cc-7b6b-48fe-a30d-5cfff84c9407"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -67,45 +49,23 @@ public partial class @EditorInputActions: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""7fee4bba-79bc-47f1-ba39-82d2b3c78458"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""AddItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""3765af28-1a2f-44bf-bcbe-d3d1efacfb9b"",
-                    ""path"": ""<Mouse>/rightButton"",
+                    ""path"": ""<Keyboard>/anyKey"",
                     ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RemoveItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""9e6ec331-de84-45a3-b395-088b16fb4f24"",
-                    ""path"": ""<Mouse>/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MousePosition"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""49050fe8-3dd2-4f11-975f-4ffae438e128"",
-                    ""path"": ""<Keyboard>/shift"",
-                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""MultiAction"",
+                    ""action"": ""KeyPressed"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf88fa6d-9e93-48ad-81ef-c49596681083"",
+                    ""path"": ""<Mouse>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MousePressed"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -177,10 +137,8 @@ public partial class @EditorInputActions: IInputActionCollection2, IDisposable
 }");
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_AddItem = m_Player.FindAction("AddItem", throwIfNotFound: true);
-        m_Player_RemoveItem = m_Player.FindAction("RemoveItem", throwIfNotFound: true);
-        m_Player_MousePosition = m_Player.FindAction("MousePosition", throwIfNotFound: true);
-        m_Player_MultiAction = m_Player.FindAction("MultiAction", throwIfNotFound: true);
+        m_Player_KeyPressed = m_Player.FindAction("KeyPressed", throwIfNotFound: true);
+        m_Player_MousePressed = m_Player.FindAction("MousePressed", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -242,18 +200,14 @@ public partial class @EditorInputActions: IInputActionCollection2, IDisposable
     // Player
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
-    private readonly InputAction m_Player_AddItem;
-    private readonly InputAction m_Player_RemoveItem;
-    private readonly InputAction m_Player_MousePosition;
-    private readonly InputAction m_Player_MultiAction;
+    private readonly InputAction m_Player_KeyPressed;
+    private readonly InputAction m_Player_MousePressed;
     public struct PlayerActions
     {
         private @EditorInputActions m_Wrapper;
         public PlayerActions(@EditorInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @AddItem => m_Wrapper.m_Player_AddItem;
-        public InputAction @RemoveItem => m_Wrapper.m_Player_RemoveItem;
-        public InputAction @MousePosition => m_Wrapper.m_Player_MousePosition;
-        public InputAction @MultiAction => m_Wrapper.m_Player_MultiAction;
+        public InputAction @KeyPressed => m_Wrapper.m_Player_KeyPressed;
+        public InputAction @MousePressed => m_Wrapper.m_Player_MousePressed;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -263,34 +217,22 @@ public partial class @EditorInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_PlayerActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_PlayerActionsCallbackInterfaces.Add(instance);
-            @AddItem.started += instance.OnAddItem;
-            @AddItem.performed += instance.OnAddItem;
-            @AddItem.canceled += instance.OnAddItem;
-            @RemoveItem.started += instance.OnRemoveItem;
-            @RemoveItem.performed += instance.OnRemoveItem;
-            @RemoveItem.canceled += instance.OnRemoveItem;
-            @MousePosition.started += instance.OnMousePosition;
-            @MousePosition.performed += instance.OnMousePosition;
-            @MousePosition.canceled += instance.OnMousePosition;
-            @MultiAction.started += instance.OnMultiAction;
-            @MultiAction.performed += instance.OnMultiAction;
-            @MultiAction.canceled += instance.OnMultiAction;
+            @KeyPressed.started += instance.OnKeyPressed;
+            @KeyPressed.performed += instance.OnKeyPressed;
+            @KeyPressed.canceled += instance.OnKeyPressed;
+            @MousePressed.started += instance.OnMousePressed;
+            @MousePressed.performed += instance.OnMousePressed;
+            @MousePressed.canceled += instance.OnMousePressed;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
         {
-            @AddItem.started -= instance.OnAddItem;
-            @AddItem.performed -= instance.OnAddItem;
-            @AddItem.canceled -= instance.OnAddItem;
-            @RemoveItem.started -= instance.OnRemoveItem;
-            @RemoveItem.performed -= instance.OnRemoveItem;
-            @RemoveItem.canceled -= instance.OnRemoveItem;
-            @MousePosition.started -= instance.OnMousePosition;
-            @MousePosition.performed -= instance.OnMousePosition;
-            @MousePosition.canceled -= instance.OnMousePosition;
-            @MultiAction.started -= instance.OnMultiAction;
-            @MultiAction.performed -= instance.OnMultiAction;
-            @MultiAction.canceled -= instance.OnMultiAction;
+            @KeyPressed.started -= instance.OnKeyPressed;
+            @KeyPressed.performed -= instance.OnKeyPressed;
+            @KeyPressed.canceled -= instance.OnKeyPressed;
+            @MousePressed.started -= instance.OnMousePressed;
+            @MousePressed.performed -= instance.OnMousePressed;
+            @MousePressed.canceled -= instance.OnMousePressed;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -355,9 +297,7 @@ public partial class @EditorInputActions: IInputActionCollection2, IDisposable
     }
     public interface IPlayerActions
     {
-        void OnAddItem(InputAction.CallbackContext context);
-        void OnRemoveItem(InputAction.CallbackContext context);
-        void OnMousePosition(InputAction.CallbackContext context);
-        void OnMultiAction(InputAction.CallbackContext context);
+        void OnKeyPressed(InputAction.CallbackContext context);
+        void OnMousePressed(InputAction.CallbackContext context);
     }
 }

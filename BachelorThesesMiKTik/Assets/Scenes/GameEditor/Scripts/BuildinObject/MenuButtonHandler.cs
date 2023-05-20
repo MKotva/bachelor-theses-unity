@@ -5,32 +5,35 @@ using UnityEngine.UI;
 
 public class MenuButtonHandler : MonoBehaviour
 {
-  [SerializeField] public ItemData BuildingItem;
-  Button _button;
+    [SerializeField] public ItemData BuildingItem;
 
-  void Awake()
-  {
-    _button = GetComponent<Button>();
-    _button.onClick.AddListener(ButtonAction);
-  }
+    private Button _button;
+    private GridController _gridController;
+    private GameObject _viewBox;
 
-  void ButtonAction()
-  {
-    GameObject workspace = GameObject.Find("Grid");
-    workspace.GetComponent<GridController>().SetPrefab(BuildingItem.Prefab);
-    SetActualItemPreview();
-  }
+    void Awake()
+    {
+        _button = GetComponent<Button>();
+        _button.onClick.AddListener(ButtonAction);
+    }
 
-  public void SetBuildingItem(ItemData data)
-  {
-    BuildingItem = data;
-  }
+    void ButtonAction()
+    {
+        _gridController.SetPrefab(BuildingItem.Id);
+        SetActualItemPreview();
+    }
 
-  private void SetActualItemPreview()
-  {
-    GameObject actualImageView = GameObject.Find("SelectedItemImage");
-    Image img = actualImageView.GetComponent<Image>();
-    Sprite sprite = BuildingItem.Prefab.GetComponent<SpriteRenderer>().sprite;
-    img.sprite = sprite;
-  }
+    public void SetBuildingItem(ItemData data, GridController controller, GameObject viewBox)
+    {
+        BuildingItem = data;
+        _gridController = controller;
+        _viewBox = viewBox;
+    }
+
+    public void SetActualItemPreview()
+    {
+        Image img = _viewBox.GetComponent<Image>();
+        Sprite sprite = BuildingItem.Prefab.GetComponent<SpriteRenderer>().sprite;
+        img.sprite = sprite;
+    }
 }

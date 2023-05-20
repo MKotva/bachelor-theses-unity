@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShownName: Grass
   Prefab: {fileID: 3686696415554171731, guid: a94d958b286aae348a3babe3596af3d6, type: 3}
+  Id: 4
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 1

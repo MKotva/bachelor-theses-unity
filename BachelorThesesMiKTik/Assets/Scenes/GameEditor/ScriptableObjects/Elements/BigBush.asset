@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad65d86b1d6bfd42a4c06508a584f34, type: 3}
   m_Name: BigBush
   m_EditorClassIdentifier: 
-  ShownName: 
+  ShownName: BigBush
   Prefab: {fileID: 1006761292877088866, guid: 3bd3b62d2d8d60349af1a101aac51584, type: 3}
+  Id: 0
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 1

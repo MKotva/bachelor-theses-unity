@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShownName: Palm
   Prefab: {fileID: 6054507948361284729, guid: 1924db0b39eb28f41a59aa24d89c2992, type: 3}
+  Id: 8
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 3

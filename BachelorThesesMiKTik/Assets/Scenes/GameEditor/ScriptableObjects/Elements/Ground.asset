@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShownName: Ground
   Prefab: {fileID: 4652379409729646180, guid: 78fedb651e1acfc4d9b7ee4e9bc8c8d4, type: 3}
+  Id: 5
   Size: {x: 0, y: 0}
   Center: {x: 0, y: 0}
   Category: 1
