@@ -51,10 +51,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void RemoveSelection()
         {
-            foreach(var position in context.Selected.Keys) 
+            while(context.Selected.Count != 0) 
             {
-                context.Erase(context.Selected[position], position);
-                context.Selected[position] = context.CreateMarkAtPosition(position);
+                var position = context.Selected.Keys.First();
+                context.Erase(context.Selected[position].Item1, position);
+                context.Selected.Remove(position);
             }
 
             _isMouseDown = false;

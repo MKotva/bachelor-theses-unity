@@ -44,7 +44,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             GameObject objectAtPos = context.GetObjectAtPosition(worldCellPosition);
             if (objectAtPos == null)
             {
-                var newObject = context.Paint(context.GridLayout, context.Parent, worldCellPosition);
+                var newObject = context.Paint(context.ActualPrefab.Prefab, context.Parent, context.GridLayout, worldCellPosition);
                 context.InsertToData(worldCellPosition, newObject);
             }
         }
@@ -53,13 +53,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             foreach(var position in context.Selected.Keys)
             {
-                if (PrefabUtility.GetCorrespondingObjectFromSource(context.Selected[position]) == context.MarkerPrefab) //TODO: Check selection prefab.
+                if (context.Selected[position].Item2) //TODO: Check selection prefab.
                 {
-                    context.Erase(context.Selected[position]);
+                    context.Erase(context.Selected[position].Item1);
                     
-                    var newObject = context.Paint(context.GridLayout, context.Parent, position);
+                    var newObject = context.Paint(context.ActualPrefab.Prefab, context.Parent, context.GridLayout, position);
                     context.MarkObject(newObject);
-                    context.Selected[position] = newObject;
+                    context.Selected[position] = (newObject, false);
                     context.InsertToData(position, newObject);
                 }
             }

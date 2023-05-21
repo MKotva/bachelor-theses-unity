@@ -60,7 +60,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 {
                    var newPosition = new Vector3(selected.Key.x + xMove, selected.Key.y + yMove);
                    var cellCenterPosition = context.GetCellCenterPosition(newPosition);
-                   selected.Value.transform.position = newPosition;
+                   selected.Value.Item1.transform.position = newPosition;
                 }
             }
         }

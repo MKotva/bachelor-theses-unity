@@ -71,7 +71,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
             if(objectAtPositon != null) 
             {
-                context.Selected.Add(cellCenter, objectAtPositon);
+                if (context.Selected.ContainsKey(cellCenter))
+                    return;
+
+                context.MarkObject(objectAtPositon);
+                context.Selected.Add(cellCenter, (objectAtPositon, false));
             }
         }
 
@@ -93,16 +97,19 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     var calculatedPosition = new Vector3(position.x + ( xSign * i * xCellSize ), position.y + ( ySign * j * yCellSize ));
                     var cellCenter = context.GetCellCenterPosition(calculatedPosition);
                     GameObject objectAtPos = context.GetObjectAtPosition(cellCenter);
+                    
+                    if (context.Selected.ContainsKey(cellCenter))
+                        continue;
 
                     if (objectAtPos != null)
                     {
                         context.MarkObject(objectAtPos);
-                        context.Selected.Add(cellCenter, objectAtPos);
+                        context.Selected.Add(cellCenter, (objectAtPos, false));
                     }
                     else
                     {
                         var newMarker = context.CreateMarkAtPosition(cellCenter);
-                        context.Selected.Add(cellCenter, newMarker);
+                        context.Selected.Add(cellCenter, (newMarker, true));
                     }
                 }
             }
@@ -110,16 +117,18 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void EraseSelection()
         {
-            foreach (var objectAtPos in context.Selected)
+            while(context.Selected.Count != 0)
             {
-                if (context.MarkerPrefab == PrefabUtility.GetCorrespondingObjectFromSource(objectAtPos.Value))
+                var objectAtPos = context.Selected.First();
+                if (objectAtPos.Value.Item2)
                 {
-                    context.Erase(objectAtPos.Value);
+                    context.Erase(objectAtPos.Value.Item1);
                 }
                 else
                 {
-                    context.UnMarkObject(objectAtPos.Value);
-                }    
+                    context.UnMarkObject(objectAtPos.Value.Item1);
+                }
+                context.Selected.Remove(objectAtPos.Key);
             }
         }
     }

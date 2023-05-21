@@ -49,6 +49,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     foreach (var item in context.Data[key])
                     {
                         context.MarkObject(item.Value);
+                        context.Selected.Add(item.Key, (item.Value, false));
                     }
                 }
             }
@@ -58,7 +59,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             foreach (var selected in context.Selected)
             {
-                context.UnMarkObject(selected.Value);
+                context.UnMarkObject(selected.Value.Item1);
                 context.selectedId = -1;
             }
         }

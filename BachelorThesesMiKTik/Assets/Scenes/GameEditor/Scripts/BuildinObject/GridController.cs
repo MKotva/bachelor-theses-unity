@@ -18,57 +18,80 @@ using UnityEngine.InputSystem.Controls;
 
 public class GridController : MonoBehaviour
 {
-    EditorActionBase _actualAction;
-
     //TODO: Restructuralize (Some field not needed.) Also change to props.
     [SerializeField] public GameObject Parent;
     [SerializeField] public GameObject MarkerPrefab;
 
-    [SerializeField] public ItemData _actualObject;
+    [SerializeField] public ItemData ActualPrefab;
     [SerializeField] public Grid GridLayout;
 
     [SerializeField] public List<ItemData> AllAvalibleItems;
 
+    public Color originalColor = Color.white;
+    public int selectedId = -1;
 
+    public Dictionary<Vector3, (GameObject, bool)> Selected;
+    public Dictionary<int, Dictionary<Vector3, GameObject>> Data;
+
+
+    private EditorActionBase _actualAction;
+    private EditorActionBase _defaultAction;
     private EditorInputActions _editorActions;
     private InputAction _keyPressed;
     private InputAction _mousePressed;
 
-    public Color originalColor = Color.white;
-    public int selectedId = -1;
-
-
-    public Dictionary<Vector3, GameObject> Selected;
-    public Dictionary<int, Dictionary<Vector3, GameObject>> Data;
-
+    private bool _isActionAllowed;
 
     private void Awake()
     {
         _editorActions = new EditorInputActions();
         _keyPressed = _editorActions.Player.KeyPressed;
-        _keyPressed.started += ctx => _actualAction.OnKeyDown(((KeyControl)ctx.control).keyCode);
-        _keyPressed.canceled += ctx => _actualAction.OnKeyUp();
+
+        _keyPressed.started += ctx =>
+        {
+            _isActionAllowed = true;
+            _actualAction.OnKeyDown(Key.LeftShift);
+        };
+        _keyPressed.canceled += ctx =>
+        {
+            _isActionAllowed = false;
+            _actualAction.OnKeyUp();
+        };
 
         _mousePressed = _editorActions.Player.MousePressed;
-        _mousePressed.started += ctx => _actualAction.OnMouseDown(GetPressedMouseButton());
-        _mousePressed.canceled += ctx => _actualAction.OnMouseUp();
+        _mousePressed.started += ctx =>
+        {
+            _isActionAllowed = true;
+            _actualAction.OnMouseDown(GetPressedMouseButton());
+        };
+        _mousePressed.canceled += ctx =>
+        {
+            _isActionAllowed = false;
+            _actualAction.OnMouseUp();
+        };
 
+        _defaultAction = new MoveAction(this);
+        _actualAction = _defaultAction;
+
+        Selected = new Dictionary<Vector3, (GameObject, bool)>();
         Data = new Dictionary<int, Dictionary<Vector3, GameObject>>();
     }
 
     private void OnEnable()
     {
-
+        _keyPressed.Enable();
+        _mousePressed.Enable();
     }
 
     private void OnDisable()
     {
-
+        _keyPressed?.Disable();
+        _mousePressed?.Disable();
     }
 
     private void FixedUpdate()
     {
-        if (_actualAction != null)
+        if (_isActionAllowed)
             _actualAction.OnUpdate(GetWorldMousePosition());
     }
 
@@ -83,14 +106,24 @@ public class GridController : MonoBehaviour
         return MouseButton.MiddleMouse;
     }
 
+    public void SetAction(EditorActionBase action)
+    {
+        _actualAction = action;
+    }
+
+    public void SetDefaultAction()
+    {
+        _actualAction = _defaultAction;
+    }
+
     public void SetPrefab(int prefabId)
     {
-        _actualObject = AllAvalibleItems[prefabId];
+        ActualPrefab = AllAvalibleItems[prefabId];
     }
 
     public GameObject CreateMarkAtPosition(Vector3 position)
     {
-        return Paint(GridLayout, MarkerPrefab, position);
+        return Paint(MarkerPrefab, Parent, GridLayout, position);
     }
 
     public void UnMarkPosition(Vector3 position)
@@ -110,9 +143,9 @@ public class GridController : MonoBehaviour
 
     public void InsertToData(Vector3 position, GameObject gameobject)
     {
-        if (Data.ContainsKey(_actualObject.Id))
+        if (Data.ContainsKey(ActualPrefab.Id))
         {
-            Data[_actualObject.Id].Add(position, gameobject);
+            Data[ActualPrefab.Id].Add(position, gameobject);
         }
         else
         {
@@ -120,24 +153,24 @@ public class GridController : MonoBehaviour
             {
                     { position, gameobject }
             };
-            Data.Add(_actualObject.Id, itemGroup);
+            Data.Add(ActualPrefab.Id, itemGroup);
         }
     }
 
     public void RemoveFromData(Vector3 position)
     {
-        if (Data.ContainsKey(_actualObject.Id))
+        if (Data.ContainsKey(ActualPrefab.Id))
         {
-            Data[_actualObject.Id].Remove(position);
+            Data[ActualPrefab.Id].Remove(position);
         }
     }
 
     public void RemoveFromData(GameObject gameobject)
     {
-        if (Data.ContainsKey(_actualObject.Id))
+        if (Data.ContainsKey(ActualPrefab.Id))
         {
-            var item = Data[_actualObject.Id].First(kvp => kvp.Value == gameObject);
-            Data[_actualObject.Id].Remove(item.Key);
+            var item = Data[ActualPrefab.Id].First(kvp => kvp.Value == gameObject);
+            Data[ActualPrefab.Id].Remove(item.Key);
         }
     }
 
@@ -149,12 +182,12 @@ public class GridController : MonoBehaviour
         }
     }
 
-    public GameObject Paint(Grid grid, GameObject brushTarget, Vector3 position)
+    public GameObject Paint(GameObject prefab, GameObject parentObject, Grid grid, Vector3 position)
     {
-        if (_actualObject)
+        if (ActualPrefab)
         {
-            GameObject newInstance = TileBase.Instantiate(_actualObject.Prefab, position, Quaternion.identity, brushTarget.transform);
-            newInstance.transform.SetParent(brushTarget.transform);
+            GameObject newInstance = TileBase.Instantiate(prefab, position, Quaternion.identity, parentObject.transform);
+            newInstance.transform.SetParent(parentObject.transform);
             return newInstance;
         }
         return null;
@@ -228,8 +261,8 @@ public class GridController : MonoBehaviour
         var _mapData = JsonUtility.FromJson<MapDataDTO>(map);
         foreach (var obj in _mapData.mapObjects)
         {
-            _actualObject = AllAvalibleItems[obj.Id];
-            var newObject = Paint(GridLayout, Parent, obj.Position);
+            ActualPrefab = AllAvalibleItems[obj.Id];
+            var newObject = Paint(ActualPrefab.Prefab, Parent, GridLayout, obj.Position);
             InsertToData(obj.Position, newObject);
         }
     }
