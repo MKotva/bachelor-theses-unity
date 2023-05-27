@@ -13,7 +13,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
     {
         bool _isMouseDown;
 
-        public GroupSelectionAction(GridController context) : base(context) {}
+        public GroupSelectionAction(MapCanvasController context) : base(context) {}
         public override void OnMouseDown(MouseButton key) 
         {
             _isMouseDown = true;

@@ -16,7 +16,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private bool _isKeyDown;
         private Vector3 _squareStart;
 
-        public SelectAction(GridController context) : base(context){}
+        public SelectAction(MapCanvasController context) : base(context){}
 
         public override void OnMouseDown(MouseButton button)
         {
@@ -32,7 +32,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         public override void OnMouseUp()
         {
-            _isKeyDown = false;
+            _isMouseDown = false;
         }
 
         public override void OnKeyDown(Key key)
@@ -84,8 +84,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var xCellSize = context.GridLayout.cellSize.x;
             var yCellSize = context.GridLayout.cellSize.y;
 
-            var xMove = ( _squareStart.x - position.x ) / xCellSize;
-            var yMove = ( _squareStart.y - position.y ) / yCellSize;
+            var xMove = (_squareStart.x - position.x) / xCellSize;
+            var yMove = (_squareStart.y - position.y) / yCellSize;
 
             var xSign = Mathf.Sign(xMove);
             var ySign = Mathf.Sign(yMove);
@@ -94,7 +94,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             {
                 for (int j = 0; j < Math.Abs(yMove) + 1; j++)
                 {
-                    var calculatedPosition = new Vector3(position.x + ( xSign * i * xCellSize ), position.y + ( ySign * j * yCellSize ));
+                    var calculatedPosition = new Vector3(position.x + (xSign * i * xCellSize), position.y + ( ySign * j * yCellSize ));
                     var cellCenter = context.GetCellCenterPosition(calculatedPosition);
                     GameObject objectAtPos = context.GetObjectAtPosition(cellCenter);
                     

@@ -3,41 +3,44 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ToolButtonController : MonoBehaviour
 {
     [SerializeField] string ActionName;
-    [SerializeField] GameObject Grid;
+    [SerializeField] MapCanvasController MapCanvasController;
+    [SerializeField] ToolPanelController PanelController;
 
+    private Color _selectionColor;
     private EditorActionBase _action;
-    private GridController _controller;
-    private bool _clicked;
+
     private void Awake()
     {
-        _controller = Grid.GetComponent<GridController>();
+        _selectionColor = Color.cyan;
 
         var type = Type.GetType("Assets.Scenes.GameEditor.Core.EditorActions." + ActionName);
         if (type != null)
         {
-            _action = (EditorActionBase) Activator.CreateInstance(type, new object[] { _controller });
+            _action = (EditorActionBase) Activator.CreateInstance(type, new object[] { MapCanvasController });
         }
         else
         {
-            _action = new MoveAction(_controller);
+            _action = new MoveAction(MapCanvasController);
         }
     }
 
     public void OnClick()
     {
-        if( _clicked)
-        {
-            _clicked = false;
-            _controller.SetDefaultAction();
-        }
-        else
-        {
-            _clicked = true;
-            _controller.SetAction(_action);
-        }
+        PanelController.HandleButtonClick(this, _action);
+    }
+
+    public void ChangeStateToClicked() 
+    {
+        GetComponent<Image>().color = _selectionColor;
+    }
+
+    public void ChangeStateToUnclicked()
+    {
+        GetComponent<Image>().color = Color.white;
     }
 }

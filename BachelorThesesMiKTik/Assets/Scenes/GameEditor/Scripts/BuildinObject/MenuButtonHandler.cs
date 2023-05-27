@@ -8,7 +8,7 @@ public class MenuButtonHandler : MonoBehaviour
     [SerializeField] public ItemData BuildingItem;
 
     private Button _button;
-    private GridController _gridController;
+    private MapCanvasController _gridController;
     private GameObject _viewBox;
 
     void Awake()
@@ -23,7 +23,7 @@ public class MenuButtonHandler : MonoBehaviour
         SetActualItemPreview();
     }
 
-    public void SetBuildingItem(ItemData data, GridController controller, GameObject viewBox)
+    public void SetBuildingItem(ItemData data, MapCanvasController controller, GameObject viewBox)
     {
         BuildingItem = data;
         _gridController = controller;

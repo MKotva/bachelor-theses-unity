@@ -13,7 +13,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
     {
         bool _isMouseDown;
 
-        public InsertAction(GridController context) : base(context) {}
+        public InsertAction(MapCanvasController context) : base(context) {}
         public override void OnMouseDown(MouseButton key) 
         {
             if (key == MouseButton.LeftMouse)
@@ -39,6 +39,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (context.Selected.ContainsKey(worldCellPosition))
             {
                 InsertSquare();
+                return;
             }
 
             GameObject objectAtPos = context.GetObjectAtPosition(worldCellPosition);
@@ -51,8 +52,10 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void InsertSquare()
         {
-            foreach(var position in context.Selected.Keys)
+            var keys = context.Selected.Keys.ToArray();
+            for (int i = 0; i < context.Selected.Count; i++)
             {
+                var position = keys[i];
                 if (context.Selected[position].Item2) //TODO: Check selection prefab.
                 {
                     context.Erase(context.Selected[position].Item1);

@@ -8,41 +8,37 @@ using UnityEngine.UI;
 
 public class ViewportController : MonoBehaviour
 {
-    [SerializeField] public GameObject Grid;
-    [SerializeField] public GameObject buttonPrefab;
-    [SerializeField] public GameObject parentObject;
-    [SerializeField] public GameObject viewBox;
+    [SerializeField] public GameObject MapCanvas;
+    [SerializeField] public GameObject ButtonPrefab;
+    [SerializeField] public GameObject ParentObject;
+    [SerializeField] public GameObject ViewBox;
 
-    public List<ItemData> itemDatas;
+    public List<ItemData> ItemDatas;
 
     private Dictionary<ItemData, Button> _itemInstances;
-    private GridController _controller;
+    private MapCanvasController _controller;
 
     // Start is called before the first frame update
     void Awake()
     {
-        _controller = Grid.GetComponent<GridController>();
+        _controller = MapCanvas.GetComponent<MapCanvasController>();
         _itemInstances = new Dictionary<ItemData, Button>();
 
-        foreach (var item in itemDatas)
+        foreach (var item in ItemDatas)
         {
-            Button button = Instantiate(buttonPrefab, parentObject.transform).GetComponent<Button>();
+            Button button = Instantiate(ButtonPrefab, ParentObject.transform).GetComponent<Button>();
             button.image.sprite = item.Prefab.GetComponent<SpriteRenderer>().sprite;
 
             TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = item.ShownName;
 
             MenuButtonHandler handler = button.GetComponent<MenuButtonHandler>();
-            handler.SetBuildingItem(item, _controller, viewBox);
+            handler.SetBuildingItem(item, _controller, ViewBox);
 
             _itemInstances.Add(item, button);
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
 
     public bool SelectBySearch(string name, out int minDistance)
     {

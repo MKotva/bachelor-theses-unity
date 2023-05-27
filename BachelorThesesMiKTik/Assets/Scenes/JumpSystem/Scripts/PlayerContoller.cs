@@ -29,11 +29,6 @@ public class PlayerContoller : MonoBehaviour
   #region [SerializeField] public bool IsGrounded { get; private set; }
   private bool _isGrounded;
 
-  /// <summary>
-  /// Checks if player stands on the ground.
-  /// </summary>
-  [field: Tooltip("Checks if player stands on the ground.")]
-  [field: SerializeField]
   public bool IsGrounded 
   {
     get 

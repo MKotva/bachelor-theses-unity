@@ -13,7 +13,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
     {
         bool _isMouseDown;
 
-        public RemoveAction(GridController context) : base(context) { }
+        public RemoveAction(MapCanvasController context) : base(context) { }
         public override void OnMouseDown(MouseButton key)
         {
             if (key == MouseButton.LeftMouse)

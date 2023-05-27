@@ -22,6 +22,13 @@ public class ItemMenuController : MonoBehaviour
 
     private GameObject _active;
 
+    private void Awake()
+    {
+        BoxMenu.SetActive(false);
+        TrapsMenu.SetActive(false);
+        DecorationsMenu.SetActive(false);
+    }
+
     public void ShowGroup(GameObject group)
     {
         if(_active != null)

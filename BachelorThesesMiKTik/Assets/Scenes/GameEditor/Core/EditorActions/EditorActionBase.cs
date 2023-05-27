@@ -11,9 +11,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 {
     public class EditorActionBase
     {
-        public GridController context;
+        public MapCanvasController context;
 
-        public EditorActionBase(GridController context) 
+        public EditorActionBase(MapCanvasController context) 
         {
             this.context = context;
         }
