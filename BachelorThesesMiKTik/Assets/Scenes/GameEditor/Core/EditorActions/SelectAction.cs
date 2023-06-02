@@ -25,7 +25,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 _isMouseDown = true;
                 if (context.Selected.Count != 0)
                 {
-                    EraseSelection();
+                    context.UnSelectAll();
                 }
             }
         }
@@ -112,23 +112,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                         context.Selected.Add(cellCenter, (newMarker, true));
                     }
                 }
-            }
-        }
-
-        private void EraseSelection()
-        {
-            while(context.Selected.Count != 0)
-            {
-                var objectAtPos = context.Selected.First();
-                if (objectAtPos.Value.Item2)
-                {
-                    context.Erase(objectAtPos.Value.Item1);
-                }
-                else
-                {
-                    context.UnMarkObject(objectAtPos.Value.Item1);
-                }
-                context.Selected.Remove(objectAtPos.Key);
             }
         }
     }

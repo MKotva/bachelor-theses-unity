@@ -12,6 +12,7 @@ using System.Linq;
 using Assets.Scenes.GameEditor.Core.EditorActions;
 using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.InputSystem.Controls;
+using UnityEditor.Rendering.LookDev;
 
 public class MapCanvasController : MonoBehaviour
 {
@@ -131,6 +132,22 @@ public class MapCanvasController : MonoBehaviour
     public GameObject CreateMarkAtPosition(Vector3 position)
     {
         return Paint(MarkerPrefab, Parent, GridLayout, position);
+    }
+
+    public void UnSelectAll()
+    {
+        foreach(var item in Selected)
+        {
+            if (item.Value.Item2)
+            {
+                Erase(item.Value.Item1);
+            }
+            else
+            {
+                UnMarkObject(item.Value.Item1);
+            }
+        }
+        Selected = new Dictionary<Vector3, (GameObject, bool)>();
     }
 
     public void UnMarkPosition(Vector3 position)

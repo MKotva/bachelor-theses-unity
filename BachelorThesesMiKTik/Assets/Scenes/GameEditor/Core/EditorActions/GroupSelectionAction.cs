@@ -17,7 +17,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         public override void OnMouseDown(MouseButton key) 
         {
             _isMouseDown = true;
-
+            if (context.Selected.Count != 0)
+                context.UnSelectAll();
         }
 
         public override void OnMouseUp() 
@@ -52,15 +53,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                         context.Selected.Add(item.Key, (item.Value, false));
                     }
                 }
-            }
-        }
-
-        public void UnSelectAllGroupItems()
-        {
-            foreach (var selected in context.Selected)
-            {
-                context.UnMarkObject(selected.Value.Item1);
-                context.selectedId = -1;
             }
         }
     }
