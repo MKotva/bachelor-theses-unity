@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: Ground
   m_EditorClassIdentifier: 
   ShownName: Ground
+  ShownImage: {fileID: 21300024, guid: a44ad40bac7cb7746a8235704640ff25, type: 3}
   Prefab: {fileID: 4652379409729646180, guid: 78fedb651e1acfc4d9b7ee4e9bc8c8d4, type: 3}
-  Id: 5
-  Size: {x: 0, y: 0}
-  Center: {x: 0, y: 0}
-  Category: 1
+  Id: 7

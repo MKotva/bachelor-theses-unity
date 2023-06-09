@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: Lava
   m_EditorClassIdentifier: 
   ShownName: Lava
+  ShownImage: {fileID: 1515899562, guid: 9ab763a0ec8a5c4489d810d44747f684, type: 3}
   Prefab: {fileID: 9010907981307652551, guid: b6016690cb80e3c4c970cde500210655, type: 3}
-  Id: 7
-  Size: {x: 0, y: 0}
-  Center: {x: 0, y: 0}
-  Category: 2
+  Id: 9
