@@ -10,6 +10,7 @@ using Assets.Scenes.GameEditor.Core.DTOS;
 using UnityEngine.UIElements;
 using System.Linq;
 using Assets.Scenes.GameEditor.Core.EditorActions;
+using Assets.Core.GameEditor.Journal;
 
 public class MapCanvasController : MonoBehaviour
 {
@@ -20,13 +21,14 @@ public class MapCanvasController : MonoBehaviour
     [SerializeField] public Grid GridLayout;
     [SerializeField] public ItemData ActualPrefab;
     [SerializeField] public List<ItemData> AllAvalibleItems;
+    [SerializeField] public bool IsRecording;
+    [SerializeField] public int JournalCapacity;
 
     public Color originalColor = Color.white;
     public int selectedId = -1;
     public Dictionary<Vector3, (GameObject, bool)> Selected;
     public Dictionary<int, Dictionary<Vector3, GameObject>> Data;
-
-
+    public Journal MapJournal;
 
     private EditorActionBase _actualAction;
     private EditorActionBase _defaultAction;
@@ -38,6 +40,8 @@ public class MapCanvasController : MonoBehaviour
 
     private void Awake()
     {
+        MapJournal = new Journal(JournalCapacity);
+
         _editorActions = new EditorInputActions();
         _keyPressed = _editorActions.Player.KeyPressed;
 
@@ -69,6 +73,10 @@ public class MapCanvasController : MonoBehaviour
             {
                 _isActionAllowed = false;
                 _actualAction.OnMouseUp();
+                if (IsRecording)
+                {
+                    MapJournal.Record(_actualAction.GetLastActionRecord(), _actualAction.GetLastActionRecordReverse());
+                }
             }
         };
 
@@ -107,7 +115,6 @@ public class MapCanvasController : MonoBehaviour
         _keyPressed?.Disable();
         _mousePressed?.Disable();
     }
-
     public void SetAction(EditorActionBase action)
     {
         _actualAction = action;

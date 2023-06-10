@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.DTOS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +20,15 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             _isMouseDown = true;
             if (context.Selected.Count != 0)
+            {
+                var positions = GetSelectedPositionsString();
+                _lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
                 context.UnSelectAll();
+            }
+            else
+            {
+                _lastActionRecordReverse = new JournalActionDTO("SUA", PerformAction);
+            }
         }
 
         public override void OnMouseUp() 
@@ -31,8 +41,22 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if(_isMouseDown)
             {
                 SelectAllGroupItems(mousePosition);
+                _lastActionRecord = new JournalActionDTO($"SG;{mousePosition.x}:{mousePosition.y}", PerformAction);
             }
             _isMouseDown = false;
+        }
+
+        public override void PerformAction(string action)
+        {
+            var descriptions = action.Split(';');
+            if (descriptions.Length < 1)
+            {
+                return;
+            }
+            if (descriptions[0] == "SG")
+            {
+                SelectAllGroupItems(MathHelper.GetVector3FromString(descriptions[1]));
+            }
         }
 
         private void SelectAllGroupItems(Vector3 position)
@@ -54,6 +78,15 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     }
                 }
             }
+        }
+        private string GetSelectedPositionsString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var selectedPos in context.Selected.Keys)
+            {
+                sb.Append($"{selectedPos.x}:{selectedPos.y};");
+            }
+            return sb.ToString();
         }
     }
 }

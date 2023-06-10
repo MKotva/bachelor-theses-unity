@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.DTOS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,8 +17,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private bool _isMouseDown;
         private bool _isKeyDown;
         private Vector3 _squareStart;
+        private Vector3 _lastMousePosition;
 
-        public SelectAction(MapCanvasController context) : base(context){}
+        public SelectAction(MapCanvasController context) : base(context) { }
 
         public override void OnMouseDown(MouseButton button)
         {
@@ -25,13 +28,29 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 _isMouseDown = true;
                 if (context.Selected.Count != 0)
                 {
+                    var positions = GetSelectedPositionsString();
+                    _lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
                     context.UnSelectAll();
+                }
+                else
+                {
+                    _lastActionRecordReverse = new JournalActionDTO($"SUA", PerformAction);
                 }
             }
         }
 
         public override void OnMouseUp()
         {
+            if (_isMouseDown && !_isKeyDown)
+            {
+                var positions = GetSelectedPositionsString();
+                _lastActionRecord = new JournalActionDTO($"SS;{positions}", PerformAction);
+            }
+            else if (_isMouseDown && _isKeyDown)
+            {
+                _lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
+            }
+
             _isMouseDown = false;
         }
 
@@ -47,6 +66,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         public override void OnKeyUp()
         {
             _isKeyDown = false;
+            _isMouseDown = false;
+            _lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
         }
 
         public override void OnUpdate(Vector3 mousePosition)
@@ -55,7 +76,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             {
                 if (_isKeyDown)
                 {
-                    SquareSelection(mousePosition);
+                    SquareSelection(_squareStart, mousePosition);
+                    _lastMousePosition = mousePosition;
                 }
                 else
                 {
@@ -64,12 +86,51 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
+        public override void PerformAction(string action)
+        {
+            var descriptions = action.Split(';');
+            if (descriptions.Length < 1)
+            {
+                return; //TODO: ERROR
+            }
+
+            if (descriptions[0] == "SS")
+            {
+                if (descriptions.Length < 2)
+                    return;
+
+                context.UnSelectAll();
+                for (int i = 1; i < descriptions.Length; i++)
+                {
+                    if (descriptions[i] == "")
+                        continue;
+
+                    SingleSelection(MathHelper.GetVector3FromString(descriptions[i]));
+                }
+            }
+            else if (descriptions[0] == "SSQ")
+            {
+                if (descriptions.Length != 3)
+                    return;
+
+                context.UnSelectAll();
+                var fromPos = MathHelper.GetVector3FromString(descriptions[1]);
+                var toPos = MathHelper.GetVector3FromString(descriptions[2]);
+
+                SquareSelection(fromPos, toPos);
+            }
+            else if (descriptions[0] == "SUA")
+            {
+                context.UnSelectAll();
+            }
+        }
+
         private void SingleSelection(Vector3 mousePosition)
         {
             var cellCenter = context.GetCellCenterPosition(mousePosition);
             var objectAtPositon = context.GetObjectAtPosition(cellCenter);
 
-            if(objectAtPositon != null) 
+            if (objectAtPositon != null)
             {
                 if (context.Selected.ContainsKey(cellCenter))
                     return;
@@ -79,13 +140,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
-        private void SquareSelection(Vector3 position)
+        private void SquareSelection(Vector3 fromPos, Vector3 toPos)
         {
             var xCellSize = context.GridLayout.cellSize.x;
             var yCellSize = context.GridLayout.cellSize.y;
 
-            var xMove = (_squareStart.x - position.x) / xCellSize;
-            var yMove = (_squareStart.y - position.y) / yCellSize;
+            var xMove = ( fromPos.x - toPos.x ) / xCellSize;
+            var yMove = ( fromPos.y - toPos.y ) / yCellSize;
 
             var xSign = Mathf.Sign(xMove);
             var ySign = Mathf.Sign(yMove);
@@ -94,10 +155,10 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             {
                 for (int j = 0; j < Math.Abs(yMove) + 1; j++)
                 {
-                    var calculatedPosition = new Vector3(position.x + (xSign * i * xCellSize), position.y + ( ySign * j * yCellSize ));
+                    var calculatedPosition = new Vector3(toPos.x + ( xSign * i * xCellSize ), toPos.y + ( ySign * j * yCellSize ));
                     var cellCenter = context.GetCellCenterPosition(calculatedPosition);
                     GameObject objectAtPos = context.GetObjectAtPosition(cellCenter);
-                    
+
                     if (context.Selected.ContainsKey(cellCenter))
                         continue;
 
@@ -113,6 +174,16 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     }
                 }
             }
+        }
+
+        private string GetSelectedPositionsString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var selectedPos in context.Selected.Keys)
+            {
+                sb.Append($"{selectedPos.x}:{selectedPos.y};");
+            }
+            return sb.ToString();
         }
     }
 }
