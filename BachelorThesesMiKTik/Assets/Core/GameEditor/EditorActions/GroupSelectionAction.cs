@@ -18,6 +18,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         public GroupSelectionAction(MapCanvasController context) : base(context) {}
         public override void OnMouseDown(MouseButton key) 
         {
+            _lastActionRecord = null;
+            _lastActionRecordReverse = null;
+
             _isMouseDown = true;
             if (context.Selected.Count != 0)
             {
@@ -55,7 +58,12 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
             if (descriptions[0] == "SG")
             {
+                context.UnSelectAll();
                 SelectAllGroupItems(MathHelper.GetVector3FromString(descriptions[1]));
+            }
+            else if(descriptions[0] == "SUA")
+            {
+                context.UnSelectAll();
             }
         }
 

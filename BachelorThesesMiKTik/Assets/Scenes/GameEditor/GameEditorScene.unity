@@ -2690,7 +2690,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8a702c96535611140b7c95bbec377ff0, type: 2}
   - {fileID: 11400000, guid: 370480679ad7a3349b9c666cc2bcb248, type: 2}
   IsRecording: 1
-  JournalCapacity: 6
+  JournalCapacity: 100
   originalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedId: -1
 --- !u!114 &873386563

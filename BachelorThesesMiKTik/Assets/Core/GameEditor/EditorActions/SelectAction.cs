@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -25,6 +26,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (button == MouseButton.LeftMouse)
             {
+                _lastActionRecord = null;
+                _lastActionRecordReverse = null;
+
                 _isMouseDown = true;
                 if (context.Selected.Count != 0)
                 {
@@ -105,7 +109,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     if (descriptions[i] == "")
                         continue;
 
-                    SingleSelection(MathHelper.GetVector3FromString(descriptions[i]));
+                    SingleReselection(MathHelper.GetVector3FromString(descriptions[i]));
                 }
             }
             else if (descriptions[0] == "SSQ")
@@ -128,20 +132,42 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private void SingleSelection(Vector3 mousePosition)
         {
             var cellCenter = context.GetCellCenterPosition(mousePosition);
-            var objectAtPositon = context.GetObjectAtPosition(cellCenter);
+            if (context.Selected.ContainsKey(cellCenter))
+                return;
 
+            var objectAtPositon = context.GetObjectAtPosition(cellCenter);
             if (objectAtPositon != null)
             {
-                if (context.Selected.ContainsKey(cellCenter))
-                    return;
 
                 context.MarkObject(objectAtPositon);
                 context.Selected.Add(cellCenter, (objectAtPositon, false));
             }
         }
 
+        private void SingleReselection(Vector3 mousePosition)
+        {
+            var cellCenter = context.GetCellCenterPosition(mousePosition);
+            if (context.Selected.ContainsKey(cellCenter))
+                return;
+
+            var objectAtPositon = context.GetObjectAtPosition(cellCenter);
+            if (objectAtPositon != null)
+            {
+
+                context.MarkObject(objectAtPositon);
+                context.Selected.Add(cellCenter, (objectAtPositon, false));
+            }
+            else
+            {
+                var marker = context.CreateMarkAtPosition(cellCenter);
+                context.Selected.Add(cellCenter, (marker, true));
+            }
+        }
+
         private void SquareSelection(Vector3 fromPos, Vector3 toPos)
         {
+            context.UnSelectAll();
+
             var xCellSize = context.GridLayout.cellSize.x;
             var yCellSize = context.GridLayout.cellSize.y;
 
@@ -159,8 +185,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     var cellCenter = context.GetCellCenterPosition(calculatedPosition);
                     GameObject objectAtPos = context.GetObjectAtPosition(cellCenter);
 
-                    if (context.Selected.ContainsKey(cellCenter))
-                        continue;
+                    //if (context.Selected.ContainsKey(cellCenter))
+                    //    continue;
 
                     if (objectAtPos != null)
                     {

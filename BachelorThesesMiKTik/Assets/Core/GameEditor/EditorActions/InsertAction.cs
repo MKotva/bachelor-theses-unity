@@ -22,6 +22,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         public InsertAction(MapCanvasController context, bool dummy) : base(context) {}
         public override void OnMouseDown(MouseButton key) 
         {
+            _lastActionRecord = null;
+            _lastActionRecordReverse = null;
+
             if (key == MouseButton.LeftMouse)
             {
                 _isMouseDown = true;
@@ -31,10 +34,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         public override void OnMouseUp() 
         {
-            _isMouseDown = false;
-            var positionsString = GetPositionsString(_newObjectPostions);
-            _lastActionRecord = new JournalActionDTO($"I;{positionsString}", PerformAction);
-            _lastActionRecordReverse = new JournalActionDTO($"R;{positionsString}", _removeAction.PerformAction);
+            if (_isMouseDown)
+            {
+                var positionsString = GetPositionsString(_newObjectPostions);
+                _lastActionRecord = new JournalActionDTO($"I;{positionsString}", PerformAction);
+                _lastActionRecordReverse = new JournalActionDTO($"R;{positionsString}", _removeAction.PerformAction);
+                _isMouseDown = false;
+            }
         }
 
         public override void OnUpdate(Vector3 mousePosition) 
@@ -45,8 +51,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (context.Selected.ContainsKey(position))
                 {
                     InsertSelection();
-                    _lastActionRecordReverse = new JournalActionDTO($"IS;{mousePosition.x}:{mousePosition.y}", PerformAction);
-                    _lastActionRecord = new JournalActionDTO($"RS;{mousePosition.x}:{mousePosition.y}", _removeAction.PerformAction);
+                    _lastActionRecord = new JournalActionDTO($"IS;{mousePosition.x}:{mousePosition.y}", PerformAction);
+                    _lastActionRecordReverse = new JournalActionDTO($"RS;{mousePosition.x}:{mousePosition.y}", _removeAction.PerformAction);
                     _isMouseDown = false;
                 }
                 else
@@ -88,6 +94,17 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     Insert(position);
                 }
             }
+            else if (descriptions[0] == "IR" && descriptions.Count() > 1)
+            {
+                for (int i = 1; i < descriptions.Count(); i++)
+                {
+                    if (descriptions[i] == "")
+                        continue;
+
+                    var position = MathHelper.GetVector3FromString(descriptions[i]);
+                    InsertReverse(position);
+                }
+            }
         }
 
         private void Insert(Vector3 position)
@@ -120,6 +137,24 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
             _isMouseDown = false; //TODO: Check if this is good idea...
         }
+
+        private void InsertReverse(Vector3 position)
+        {
+            position = context.GetCellCenterPosition(position);
+            if (!context.Selected.ContainsKey(position))
+                return;
+
+            if (context.Selected[position].Item2)
+            {
+                context.Erase(context.Selected[position].Item1);
+
+                var newObject = context.Paint(context.ActualPrefab.Prefab, context.Parent, context.GridLayout, position);
+                context.MarkObject(newObject);
+                context.Selected[position] = (newObject, false);
+                context.InsertToData(position, newObject);
+            }
+        }
+
         private string GetPositionsString(List<Vector3> positions)
         {
             StringBuilder sb = new StringBuilder();

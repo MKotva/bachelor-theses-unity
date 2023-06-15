@@ -23,6 +23,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (key == MouseButton.LeftMouse)
             {
+                _lastActionRecord = null;
+                _lastActionRecordReverse = null;
+
                 _isMouseDown = true;
                 _startPosition = context.GetWorldMousePosition();
                 var worldCellPosition = context.GetCellCenterPosition(_startPosition);
@@ -94,7 +97,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var xMove = fromPos.x - toPos.x;
             var yMove = fromPos.y - toPos.y;
 
-            var newSelection = new Dictionary<Vector3, (GameObject, bool)>();
             var keys = context.Selected.Keys.ToArray();
             for (int i = 0; i < context.Selected.Count; i++)
             {

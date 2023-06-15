@@ -19,11 +19,18 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             _newObjectPostions = new List<Vector3>();
             _insertAction = new InsertAction(context, true); 
         }
-        public RemoveAction(MapCanvasController context, bool dummy) : base(context) { }
+        public RemoveAction(MapCanvasController context, bool dummy) : base(context) 
+        {
+            _newObjectPostions = new List<Vector3>();
+        }
+
         public override void OnMouseDown(MouseButton key)
         {
             if (key == MouseButton.LeftMouse)
             {
+                _lastActionRecord = null;
+                _lastActionRecordReverse = null;
+
                 _isMouseDown = true;
                 _newObjectPostions.Clear();
             }
@@ -31,10 +38,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         public override void OnMouseUp()
         {
-            _isMouseDown = false;
-            var positionsString = GetPositionsString(_newObjectPostions);
-            _lastActionRecord = new JournalActionDTO($"R;{positionsString}", PerformAction);
-            _lastActionRecordReverse = new JournalActionDTO($"I;{positionsString}", _insertAction.PerformAction);
+            if (_isMouseDown)
+            {
+                var positionsString = GetPositionsString(_newObjectPostions);
+                _lastActionRecord = new JournalActionDTO($"R;{positionsString}", PerformAction);
+                _lastActionRecordReverse = new JournalActionDTO($"I;{positionsString}", _insertAction.PerformAction);
+                _isMouseDown = false;
+            }
         }
 
         public override void OnUpdate(Vector3 mousePosition)
@@ -45,8 +55,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (context.Selected.ContainsKey(position))
                 {
                     RemoveSelection();
-                    _lastActionRecord = new JournalActionDTO($"RS;{mousePosition.x}:{mousePosition.y}", PerformAction);
-                    _lastActionRecordReverse = new JournalActionDTO($"IS;{mousePosition.x}:{mousePosition.y}", _insertAction.PerformAction);
+                    var positionsString = GetPositionsString(_newObjectPostions);
+                    _lastActionRecord = new JournalActionDTO($"RS;{position.x}:{position.y}", PerformAction);
+                    _lastActionRecordReverse = new JournalActionDTO($"IR;{positionsString}", _insertAction.PerformAction);
                     _isMouseDown = false;
                 }
                 else
@@ -102,13 +113,19 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void RemoveSelection()
         {
-            while(context.Selected.Count != 0) 
+            var keys = context.Selected.Keys.ToArray();
+            for (int i = 0; i < context.Selected.Count(); i++)
             {
-                var position = context.Selected.Keys.First();
-                context.Erase(context.Selected[position].Item1, position);
-                context.Selected.Remove(position);
-            }
+                var position = keys[i];
+                if (!context.Selected[position].Item2)
+                {
+                    context.Erase(context.Selected[position].Item1, position);
+                    context.Selected[position] = (context.CreateMarkAtPosition(position), true);
 
+                    if (!_newObjectPostions.Contains(position))
+                        _newObjectPostions.Add(position);
+                }
+            }
             _isMouseDown = false;
         }
 
