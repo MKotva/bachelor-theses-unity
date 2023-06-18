@@ -17,12 +17,14 @@ public class MapCanvasController : MonoBehaviour
     //TODO: Restructuralize (Some field not needed.) Also change to props.
     [SerializeField] public GameObject Parent;
     [SerializeField] public GameObject MarkerPrefab;
+    [SerializeField] public GameObject MarkerDotPrefab;
     [SerializeField] public Camera CameraObj;
     [SerializeField] public Grid GridLayout;
     [SerializeField] public ItemData ActualPrefab;
     [SerializeField] public List<ItemData> AllAvalibleItems;
     [SerializeField] public bool IsRecording;
     [SerializeField] public int JournalCapacity;
+    [SerializeField] public List<string> BlockingObjectTags;
 
     public Color originalColor = Color.white;
     public int selectedId = -1;
@@ -135,6 +137,11 @@ public class MapCanvasController : MonoBehaviour
         return Paint(MarkerPrefab, Parent, GridLayout, position);
     }
 
+    public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector3 position)
+    {
+        return Paint(markerPrefab, Parent, GridLayout, position);
+    }
+
     public void DestroyMark(GameObject marker)
     {
         Erase(marker);
@@ -158,12 +165,20 @@ public class MapCanvasController : MonoBehaviour
 
     public void MarkObject(GameObject gameObject)
     {
-        gameObject.GetComponent<Renderer>().material.color = new Color(2f, 0f, 0f, 0.7f);
+        Renderer renderer;
+        if(!gameObject.TryGetComponent(out renderer))
+           renderer = gameObject.GetComponentInChildren<Renderer>();
+
+        renderer.material.color = new Color(2f, 0f, 0f, 0.7f);
     }
 
     public void UnMarkObject(GameObject gameObject)
     {
-        gameObject.GetComponent<Renderer>().material.color = originalColor;
+        Renderer renderer;
+        if (!gameObject.TryGetComponent(out renderer))
+            renderer = gameObject.GetComponentInChildren<Renderer>();
+
+        renderer.material.color = originalColor;
     }
 
     public void InsertToData(Vector3 position, GameObject gameobject)
@@ -210,6 +225,38 @@ public class MapCanvasController : MonoBehaviour
         {
             if (group.ContainsKey(position))
                 return true;
+        }
+        return false;
+    }
+
+    public bool ContainsObjectAtPosition(Vector3 position, int[] layers)
+    {
+        foreach (var group in Data.Values)
+        {
+            if (group.ContainsKey(position))
+            {
+                var obj = group[position];
+                foreach( var layer in layers)
+                {
+                    if(obj.layer == layer)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    //TODO: Rework this, make with layers.
+    public bool ContainsBlockingObjectAtPosition(Vector3 position)
+    {
+        foreach (var group in Data.Values)
+        {
+            if (group.ContainsKey(position))
+            {
+                if (BlockingObjectTags.Contains(group[position].tag))
+                    return true;
+            }
         }
         return false;
     }

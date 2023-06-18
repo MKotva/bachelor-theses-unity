@@ -1,12 +1,7 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.DTOS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace Assets.Scenes.GameEditor.Core.EditorActions

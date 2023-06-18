@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 865169559003138917}
   - component: {fileID: 1408336429453807}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: SmallBush
   m_TagString: Untagged
   m_Icon: {fileID: 0}

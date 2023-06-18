@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8420659264702119695}
   - component: {fileID: 1989047545821303303}
   - component: {fileID: 8343944253597424350}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: PlayerSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4593877143413931453}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -104,7 +104,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5200462337236007257}
   - component: {fileID: 2956583083431516435}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: PlayerBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}

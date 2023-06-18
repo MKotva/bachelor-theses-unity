@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4543887021455132906}
   - component: {fileID: 8129580041985285891}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MarkerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}

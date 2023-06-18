@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3171615028448286607}
   - component: {fileID: 5907932225078431725}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: ConnectedCreeper
   m_TagString: Untagged
   m_Icon: {fileID: 0}

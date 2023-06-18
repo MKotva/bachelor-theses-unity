@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8588181807622155875}
   - component: {fileID: 332127690759090441}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: SingleCreeper
   m_TagString: Untagged
   m_Icon: {fileID: 0}

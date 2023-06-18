@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3686696415325280224}
   - component: {fileID: 3686696415554171729}
   - component: {fileID: 4545441709625546445}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GrassGroundBlock
-  m_TagString: Untagged
+  m_TagString: Box
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3686696415554171731}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.8963, y: -0.1779, z: 3.4309874}
-  m_LocalScale: {x: 1.1459258, y: 1.194074, z: 1}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,8 +78,8 @@ SpriteRenderer:
   m_Color: {r: 0.7058824, g: 0.7058824, b: 0.7058824, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 2
-  m_Size: {x: 0.29202974, y: 0.29251602}
+  m_DrawMode: 0
+  m_Size: {x: 30, y: 30}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -94,7 +94,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 3686696415554171731}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5ccd6132531f2a848998f07c6cdefb07, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -103,11 +103,11 @@ BoxCollider2D:
     border: {x: 0.0075000003, y: 0.0100017935, z: 0.0075000003, w: 0.0100017935}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.29749998, y: 0.31005558}
-    newSize: {x: 0.29202974, y: 0.29251602}
+    newSize: {x: 30, y: 30}
     adaptiveTilingThreshold: 0.5
-    drawMode: 2
+    drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.29749998, y: 0.31005558}
+  m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0

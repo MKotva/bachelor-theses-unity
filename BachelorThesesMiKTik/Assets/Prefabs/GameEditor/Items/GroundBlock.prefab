@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4652379409545840915}
   - component: {fileID: 4652379409729646181}
   - component: {fileID: -4119390917875015544}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GroundBlock
-  m_TagString: Untagged
+  m_TagString: Box
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4652379409729646180}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.884, y: -0.561, z: 3.4309874}
-  m_LocalScale: {x: 1.3, y: 1.3, z: 1}
+  m_LocalPosition: {x: 0.8851, y: -0.561, z: 3.4309874}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 30, y: 30}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -94,20 +94,20 @@ BoxCollider2D:
   m_GameObject: {fileID: 4652379409729646180}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 0c582638b5110ee439fd24cd4c25e639, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
+    border: {x: 0.0075000003, y: 0, z: 0.015000001, w: 0.01500269}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.29749998, y: 0.31505647}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 0.29749998, y: 0.30755514}
+    newSize: {x: 30, y: 30}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.29749998, y: 0.31505647}
+  m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0

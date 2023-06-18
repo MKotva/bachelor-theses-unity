@@ -7,6 +7,8 @@ TagManager:
   - BoxView
   - TrapsView
   - DecorationsView
+  - Box
+  - Trap
   layers:
   - Default
   - TransparentFX
@@ -14,12 +16,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - Decoration
-  - Trap
-  - Player
+  - Marker
   - Box
+  - Trap
+  - Decoration
+  - AIObject
+  - 
   - 
   - 
   - 

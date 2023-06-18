@@ -15,5 +15,22 @@ namespace Assets.Core.GameEditor
 
             return new Vector3();
         }
+
+        public static Vector3 Add(Vector3 a, Vector2 b)
+        {
+            a.x += b.x;
+            a.y += b.y;
+            return a;
+        }
+
+        public static float Pow(float x, int exp) 
+        {
+            var powered = x;
+
+            for(int i = 1; i < exp; i++)
+                powered *= powered;
+
+            return powered;
+        }
     }
 }
