@@ -13,8 +13,9 @@ namespace Assets.Scripts.GameEditor.AI
     {
         public MoveAIAction(MapCanvasController controller) : base(controller) { }
 
-        public override AgentActionDTO GetReacheablePosition(Vector3 position)
+        public override List<AgentActionDTO> GetReacheablePosition(Vector3 position)
         {
+            var reacheablePositions = new List<AgentActionDTO>();
             var cellSize = context.GridLayout.cellSize;
 
             var newPositions = new Vector3[]
@@ -28,22 +29,36 @@ namespace Assets.Scripts.GameEditor.AI
                 context.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y - cellSize.y)) //UpperLeft;
             };
 
-            var reacheablePositions = new List<Vector3>();
-            var actionParameters = new List<string>();
-            foreach(var possiblePos in reacheablePositions)
+            var newPositionsParams = new string[]
             {
-                if(IsWalkable(possiblePos))
+                "M;1:0", //Right
+                "M;1:-1", //LowerRight
+                "M;1:1", //UpperRight
+
+                "M;-1:0", //Left
+                "M;-1:-1", //LowerLeft;
+                "M;-1:1" //UpperLeft;
+            };
+
+            for(int i = 0; i < newPositions.Length; i++)
+            {
+                if(IsWalkable(newPositions[i]))
                 {
-                    reacheablePositions.Add(possiblePos);
+                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformAction, PerformActionWithPrint));
                 }
             }
 
-            return new AgentActionDTO(reacheablePositions, actionParameters, PerformAction, 1f);
+            return reacheablePositions;
         }
 
-        public override void PerformAction(string parameters)
+        public override void PerformAction(Vector3 startPosition, string parameters)
         {
-            throw new NotImplementedException();
+            //context.CreateMarkAtPosition(startPosition);
+        }
+
+        public override List<GameObject> PerformActionWithPrint(Vector3 startPosition, string parameters)
+        {
+            return new List<GameObject>() { context.CreateMarkAtPosition(startPosition) };
         }
     }
 }

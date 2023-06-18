@@ -32,10 +32,10 @@ namespace Assets.Core.GameEditor.DataStructures
         }
 
 
-        public T Pop()
-        {
+        //public T Pop()
+        //{
 
-        }
+        //}
 
 
         private class Node

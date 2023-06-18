@@ -22,6 +22,13 @@ namespace Assets.Scripts.GameEditor.AI
         private float _moveSpeed;
         private bool _shouldPrint;
 
+        private Vector2 gravityAcceleration;
+
+        private float timeTick;
+        private float drag;
+
+        private int depth;
+
         public JumpAIAction(MapCanvasController context, GameObject jumpingObject, float jumpForce = 5, float moveSpeed = 2) : base(context, 50)
         {
             _jumpingObject = jumpingObject;
@@ -33,6 +40,12 @@ namespace Assets.Scripts.GameEditor.AI
 
             _jumpForce = jumpForce;
             _moveSpeed = moveSpeed;
+
+            timeTick = ( Time.fixedDeltaTime / Physics2D.velocityIterations ) * 10;
+            gravityAcceleration = Physics2D.gravity * _rigid.gravityScale * MathHelper.Pow(timeTick, 2);
+            drag = 1f - timeTick * _rigid.drag;
+
+            depth = 30;
         }
 
         public JumpAIAction(MapCanvasController context, GameObject jumpingObject, float defaultBounceForce, float jumpForce, float moveSpeed) : this(context, jumpingObject, jumpForce, moveSpeed)
@@ -40,20 +53,20 @@ namespace Assets.Scripts.GameEditor.AI
             _defaultBounceForce = defaultBounceForce;
         }
 
-        public override AgentActionDTO GetReacheablePosition(Vector3 position)
+        public override List<AgentActionDTO> GetReacheablePosition(Vector3 position)
         {
-            var right = GetAllJumpTrajectories(position, Vector2.right, _jumpForce, _moveSpeed, 30);
-            var left = GetAllJumpTrajectories(position, Vector2.left, _jumpForce, _moveSpeed, 30);
+            var reacheablePositions = new List<AgentActionDTO>();
 
+            var right = GetAllJumpTrajectories(position, Vector2.right, _jumpForce, _moveSpeed);
+            var left = GetAllJumpTrajectories(position, Vector2.left, _jumpForce, _moveSpeed);
 
-            var reacheable = new List<Vector3>();
-            var parameters = new List<string>();
+            
             foreach ( var item in right) 
             {
                 if(IsWalkable(item.Position))
                 {
-                    reacheable.Add(item.Position);
-                    parameters.Add(item.MotionPower.ToString());
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionPower.x}:{item.MotionPower.y}", 50, PerformAction, PerformActionWithPrint);
+                    reacheablePositions.Add(action);
                 }
             }
 
@@ -61,25 +74,38 @@ namespace Assets.Scripts.GameEditor.AI
             {
                 if (IsWalkable(item.Position))
                 {
-                    reacheable.Add(item.Position);
-                    parameters.Add(item.MotionPower.ToString());
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionPower.x}:{item.MotionPower.y}", 50, PerformAction, PerformActionWithPrint);
+                    reacheablePositions.Add(action);
                 }
             }
 
-            return new AgentActionDTO(reacheable, parameters, PerformAction, actionCost);
+            return reacheablePositions;
         }
 
-        public override void PerformAction(string parameters)
+        public override void PerformAction(Vector3 startPosition, string parameters)
         {
-            throw new NotImplementedException();
+            //_shouldPrint = true;
+            //context.CreateMarkAtPosition(startPosition);
+            //GetTrajectory(startPosition, MathHelper.GetVector3FromString(parameters));
+            //_shouldPrint = false;
         }
 
-        public void PrintJumpables()
+        public override List<GameObject> PerformActionWithPrint(Vector3 startPosition, string parameters)
+        {
+            _shouldPrint = true;
+            _markers.Add(context.CreateMarkAtPosition(startPosition));
+            GetTrajectory(startPosition, MathHelper.GetVector3FromString(parameters));
+            _shouldPrint = false;
+            return _markers;
+        }
+
+        public List<GameObject> PrintJumpables()
         {
             ClearMarks();
             _shouldPrint = true;
             GetReacheablePosition(_jumpingObject.transform.position);
             _shouldPrint = false;
+            return _markers;
         }
 
         private void ClearMarks()
@@ -91,21 +117,17 @@ namespace Assets.Scripts.GameEditor.AI
             _markers.Clear();
         }
 
-        private List<JumpPositionDTO> GetAllJumpTrajectories(Vector2 position, Vector2 jumpDirection, float jumpPower, float motionPower, int depth)
+        private List<JumpPositionDTO> GetAllJumpTrajectories(Vector2 position, Vector2 jumpDirection, float jumpPower, float motionPower)
         {
             List<List<Vector3>> dummy;
-            return GetAllJumpTrajectories(position, jumpDirection, jumpPower, motionPower, depth, out dummy);
+            return GetAllJumpTrajectories(position, jumpDirection, jumpPower, motionPower, out dummy);
         }
 
-        private List<JumpPositionDTO> GetAllJumpTrajectories(Vector2 startPosition, Vector2 jumpDirection, float jumpPower, float motionPower, int depth, out List<List<Vector3>> trajectories)
+        private List<JumpPositionDTO> GetAllJumpTrajectories(Vector2 startPosition, Vector2 jumpDirection, float jumpPower, float motionPower, out List<List<Vector3>> trajectories)
         {
             trajectories = new List<List<Vector3>>();
             var jumpRecords = new List<JumpPositionDTO>();
             var position = startPosition;
-
-            var timeTick = ( Time.fixedDeltaTime / Physics2D.velocityIterations ) * 10;
-            var gravityAcceleration = Physics2D.gravity * _rigid.gravityScale * MathHelper.Pow(timeTick, 2);
-            var drag = 1f - timeTick * _rigid.drag;
 
             var adjustedJumppower = jumpPower;
             float adjustment = jumpPower * 0.05f;
@@ -113,7 +135,7 @@ namespace Assets.Scripts.GameEditor.AI
             while (adjustedJumppower > 1)
             {
                 var motionDirection = ( Vector2.up * adjustedJumppower ) - ( jumpDirection * motionPower );
-                var result = GetTrajectory(position, motionDirection, gravityAcceleration, timeTick, drag, depth);
+                var result = GetTrajectory(position, motionDirection);
                 jumpRecords.Add(new JumpPositionDTO(result.Last(), motionDirection));
                 adjustedJumppower = adjustedJumppower - adjustment;
             }
@@ -121,7 +143,7 @@ namespace Assets.Scripts.GameEditor.AI
             return jumpRecords;
         }
 
-        private List<Vector3> GetTrajectory(Vector2 startPos, Vector2 initialDirection, Vector2 gravityAcceleration, float timeTick, float drag, int depth)
+        private List<Vector3> GetTrajectory(Vector2 startPos, Vector2 initialDirection)
         {
             var trajectoryPoints = new List<Vector3>();
             var position = startPos;
@@ -160,7 +182,7 @@ namespace Assets.Scripts.GameEditor.AI
         private Vector2 Bounce(Vector2 startPosition, Vector2 motionDirection, out Vector2 hitPosition, out bool isLandPossible)
         {
             isLandPossible = false;
-            RaycastHit2D hit = Physics2D.Raycast(startPosition, motionDirection, Mathf.Infinity, LayerMask.GetMask("Box"));
+            RaycastHit2D hit = Physics2D.Raycast(startPosition, motionDirection, 1, LayerMask.GetMask("Box"));
             if (hit.collider != null)
             {
                 var normal = hit.normal;
@@ -175,6 +197,12 @@ namespace Assets.Scripts.GameEditor.AI
 
                 if (hit.normal == Vector2.up)
                     isLandPossible = true;
+
+                if(hit.normal == Vector2.zero)
+                {
+                    isLandPossible = true;
+                    Debug.DrawRay(startPosition, motionDirection, Color.red, 100000000000000000);
+                }
 
                 hitPosition = hit.point;
                 return Vector2.Reflect(motionDirection, normal);

@@ -1,5 +1,7 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using Mono.Cecil;
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -16,8 +18,18 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             actionCost = cost;
         }
 
-        public virtual AgentActionDTO GetReacheablePosition(Vector3 position) {  return null; }
-        public virtual void PerformAction(string parameters) { }
+        public virtual List<AgentActionDTO> GetReacheablePosition(Vector3 position) 
+        {
+            throw new NotImplementedException();
+        }
+        public virtual void PerformAction(Vector3 startPosition, string parameters) 
+        {
+            throw new NotImplementedException();
+        }
+        public virtual List<GameObject> PerformActionWithPrint(Vector3 startPosition, string parameters) 
+        {
+            throw new NotImplementedException();
+        }
 
         internal bool IsWalkable(Vector3 position)
         {

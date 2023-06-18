@@ -1,9 +1,12 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static Assets.Core.GameEditor.DTOS.JournalActionDTO;
+using static Assets.Core.GameEditor.DTOS.AgentActionDTO;
 
 namespace Assets.Scripts.GameEditor.AI
 {
@@ -16,7 +19,7 @@ namespace Assets.Scripts.GameEditor.AI
         private Vector3 _startPosition;
         private Vector3 _endPosition;
 
-        private PriorityQueue<Node, double> ActiveNodes;
+        private List<Node> ActiveNodes;
         private Dictionary<Vector3, Node> ClosedNodes;
 
 
@@ -32,18 +35,18 @@ namespace Assets.Scripts.GameEditor.AI
             moveAIAction = new MoveAIAction(MapController);
         }
 
-        public void FindPath(Vector3 endPosition)
+        public List<AgentActionDTO> FindPath(Vector3 endPosition)
         {
             Initialize(endPosition);
 
             while (ActiveNodes.Count > 0)
             {
-                var actualNode = ActiveNodes.Dequeue();
+                var actualNode = ActiveNodes.First();
+                ActiveNodes.Remove(actualNode);
 
                 if (actualNode.Position == endPosition)
                 {
-                    BackTrack(actualNode);
-                    return;
+                    return BackTrackActions(actualNode);
                 }
 
                 ClosedNodes.Add(actualNode.Position, actualNode);
@@ -55,24 +58,26 @@ namespace Assets.Scripts.GameEditor.AI
                     if (ClosedNodes.ContainsKey(node.Position))
                         continue;
 
-                    if(!TryAdjustCost(node))
-                        ActiveNodes.Enqueue(node, node.CostDistance);
+                    if (!TryAdjustCost(node))
+                        ActiveNodes.Add(node);
                 }
+                ActiveNodes = ActiveNodes.OrderBy(node => node.CostDistance).ToList();
             }
 
             Debug.Log("No Path Found!");
+            return null;
         }
-        
+
         private bool TryAdjustCost(Node node)
         {
-            foreach (var activeNode in ActiveNodes.UnorderedItems)
+            foreach (var activeNode in ActiveNodes)
             {
-                if (activeNode.Element.Position == node.Position)
+                if (activeNode.Position == node.Position)
                 {
-                    if (activeNode.Element.CostDistance > node.CostDistance)
+                    if (activeNode.CostDistance > node.CostDistance)
                     {
-                        activeNode.Element.Cost = node.Cost;
-                        activeNode.Element.Distance = node.Distance;
+                        ActiveNodes.Remove(activeNode);
+                        ActiveNodes.Add(node);
                     }
                     return true;
                 }
@@ -81,27 +86,35 @@ namespace Assets.Scripts.GameEditor.AI
         }
         private void Initialize(Vector3 endPositon)
         {
-            ActiveNodes = new PriorityQueue<Node, double>();
+            ActiveNodes = new List<Node>();
 
             _startPosition = _player.transform.position;
             _endPosition = endPositon;
 
-            ActiveNodes.Enqueue(new Node(_startPosition, _endPosition), 0);
+            ActiveNodes.Add(new Node(_startPosition, _endPosition));
             ClosedNodes = new Dictionary<Vector3, Node>();
         }
 
-        private void BackTrack(Node actualNode)
+        private List<AgentActionDTO> BackTrackActions(Node actualNode)
         {
-            var tile = actualNode;
+            Stack<AgentActionDTO> stack = new Stack<AgentActionDTO>();
+
+            var node = actualNode;
             while (true)
             {
-                MapController.CreateMarkAtPosition(tile.Position);
-                tile = tile.Parent;
-                if (tile == null)
+                if (node.Parent == null)
                 {
-                    return;
+                    break;
                 }
+
+                stack.Push(node.ActionRecord);
+                node = node.Parent;
             }
+
+            if (stack.Count == 0)
+                return null; //TODO: Exception.
+
+            return stack.ToList();
         }
 
         private List<Node> GetWalkableNodes(Node actualNode)
@@ -109,28 +122,23 @@ namespace Assets.Scripts.GameEditor.AI
             var newNodes = new List<Node>();
             var actionResults = new List<AgentActionDTO>();
 
-            //TODO:Replace
-            actionResults.Add(moveAIAction.GetReacheablePosition(actualNode.Position));
-            actionResults.Add(jumpAction.GetReacheablePosition(actualNode.Position));
+            moveAIAction.GetReacheablePosition(actualNode.Position).ForEach(action => actionResults.Add(action));
+            jumpAction.GetReacheablePosition(actualNode.Position).ForEach(action => actionResults.Add(action));
 
 
             foreach (var actionResult in actionResults)
             {
-                for (int i = 0; i < actionResult.ReachablePositions.Count; i++)
+                var position = actionResult.EndPosition;
+                var node = new Node
                 {
-                    var position = actionResult.ReachablePositions[i];
+                    Cost = actualNode.Cost + actionResult.Cost,
+                    Distance = Math.Abs(_endPosition.x - position.x) + Math.Abs(_endPosition.y - position.y),
+                    Parent = actualNode,
+                    Position = position,
+                    ActionRecord = actionResult                  
+                };
 
-                    var node = new Node
-                    {
-                        Cost = actualNode.Cost + actionResult.Cost,
-                        Distance = Math.Abs(_endPosition.x - position.x) + Math.Abs(_endPosition.y - position.y),
-                        Parent = actualNode,
-                        Position = position,
-                        ActionRecord = actionResult.PositionActionParameters[i]
-                    };
-
-                    newNodes.Add(node);
-                }
+                newNodes.Add(node);
             }
             return newNodes;
         }
@@ -144,7 +152,7 @@ class Node
     public double CostDistance => Cost + Distance;
     public Node Parent { get; set; }
     public Vector3 Position { get; set; }
-    public string ActionRecord { get; set; }
+    public AgentActionDTO ActionRecord { get; set; }
 
     public Node() { }
 

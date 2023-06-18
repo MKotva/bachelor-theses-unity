@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Core.GameEditor.DTOS;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -45,7 +46,7 @@ namespace Assets.Scripts.GameEditor.AI
             if (selectedObject != null)
             {
                 var jumpHandler = new JumpAIAction(MapController, selectedObject);
-                jumpHandler.PrintJumpables();
+                jumpHandler.PrintJumpables().ForEach(marker => Markers.Add(marker));
             }
         }
 
@@ -61,6 +62,11 @@ namespace Assets.Scripts.GameEditor.AI
                 ShowWalkableTiles();
                 IsShowingPath = true;
             }
+        }
+
+        public void OnCleanClick()
+        {
+            DestroyAllMarkers();
         }
 
         private void Awake()
@@ -83,7 +89,19 @@ namespace Assets.Scripts.GameEditor.AI
             if (selectedObject != null)
             {
                 var astar = new AStar(MapController, selectedObject);
-                astar.FindPath(endPosition);
+                var path = astar.FindPath(endPosition);
+                if (path != null)
+                {
+                    PrintPath(path);
+                }
+            }
+        }
+
+        private void PrintPath(List<AgentActionDTO> path)
+        {
+            foreach (var action in path) 
+            {
+                action.PrinttingPerformer(action.StartPosition, action.PositionActionParameter).ForEach(marker => Markers.Add(marker));
             }
         }
 
