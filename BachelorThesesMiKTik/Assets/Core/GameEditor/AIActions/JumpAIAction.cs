@@ -1,14 +1,9 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static DG.Tweening.DOTweenModuleUtils;
 
 namespace Assets.Scripts.GameEditor.AI
 {
@@ -16,12 +11,12 @@ namespace Assets.Scripts.GameEditor.AI
     {
         private GameObject _jumpingObject;
         private Rigidbody2D _rigid;
-        private List<GameObject> _markers;
-        private float _defaultBounceForce;
+
+        private float _defaultBounceForce = 0.1f;
         private float _jumpForce;
         private float _moveSpeed;
-        private bool _shouldPrint;
 
+        private Vector2 _boxColliderSize;
         private Vector2 gravityAcceleration;
 
         private float timeTick;
@@ -33,10 +28,13 @@ namespace Assets.Scripts.GameEditor.AI
         {
             _jumpingObject = jumpingObject;
             _rigid = _jumpingObject.GetComponent<Rigidbody2D>();
+            var boxCollider = _jumpingObject.GetComponent<BoxCollider2D>();
 
-            _markers = new List<GameObject>();
-            _defaultBounceForce = 0.1f;
-            _shouldPrint = false;
+            if (!boxCollider.enabled)
+                boxCollider.enabled = true;
+            
+            _boxColliderSize = new Vector2(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+            boxCollider.enabled = false;
 
             _jumpForce = jumpForce;
             _moveSpeed = moveSpeed;
@@ -45,7 +43,7 @@ namespace Assets.Scripts.GameEditor.AI
             gravityAcceleration = Physics2D.gravity * _rigid.gravityScale * MathHelper.Pow(timeTick, 2);
             drag = 1f - timeTick * _rigid.drag;
 
-            depth = 30;
+            depth = 40;
         }
 
         public JumpAIAction(MapCanvasController context, GameObject jumpingObject, float defaultBounceForce, float jumpForce, float moveSpeed) : this(context, jumpingObject, jumpForce, moveSpeed)
@@ -53,19 +51,19 @@ namespace Assets.Scripts.GameEditor.AI
             _defaultBounceForce = defaultBounceForce;
         }
 
-        public override List<AgentActionDTO> GetReacheablePosition(Vector3 position)
+        public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
         {
             var reacheablePositions = new List<AgentActionDTO>();
 
             var right = GetAllJumpTrajectories(position, Vector2.right, _jumpForce, _moveSpeed);
             var left = GetAllJumpTrajectories(position, Vector2.left, _jumpForce, _moveSpeed);
 
-            
-            foreach ( var item in right) 
+
+            foreach (var item in right)
             {
-                if(IsWalkable(item.Position))
+                if (IsWalkable(item.Position))
                 {
-                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionPower.x}:{item.MotionPower.y}", 50, PerformAction, PerformActionWithPrint);
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAction, PrintAction);
                     reacheablePositions.Add(action);
                 }
             }
@@ -74,7 +72,7 @@ namespace Assets.Scripts.GameEditor.AI
             {
                 if (IsWalkable(item.Position))
                 {
-                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionPower.x}:{item.MotionPower.y}", 50, PerformAction, PerformActionWithPrint);
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAction, PrintAction);
                     reacheablePositions.Add(action);
                 }
             }
@@ -82,40 +80,51 @@ namespace Assets.Scripts.GameEditor.AI
             return reacheablePositions;
         }
 
-        public override void PerformAction(Vector3 startPosition, string parameters)
+        public override void PerformAction(AgentActionDTO action)
         {
-            //_shouldPrint = true;
-            //context.CreateMarkAtPosition(startPosition);
-            //GetTrajectory(startPosition, MathHelper.GetVector3FromString(parameters));
-            //_shouldPrint = false;
+           var jumpDirection = MathHelper.GetVector3FromString(action.PositionActionParameter);
+            _rigid.AddForce(jumpDirection);
         }
 
-        public override List<GameObject> PerformActionWithPrint(Vector3 startPosition, string parameters)
+        public override List<GameObject> PrintAction(AgentActionDTO action)
         {
-            _shouldPrint = true;
-            _markers.Add(context.CreateMarkAtPosition(startPosition));
-            GetTrajectory(startPosition, MathHelper.GetVector3FromString(parameters));
-            _shouldPrint = false;
-            return _markers;
+            var trajectory = GetTrajectory(action.StartPosition, MathHelper.GetVector3FromString(action.PositionActionParameter));
+            return context.CreateMarkAtPosition(context.MarkerDotPrefab, trajectory);
         }
 
-        public List<GameObject> PrintJumpables()
+        public override bool IsPerforming()
         {
-            ClearMarks();
-            _shouldPrint = true;
-            GetReacheablePosition(_jumpingObject.transform.position);
-            _shouldPrint = false;
-            return _markers;
+            RaycastHit2D hit = Physics2D.Raycast(_jumpingObject.transform.position, Vector2.down, 1, LayerMask.GetMask("Box"));
+            if (hit.collider != null)
+                return true;
+            return false;
         }
 
-        private void ClearMarks()
+        public override List<GameObject> PrintReacheables(Vector3 startPosition)
         {
-            for (int i = 0; i < _markers.Count; i++)
+            return context.CreateMarkAtPosition(context.MarkerDotPrefab, GetReacheablePositions(startPosition));
+        }
+
+        public List<GameObject> PrintAllPossibleJumps(Vector3 position)
+        {
+            List<List<Vector3>> trajectories;
+            GetAllJumpTrajectories(position, Vector2.right, _jumpForce, _moveSpeed, out trajectories);
+
+            List<List<Vector3>> trajectoriesLeft;
+            GetAllJumpTrajectories(position, Vector2.left, _jumpForce, _moveSpeed, out trajectoriesLeft);
+
+            trajectoriesLeft.ForEach(x => trajectories.Add(x));
+
+            var markers = new List<GameObject>();
+            foreach(var trajectory in trajectories)
             {
-                context.DestroyMark(_markers[i]);
+               context.CreateMarkAtPosition(context.MarkerDotPrefab, trajectory).ForEach(x => markers.Add(x));
             }
-            _markers.Clear();
+
+            return markers;
         }
+
+        #region PRIVATE
 
         private List<JumpPositionDTO> GetAllJumpTrajectories(Vector2 position, Vector2 jumpDirection, float jumpPower, float motionPower)
         {
@@ -136,7 +145,8 @@ namespace Assets.Scripts.GameEditor.AI
             {
                 var motionDirection = ( Vector2.up * adjustedJumppower ) - ( jumpDirection * motionPower );
                 var result = GetTrajectory(position, motionDirection);
-                jumpRecords.Add(new JumpPositionDTO(result.Last(), motionDirection));
+                trajectories.Add(result);
+                jumpRecords.Add(new JumpPositionDTO(context.GetCellCenterPosition(result.Last()), motionDirection));
                 adjustedJumppower = adjustedJumppower - adjustment;
             }
 
@@ -158,20 +168,17 @@ namespace Assets.Scripts.GameEditor.AI
                 actualDirection *= drag;
                 position = MathHelper.Add(position, actualDirection);
 
-                var centered = context.GetCellCenterPosition(position);
-                if (context.ContainsObjectAtPosition(centered, new int[] { 7, 8 })) //TODO: For every ai object, have list of layers.
+                Vector2 previousHitPosition;
+                GameObject hittedObject;
+                if (CheckCollision(position, previousPos, out previousHitPosition, out hittedObject)) //TODO: For every ai object, have list of layers.
                 {
-                    var hasLanded = false;
-                    actualDirection = HandleCollision(context.GetObjectAtPosition(centered), previousPos, previousDir, out position, out hasLanded);
+                    bool hasLanded;
+                    actualDirection = HandleCollision(hittedObject, previousHitPosition, previousDir, out hasLanded);
                     if (hasLanded)
                         return trajectoryPoints;
                 }
 
-                if (!trajectoryPoints.Contains(centered))
-                    trajectoryPoints.Add(centered);
-
-                if (_shouldPrint)
-                    PrintMarkers(position);
+                trajectoryPoints.Add(position);
 
                 previousDir = actualDirection;
                 previousPos = position;
@@ -179,7 +186,26 @@ namespace Assets.Scripts.GameEditor.AI
             return trajectoryPoints;
         }
 
-        private Vector2 Bounce(Vector2 startPosition, Vector2 motionDirection, out Vector2 hitPosition, out bool isLandPossible)
+        private bool CheckCollision(Vector2 position, Vector2 PreviousPostion, out Vector2 preHitPositions, out GameObject hittedObject)
+        {
+            var actualPositionCorners = GetCorners(position);
+            var previousPositionCorners = GetCorners(PreviousPostion);
+
+            for (int i = 0; i < actualPositionCorners.Length; i++)
+            {
+                var centered = context.GetCellCenterPosition(actualPositionCorners[i]);
+                if (context.ContainsObjectAtPosition(centered, new int[] { 7, 8 })) //TODO: For every ai object, have list of layers.
+                {
+                    hittedObject = context.GetObjectAtPosition(centered);
+                    preHitPositions = previousPositionCorners[i];
+                    return true;
+                }
+            }
+            hittedObject = null;
+            preHitPositions = Vector2.zero;
+            return false;
+        }
+        private Vector2 Bounce(Vector2 startPosition, Vector2 motionDirection, out bool isLandPossible)
         {
             isLandPossible = false;
             RaycastHit2D hit = Physics2D.Raycast(startPosition, motionDirection, 1, LayerMask.GetMask("Box"));
@@ -198,30 +224,26 @@ namespace Assets.Scripts.GameEditor.AI
                 if (hit.normal == Vector2.up)
                     isLandPossible = true;
 
-                if(hit.normal == Vector2.zero)
+                if (hit.normal == Vector2.zero)
                 {
                     isLandPossible = true;
-                    Debug.DrawRay(startPosition, motionDirection, Color.red, 100000000000000000);
                 }
 
-                hitPosition = hit.point;
                 return Vector2.Reflect(motionDirection, normal);
             }
-
-            hitPosition = Vector2.zero;
             return Vector2.zero;
         }
 
-        private Vector2 HandleCollision(GameObject hittedObject, Vector2 startPos, Vector2 motionDirection, out Vector2 hitPosition, out bool isLandingPossible)
+        private Vector2 HandleCollision(GameObject hittedObject, Vector2 startPos, Vector2 motionDirection, out bool isLandingPossible)
         {
-            var bounceDirection = Bounce(startPos, motionDirection, out hitPosition, out isLandingPossible);
+            var bounceDirection = Bounce(startPos, motionDirection, out isLandingPossible);
 
             BoxCollider2D collider2D;
             if (hittedObject.TryGetComponent(out collider2D))
             {
-                if (!isLandingPossible || collider2D.sharedMaterial.bounciness > 0.1)
+                if (!isLandingPossible)
                 {
-                    bounceDirection *= collider2D.sharedMaterial.bounciness;
+                    bounceDirection *= collider2D.sharedMaterial.bounciness + 1.1f;
                     isLandingPossible = false;
                 }
             }
@@ -233,10 +255,18 @@ namespace Assets.Scripts.GameEditor.AI
             return bounceDirection;
         }
 
-        private void PrintMarkers(Vector2 position)
+        private Vector2[] GetCorners(Vector2 position)
         {
-            var mark = context.CreateMarkAtPosition(context.MarkerDotPrefab, position);
-            _markers.Add(mark);
+            var maxPosition = position + _boxColliderSize;
+            var minPosition = position - _boxColliderSize;
+            return new Vector2[]
+            {
+                maxPosition,
+                minPosition,
+                new Vector2(maxPosition.x, minPosition.y),
+                new Vector2(minPosition.y, maxPosition.x),
+            };
         }
     }
+    #endregion
 }

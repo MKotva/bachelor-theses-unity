@@ -2,66 +2,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static Assets.Core.GameEditor.DTOS.JournalActionDTO;
-using static Assets.Core.GameEditor.DTOS.AgentActionDTO;
+using Assets.Scenes.GameEditor.Core.AIActions;
 
 namespace Assets.Scripts.GameEditor.AI
 {
     public class AStar
     {
-        public MapCanvasController MapController;
-
-        private GameObject _player;
-
         private Vector3 _startPosition;
         private Vector3 _endPosition;
 
-        private List<Node> ActiveNodes;
-        private Dictionary<Vector3, Node> ClosedNodes;
+        private List<Node> _activeNodes;
+        private List<AIActionBase> _actions;
+        private Dictionary<Vector3, Node> _closedNodes;
 
-
-        private JumpAIAction jumpAction;
-        private MoveAIAction moveAIAction;
-
-        public AStar(MapCanvasController controller, GameObject player)
+        public List<AgentActionDTO> FindPath(Vector3 startPosition, Vector3 endPosition, List<AIActionBase> actions)
         {
-            MapController = controller;
-            _player = player;
+            Initialize(startPosition, endPosition, actions);
 
-            jumpAction = new JumpAIAction(MapController, _player);
-            moveAIAction = new MoveAIAction(MapController);
-        }
-
-        public List<AgentActionDTO> FindPath(Vector3 endPosition)
-        {
-            Initialize(endPosition);
-
-            while (ActiveNodes.Count > 0)
+            while (_activeNodes.Count > 0)
             {
-                var actualNode = ActiveNodes.First();
-                ActiveNodes.Remove(actualNode);
+                var actualNode = _activeNodes.First();
+                _activeNodes.Remove(actualNode);
 
                 if (actualNode.Position == endPosition)
                 {
                     return BackTrackActions(actualNode);
                 }
 
-                ClosedNodes.Add(actualNode.Position, actualNode);
+                _closedNodes.Add(actualNode.Position, actualNode);
                 var reacheableNodes = GetWalkableNodes(actualNode);
 
                 foreach (var node in reacheableNodes)
                 {
                     //We have already visited this tile so we don't need to do so again!
-                    if (ClosedNodes.ContainsKey(node.Position))
+                    if (_closedNodes.ContainsKey(node.Position))
                         continue;
 
                     if (!TryAdjustCost(node))
-                        ActiveNodes.Add(node);
+                        _activeNodes.Add(node);
                 }
-                ActiveNodes = ActiveNodes.OrderBy(node => node.CostDistance).ToList();
+                _activeNodes = _activeNodes.OrderBy(node => node.CostDistance).ToList();
             }
 
             Debug.Log("No Path Found!");
@@ -70,29 +51,30 @@ namespace Assets.Scripts.GameEditor.AI
 
         private bool TryAdjustCost(Node node)
         {
-            foreach (var activeNode in ActiveNodes)
+            foreach (var activeNode in _activeNodes)
             {
                 if (activeNode.Position == node.Position)
                 {
                     if (activeNode.CostDistance > node.CostDistance)
                     {
-                        ActiveNodes.Remove(activeNode);
-                        ActiveNodes.Add(node);
+                        _activeNodes.Remove(activeNode);
+                        _activeNodes.Add(node);
                     }
                     return true;
                 }
             }
             return false;
         }
-        private void Initialize(Vector3 endPositon)
+        private void Initialize(Vector3 startPosition, Vector3 endPosition, List<AIActionBase> actions)
         {
-            ActiveNodes = new List<Node>();
+            _activeNodes = new List<Node>();
 
-            _startPosition = _player.transform.position;
-            _endPosition = endPositon;
+            _startPosition = startPosition;
+            _endPosition = endPosition;
+            _actions = actions;
 
-            ActiveNodes.Add(new Node(_startPosition, _endPosition));
-            ClosedNodes = new Dictionary<Vector3, Node>();
+            _activeNodes.Add(new Node(_startPosition, _endPosition));
+            _closedNodes = new Dictionary<Vector3, Node>();
         }
 
         private List<AgentActionDTO> BackTrackActions(Node actualNode)
@@ -122,8 +104,8 @@ namespace Assets.Scripts.GameEditor.AI
             var newNodes = new List<Node>();
             var actionResults = new List<AgentActionDTO>();
 
-            moveAIAction.GetReacheablePosition(actualNode.Position).ForEach(action => actionResults.Add(action));
-            jumpAction.GetReacheablePosition(actualNode.Position).ForEach(action => actionResults.Add(action));
+            foreach(var action in _actions)
+                action.GetPossibleActions(actualNode.Position).ForEach(action => actionResults.Add(action));
 
 
             foreach (var actionResult in actionResults)

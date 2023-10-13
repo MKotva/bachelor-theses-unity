@@ -5,15 +5,15 @@ namespace Assets.Core.GameEditor.DTOS
 {
     public class AgentActionDTO
     {
-        public delegate void ActionPerformer(Vector3 startPosition, string parametes);
-        public delegate List<GameObject> ActionPrintingPerformer(Vector3 startPosition, string parametes);
+        public delegate void ActionPerformer(AgentActionDTO action);
+        public delegate List<GameObject> ActionPrintingPerformer(AgentActionDTO action);
 
         public Vector3 StartPosition;
         public Vector3 EndPosition;
         public string PositionActionParameter;
         public float Cost;
         public ActionPerformer Performer;
-        public ActionPrintingPerformer PrinttingPerformer;
+        public ActionPrintingPerformer PrintingPerformer;
 
         public AgentActionDTO(Vector3 startPosition, Vector3 reachablePositions, string positionActionParameters, float cost, ActionPerformer actionPerformer, ActionPrintingPerformer printtingPerformer)
         {
@@ -22,7 +22,7 @@ namespace Assets.Core.GameEditor.DTOS
             PositionActionParameter = positionActionParameters;
             Cost = cost;
             Performer = actionPerformer;
-            PrinttingPerformer = printtingPerformer;
+            PrintingPerformer = printtingPerformer;
         }
     }
 }

@@ -1,19 +1,13 @@
 ﻿using Assets.Core.GameEditor.DTOS;
-using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 namespace Assets.Scripts.GameEditor.AI
 {
-    public class PathFinder : MonoBehaviour
+    public class AIPanelController : MonoBehaviour
     {
         public MapCanvasController MapController;
-
-        public GameObject player;
-        public GameObject TrajectoryMarker;
 
         private Vector3 startPosition;
         private Vector3 endPosition;
@@ -22,45 +16,68 @@ namespace Assets.Scripts.GameEditor.AI
         private Vector3 sceneMaxPosition;
         private List<GameObject> Markers;
 
-        private bool IsShowingWalkableTiles;
-        private bool IsShowingPath;
 
         public void OnShowWalkableTilesClick()
         {
-            if (IsShowingWalkableTiles)
-            {
                 DestroyAllMarkers();
-                IsShowingWalkableTiles = false;
-            }
-            else
-            {
                 ShowWalkableTiles();
-                IsShowingWalkableTiles = true;
-            }
         }
 
-        public void OnShowJumpable()
+        public void OnShowPosibleActions()
         {
             Initialize();
             var selectedObject = MapController.GetObjectAtPosition(startPosition);
             if (selectedObject != null)
             {
-                var jumpHandler = new JumpAIAction(MapController, selectedObject);
-                jumpHandler.PrintJumpables().ForEach(marker => Markers.Add(marker));
+                AIAgent aiController;
+                if (selectedObject.TryGetComponent(out aiController))
+                {
+                    foreach (var action in aiController.AI.Actions)
+                    {
+                        action.PrintReacheables(selectedObject.transform.position).ForEach(marker => Markers.Add(marker));
+                    }
+                }
+            }
+        }
+
+        public void OnShowJumps()
+        {
+            Initialize();
+            var selectedObject = MapController.GetObjectAtPosition(startPosition);
+            if (selectedObject != null)
+            {
+                AIAgent aiController;
+                if (selectedObject.TryGetComponent(out aiController))
+                {
+                    foreach (var action in aiController.AI.Actions)
+                    {
+                        if (action is JumpAIAction)
+                            Markers = ( (JumpAIAction) action ).PrintAllPossibleJumps(selectedObject.transform.position);
+                    }
+                }
             }
         }
 
         public void OnFindPathClick()
         {
-            if (IsShowingPath)
+            Initialize();
+            var path =  FindPath(startPosition, endPosition);
+
+            if (path != null) 
             {
-                FindPath();
-                IsShowingPath = false;
+                PrintPath(path);
             }
-            else
+        }
+
+        public void OnFindPathAndPerform()
+        {
+            Initialize();
+            var selectedObject = MapController.GetObjectAtPosition(startPosition);
+            var path = FindPath(startPosition, endPosition);
+
+            foreach(var action in path)
             {
-                ShowWalkableTiles();
-                IsShowingPath = true;
+                action.Performer(action);
             }
         }
 
@@ -68,6 +85,8 @@ namespace Assets.Scripts.GameEditor.AI
         {
             DestroyAllMarkers();
         }
+
+        #region PRIVATE
 
         private void Awake()
         {
@@ -82,26 +101,27 @@ namespace Assets.Scripts.GameEditor.AI
             SetEnd();
         }
 
-        private void FindPath()
+        private List<AgentActionDTO> FindPath(Vector3 startPosition, Vector3 endPosition)
         {
-            Initialize();
             var selectedObject = MapController.GetObjectAtPosition(startPosition);
             if (selectedObject != null)
             {
-                var astar = new AStar(MapController, selectedObject);
-                var path = astar.FindPath(endPosition);
-                if (path != null)
+                var astar = new AStar();
+
+                AIAgent aiController;
+                if (selectedObject.TryGetComponent(out aiController))
                 {
-                    PrintPath(path);
+                    return astar.FindPath(selectedObject.transform.position, endPosition, aiController.AI.Actions);
                 }
             }
+            return null;
         }
 
         private void PrintPath(List<AgentActionDTO> path)
         {
-            foreach (var action in path) 
+            foreach (var action in path)
             {
-                action.PrinttingPerformer(action.StartPosition, action.PositionActionParameter).ForEach(marker => Markers.Add(marker));
+                action.PrintingPerformer(action).ForEach(marker => Markers.Add(marker));
             }
         }
 
@@ -180,5 +200,7 @@ namespace Assets.Scripts.GameEditor.AI
             }
             Markers.Clear();
         }
+
+        #endregion
     }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6961865778793673748}
   - component: {fileID: 8420659264702119695}
   - component: {fileID: 1989047545821303303}
-  - component: {fileID: 8343944253597424350}
+  - component: {fileID: -8607291112248498619}
   m_Layer: 10
   m_Name: PlayerSpawner
   m_TagString: Untagged
@@ -59,7 +59,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
 --- !u!50 &1989047545821303303
 Rigidbody2D:
@@ -82,7 +82,7 @@ Rigidbody2D:
   m_SleepingMode: 2
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &8343944253597424350
+--- !u!114 &-8607291112248498619
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c084a38ebe18ec14b87505d4313fef00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  context: {fileID: 0}
 --- !u!1 &5747739271039508250
 GameObject:
   m_ObjectHideFlags: 0

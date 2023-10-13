@@ -1,13 +1,11 @@
 ﻿using Assets.Core.GameEditor.DTOS;
-using Mono.Cecil;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Assets.Scenes.GameEditor.Core.AIActions
 {
-    public class AIActionBase
+    public abstract class AIActionBase
     {
         internal MapCanvasController context;
         internal float actionCost;
@@ -18,17 +16,44 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             actionCost = cost;
         }
 
-        public virtual List<AgentActionDTO> GetReacheablePosition(Vector3 position) 
+        public virtual List<Vector3> GetReacheablePositions(Vector3 position)
+        {
+            var positions = new List<Vector3>();
+            foreach (var action in GetPossibleActions(position))
+            {
+                positions.Add(action.EndPosition);
+            }
+            return positions;
+        }
+
+        public virtual List<AgentActionDTO> GetPossibleActions(Vector3 position) 
         {
             throw new NotImplementedException();
         }
-        public virtual void PerformAction(Vector3 startPosition, string parameters) 
+        public virtual void PerformAction(AgentActionDTO action) 
         {
             throw new NotImplementedException();
         }
-        public virtual List<GameObject> PerformActionWithPrint(Vector3 startPosition, string parameters) 
+        public virtual List<GameObject> PrintAction(AgentActionDTO action) 
         {
             throw new NotImplementedException();
+        }
+        public virtual bool IsPerforming()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual List<GameObject> PrintReacheables(Vector3 startPosition) 
+        {
+            List<GameObject> markers = new List<GameObject>();
+
+            var color = UnityEngine.Random.ColorHSV();
+            var reacheables = GetReacheablePositions(startPosition);
+            
+            foreach (var reacheable in reacheables)
+                markers.Add(context.CreateMarkAtPosition(context.MarkerDotPrefab, reacheable, color));
+
+            return markers;
         }
 
         internal bool IsWalkable(Vector3 position)

@@ -1,23 +1,24 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
 {
     public class MoveAIAction : AIActionBase
     {
-        public MoveAIAction(MapCanvasController controller) : base(controller) { }
+        private GameObject performer;
 
-        public override List<AgentActionDTO> GetReacheablePosition(Vector3 position)
+        public MoveAIAction(MapCanvasController controller, GameObject gameObject) : base(controller)
         {
-            var reacheablePositions = new List<AgentActionDTO>();
+            performer = gameObject;
+        }
+
+        public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
+        {
             var cellSize = context.GridLayout.cellSize;
 
+            var reacheablePositions = new List<AgentActionDTO>();
             var newPositions = new Vector3[]
             {
                 context.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y)), //Right
@@ -40,25 +41,42 @@ namespace Assets.Scripts.GameEditor.AI
                 "M;-1:1" //UpperLeft;
             };
 
-            for(int i = 0; i < newPositions.Length; i++)
+            for (int i = 0; i < newPositions.Length; i++)
             {
-                if(IsWalkable(newPositions[i]))
+                if (IsWalkable(newPositions[i]))
                 {
-                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformAction, PerformActionWithPrint));
+                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformAction, PrintAction));
                 }
             }
 
             return reacheablePositions;
         }
 
-        public override void PerformAction(Vector3 startPosition, string parameters)
+        public override void PerformAction(AgentActionDTO action)
         {
-            //context.CreateMarkAtPosition(startPosition);
+            performer.transform.position = GetPositionFromParam(action.StartPosition, action.PositionActionParameter);
         }
 
-        public override List<GameObject> PerformActionWithPrint(Vector3 startPosition, string parameters)
-        {
-            return new List<GameObject>() { context.CreateMarkAtPosition(startPosition) };
+        public override List<GameObject> PrintAction(AgentActionDTO action)
+        { 
+            return new List<GameObject>() { context.CreateMarkAtPosition(action.StartPosition) };
         }
+
+        private Vector3 GetPositionFromParam(Vector3 position, string param)
+        {
+            var cellSize = context.GridLayout.cellSize;
+
+            switch (param)
+            {
+                case "M;1:0" : return new Vector3(position.x + cellSize.x, position.y); //Right
+                case "M;1:-1": return new Vector3(position.x + cellSize.x, position.y - cellSize.y); //LowerRight
+                case "M;1:1" : return new Vector3(position.x + cellSize.x, position.y + cellSize.y); //UpperRight
+
+                case "M;-1:0": return new Vector3(position.x - cellSize.x, position.y); //Left
+                case "M;-1:-1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //LowerLeft;
+                case "M;-1:1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //UpperLeft;
+            }
+            return position;
     }
+}
 }

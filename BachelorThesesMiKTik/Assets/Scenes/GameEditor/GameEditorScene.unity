@@ -1541,8 +1541,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MapController: {fileID: 873386562}
-  player: {fileID: 0}
-  TrajectoryMarker: {fileID: 5152985759584709032, guid: bb517887fd79bab4db3b2376812fcd46, type: 3}
 --- !u!1001 &587833243
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3987,11 +3985,11 @@ PrefabInstance:
       objectReference: {fileID: 581878790}
     - target: {fileID: 1305936810681565431, guid: 57c305ffc412d0246bb41b3f96714262, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: FindPath
+      value: OnFindPathClick
       objectReference: {fileID: 0}
     - target: {fileID: 1305936810681565431, guid: 57c305ffc412d0246bb41b3f96714262, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Assets.Scripts.GameEditor.AI.PathFinder, Assembly-CSharp
+      value: Assets.Scripts.GameEditor.AI.AIPanelController, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2406239031308705461, guid: 57c305ffc412d0246bb41b3f96714262, type: 3}
       propertyPath: m_Pivot.x
@@ -4476,11 +4474,11 @@ PrefabInstance:
       objectReference: {fileID: 581878790}
     - target: {fileID: 1305936810681565431, guid: 57c305ffc412d0246bb41b3f96714262, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnShowJumpable
+      value: OnShowJumps
       objectReference: {fileID: 0}
     - target: {fileID: 1305936810681565431, guid: 57c305ffc412d0246bb41b3f96714262, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Assets.Scripts.GameEditor.AI.PathFinder, Assembly-CSharp
+      value: Assets.Scripts.GameEditor.AI.AIPanelController, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2406239031308705461, guid: 57c305ffc412d0246bb41b3f96714262, type: 3}
       propertyPath: m_Pivot.x

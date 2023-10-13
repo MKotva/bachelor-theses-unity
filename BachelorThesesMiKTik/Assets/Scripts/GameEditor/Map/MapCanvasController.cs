@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 using System.IO;
-using System;
 using Assets.Scenes.GameEditor.Core.DTOS;
 using UnityEngine.UIElements;
 using System.Linq;
@@ -137,9 +135,34 @@ public class MapCanvasController : MonoBehaviour
         return Paint(MarkerPrefab, Parent, GridLayout, position);
     }
 
+    public List<GameObject> CreateMarkAtPosition(List<Vector3> positions)
+    {
+        var markers = new List<GameObject>();
+        foreach (Vector3 position in positions)
+            markers.Add(CreateMarkAtPosition(position));
+
+        return markers;
+    }
+
     public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector3 position)
     {
         return Paint(markerPrefab, Parent, GridLayout, position);
+    }
+
+    public List<GameObject> CreateMarkAtPosition(GameObject markerPrefab, List<Vector3> positions)
+    {
+        var markers = new List<GameObject>();
+        foreach (Vector3 position in positions)
+            markers.Add(CreateMarkAtPosition(markerPrefab, position));
+
+        return markers;
+    }
+
+    public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector3 position, Color color)
+    {
+        var marker = Paint(markerPrefab, Parent, GridLayout, position);
+        marker.GetComponent<Renderer>().material.color = color;
+        return marker;
     }
 
     public void DestroyMark(GameObject marker)
