@@ -1,3 +1,4 @@
+using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using Assets.Scripts.GameEditor.AI;
 using System.Collections.Generic;
@@ -15,24 +16,51 @@ public class PlayerAgent : AIAgent
         };
 
         AI = new AIObject(gameObject, actions);
+        pathFinder = new AStar();
     }
 
     private void FixedUpdate()
     {
-        if(AI.Actions.Count > 0) 
-        {
             OnAction();
-        }
     }
 
+    private Vector3 FindDestination()
+    {
+        if (context.Data.ContainsKey(1))
+        {
+            foreach (var endPoint in context.Data[1])
+            {
+                if (context.IsPositionInBoundaries(endPoint.Key))
+                {
+                    return endPoint.Key;
+                }
+            }
+        }
+        return Vector3.zero; //TODO: Proper failure, no suitable endpoint.
+    }
 
     public override void Simulate()
     {
-        throw new System.NotImplementedException();
+        var path = pathFinder.FindPath(gameObject.transform.position, FindDestination(), AI.Actions);
+        if (path != null) 
+        {
+            EnqueAction(path);
+        }
     }
 
-    public override void PrintSimulation()
+    public override List<GameObject> PrintSimulation()
     {
-        throw new System.NotImplementedException();
+        var path = pathFinder.FindPath(gameObject.transform.position, FindDestination(), AI.Actions);
+        return AgentActionDTO.Print(path);
+    }
+
+    public override List<GameObject> PrintPossibleActions()
+    {
+        List<GameObject> markers = new List<GameObject>();
+        foreach(var action in AI.Actions) 
+        {
+            action.PrintReacheables(gameObject.transform.position).ForEach(x => markers.Add(x));
+        }
+        return markers;
     }
 }

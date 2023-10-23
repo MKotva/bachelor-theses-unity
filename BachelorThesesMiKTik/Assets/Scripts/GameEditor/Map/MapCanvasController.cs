@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -240,6 +239,17 @@ public class MapCanvasController : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public bool IsPositionInBoundaries(Vector3 position)
+    {
+        var sceneMinPosition = CameraObj.ScreenToWorldPoint(new Vector3(0, 0));
+        var sceneMaxPosition = CameraObj.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
+
+        if (sceneMaxPosition.x < position.x || sceneMinPosition.x > position.x ||
+           sceneMaxPosition.y < position.y || sceneMinPosition.y > position.y)
+            return false;
+        return true;
     }
 
     public bool ContainsObjectAtPosition(Vector3 position)

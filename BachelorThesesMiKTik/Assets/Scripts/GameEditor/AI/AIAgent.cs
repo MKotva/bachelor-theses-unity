@@ -1,4 +1,5 @@
 ﻿using Assets.Core.GameEditor.DTOS;
+using Assets.Scripts.GameEditor.AI.PathFind;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace Assets.Scripts.GameEditor.AI
     {
         public MapCanvasController context;
         public AIObject AI;
+        public IAIPathFinder pathFinder;   
 
         public virtual void OnAction()
         {
@@ -21,6 +23,7 @@ namespace Assets.Scripts.GameEditor.AI
         }
 
         public abstract void Simulate();
-        public abstract void PrintSimulation();
+        public abstract List<GameObject> PrintSimulation();
+        public abstract List<GameObject> PrintPossibleActions();
     }
 }

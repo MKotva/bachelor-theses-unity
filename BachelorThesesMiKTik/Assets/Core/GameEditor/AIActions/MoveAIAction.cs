@@ -1,6 +1,7 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
@@ -45,19 +46,20 @@ namespace Assets.Scripts.GameEditor.AI
             {
                 if (IsWalkable(newPositions[i]))
                 {
-                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformAction, PrintAction));
+                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformActionAsync, PrintActionAsync));
                 }
             }
 
             return reacheablePositions;
         }
 
-        public override void PerformAction(AgentActionDTO action)
+        public override async Task PerformActionAsync(AgentActionDTO action)
         {
             performer.transform.position = GetPositionFromParam(action.StartPosition, action.PositionActionParameter);
+            await Task.Delay(1000);
         }
 
-        public override List<GameObject> PrintAction(AgentActionDTO action)
+        public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
         { 
             return new List<GameObject>() { context.CreateMarkAtPosition(action.StartPosition) };
         }
@@ -76,7 +78,7 @@ namespace Assets.Scripts.GameEditor.AI
                 case "M;-1:-1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //LowerLeft;
                 case "M;-1:1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //UpperLeft;
             }
-            return position;
+            return context.GetCellCenterPosition(position);
     }
 }
 }

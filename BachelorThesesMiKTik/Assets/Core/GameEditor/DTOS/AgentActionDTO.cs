@@ -1,19 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.DTOS
 {
     public class AgentActionDTO
     {
-        public delegate void ActionPerformer(AgentActionDTO action);
-        public delegate List<GameObject> ActionPrintingPerformer(AgentActionDTO action);
+        public delegate Task ActionPerformer(AgentActionDTO action);
+        public delegate Task<List<GameObject>> ActionPrintingPerformer(AgentActionDTO action);
 
-        public Vector3 StartPosition;
-        public Vector3 EndPosition;
-        public string PositionActionParameter;
-        public float Cost;
-        public ActionPerformer Performer;
-        public ActionPrintingPerformer PrintingPerformer;
+        public Vector3 StartPosition {get; set;}
+        public Vector3 EndPosition { get; set;}
+        public bool IsDone { get; set; }
+        public string PositionActionParameter { get; set;}
+        public float Cost { get; set;}
+        public ActionPerformer Performer { get; set;}
+        public ActionPrintingPerformer PrintingPerformer { get; set;}
 
         public AgentActionDTO(Vector3 startPosition, Vector3 reachablePositions, string positionActionParameters, float cost, ActionPerformer actionPerformer, ActionPrintingPerformer printtingPerformer)
         {
@@ -23,6 +26,27 @@ namespace Assets.Core.GameEditor.DTOS
             Cost = cost;
             Performer = actionPerformer;
             PrintingPerformer = printtingPerformer;
+        }
+
+        static public List<GameObject> Print(AgentActionDTO action) 
+        {
+            if (action == null)
+                return new List<GameObject>();
+
+            return action.PrintingPerformer(action).Result;
+        }
+
+        static public List<GameObject> Print(List<AgentActionDTO> path)
+        {
+            if (path == null)
+                return new List<GameObject>();
+
+            List<GameObject> markers = new List<GameObject>();
+            foreach (var action in path)
+            {
+                Print(action).ForEach(x => markers.Add(x));   
+            }
+            return markers;
         }
     }
 }

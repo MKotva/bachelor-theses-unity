@@ -1,51 +1,54 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
 {
     public class AIObject
     {
-        public GameObject AIObjectl { get; set; }
+        public GameObject Performer { get; set; }
         public List<AIActionBase> Actions { get; internal set; }
 
+        internal Queue<AgentActionDTO> actionsToPerform;
+        internal Task performingTask;
+        internal bool isPerforming;
 
-        internal Queue<AgentActionDTO> _actionsToPerform;
-        internal bool _isPerforming;
-
-        public AIObject(GameObject aIObjectl, List<AIActionBase> actions)
+        public AIObject(GameObject performer, List<AIActionBase> actions)
         {
-            AIObjectl = aIObjectl;
+            Performer = performer;
+            Performer.GetComponent<BoxCollider2D>().enabled = true;
+
             Actions = actions;
+
+            actionsToPerform = new Queue<AgentActionDTO>();
         }
 
         public virtual void AddActions(List<AgentActionDTO> actions)
         {
-            actions.ForEach(action => _actionsToPerform.Enqueue(action));
-            _isPerforming = true;
+            actions.ForEach(action => actionsToPerform.Enqueue(action));
         }
 
         public virtual void PerformActions()
         {
-            if (_isPerforming && _actionsToPerform.Count > 0)
+            if (actionsToPerform.Count > 0 && !isPerforming)
             {
-                if (_actionsToPerform.Count > 0)
-                {
-                    var actualAction = _actionsToPerform.Dequeue();
-                    actualAction.Performer(actualAction);
-                }
-                else
-                {
-                    _isPerforming = false;
-                }
+                var actualAction = actionsToPerform.Dequeue();
+                performingTask = actualAction.Performer(actualAction);
+                isPerforming = true;
             }
+            else if (performingTask != null)
+            {
+                if (performingTask.IsCompleted)
+                    isPerforming = false;
+            }
+
         }
 
         public virtual bool IsActionFinished()
         {
-            if (_actionsToPerform.Count == 0)
+            if (actionsToPerform.Count == 0)
                 return true;
             return false;
         }

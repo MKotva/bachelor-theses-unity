@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Assets.Scenes.GameEditor.Core.AIActions;
+using Assets.Scripts.GameEditor.AI.PathFind;
 
 namespace Assets.Scripts.GameEditor.AI
 {
-    public class AStar
+    public class AStar : IAIPathFinder
     {
         private Vector3 _startPosition;
         private Vector3 _endPosition;
@@ -45,7 +46,7 @@ namespace Assets.Scripts.GameEditor.AI
                 _activeNodes = _activeNodes.OrderBy(node => node.CostDistance).ToList();
             }
 
-            Debug.Log("No Path Found!");
+            InfoPanelController.Instance.ShowMessage("No path found!");
             return null;
         }
 

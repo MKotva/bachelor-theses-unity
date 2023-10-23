@@ -1,6 +1,7 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scenes.GameEditor.Core.AIActions
@@ -16,6 +17,15 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             actionCost = cost;
         }
 
+        public abstract Task PerformActionAsync(AgentActionDTO action);
+        public abstract Task<List<GameObject>> PrintActionAsync(AgentActionDTO action);
+        public abstract List<AgentActionDTO> GetPossibleActions(Vector3 position); 
+        
+        public virtual bool IsPerforming()
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual List<Vector3> GetReacheablePositions(Vector3 position)
         {
             var positions = new List<Vector3>();
@@ -24,23 +34,6 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
                 positions.Add(action.EndPosition);
             }
             return positions;
-        }
-
-        public virtual List<AgentActionDTO> GetPossibleActions(Vector3 position) 
-        {
-            throw new NotImplementedException();
-        }
-        public virtual void PerformAction(AgentActionDTO action) 
-        {
-            throw new NotImplementedException();
-        }
-        public virtual List<GameObject> PrintAction(AgentActionDTO action) 
-        {
-            throw new NotImplementedException();
-        }
-        public virtual bool IsPerforming()
-        {
-            throw new NotImplementedException();
         }
 
         public virtual List<GameObject> PrintReacheables(Vector3 startPosition) 

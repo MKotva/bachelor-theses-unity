@@ -1,6 +1,4 @@
-﻿using Assets.Core.GameEditor.DTOS;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
@@ -8,77 +6,66 @@ namespace Assets.Scripts.GameEditor.AI
     public class AIPanelController : MonoBehaviour
     {
         public MapCanvasController MapController;
-
-        private Vector3 startPosition;
-        private Vector3 endPosition;
-
-        private Vector3 sceneMinPosition;
-        private Vector3 sceneMaxPosition;
-        private List<GameObject> Markers;
+        private AIAgent agent;
+        private List<GameObject> markers;
 
 
         public void OnShowWalkableTilesClick()
         {
-                DestroyAllMarkers();
-                ShowWalkableTiles();
+            DestroyAllMarkers();
+            ShowWalkableTiles();
         }
 
         public void OnShowPosibleActions()
         {
             Initialize();
-            var selectedObject = MapController.GetObjectAtPosition(startPosition);
-            if (selectedObject != null)
+
+            if (agent == null)
             {
-                AIAgent aiController;
-                if (selectedObject.TryGetComponent(out aiController))
-                {
-                    foreach (var action in aiController.AI.Actions)
-                    {
-                        action.PrintReacheables(selectedObject.transform.position).ForEach(marker => Markers.Add(marker));
-                    }
-                }
+                InfoPanelController.Instance.ShowMessage("Selected object does not contain AIAgent component.");
+                return;
             }
+            markers = agent.PrintPossibleActions();
         }
 
         public void OnShowJumps()
         {
             Initialize();
-            var selectedObject = MapController.GetObjectAtPosition(startPosition);
-            if (selectedObject != null)
+
+            if(agent == null) 
             {
-                AIAgent aiController;
-                if (selectedObject.TryGetComponent(out aiController))
-                {
-                    foreach (var action in aiController.AI.Actions)
-                    {
-                        if (action is JumpAIAction)
-                            Markers = ( (JumpAIAction) action ).PrintAllPossibleJumps(selectedObject.transform.position);
-                    }
-                }
+                InfoPanelController.Instance.ShowMessage("Selected object does not contain AIAgent component.");
+                return;
+            }
+
+            foreach (var action in agent.AI.Actions)
+            {
+                if (action is JumpAIAction)
+                    markers = ( (JumpAIAction) action ).PrintAllPossibleJumps(agent.transform.position);
             }
         }
 
-        public void OnFindPathClick()
+        public void OnPrintSimulation()
         {
             Initialize();
-            var path =  FindPath(startPosition, endPosition);
-
-            if (path != null) 
+            if (agent == null)
             {
-                PrintPath(path);
+                InfoPanelController.Instance.ShowMessage("Selected object does not contain AIAgent component.");
+                return;
             }
+
+            markers = agent.PrintSimulation();
         }
 
-        public void OnFindPathAndPerform()
+        public void OnSimulate()
         {
             Initialize();
-            var selectedObject = MapController.GetObjectAtPosition(startPosition);
-            var path = FindPath(startPosition, endPosition);
-
-            foreach(var action in path)
+            if (agent == null)
             {
-                action.Performer(action);
+                InfoPanelController.Instance.ShowMessage("Selected object does not contain AIAgent component.");
+                return;
             }
+            agent.Simulate();
         }
 
         public void OnCleanClick()
@@ -90,48 +77,16 @@ namespace Assets.Scripts.GameEditor.AI
 
         private void Awake()
         {
-            Markers = new List<GameObject>();
+            markers = new List<GameObject>();
         }
 
         private void Initialize()
         {
             DestroyAllMarkers();
-            GetScreneBoundaries();
-            SetStart();
-            SetEnd();
+            agent = FindSelectedObject();
         }
 
-        private List<AgentActionDTO> FindPath(Vector3 startPosition, Vector3 endPosition)
-        {
-            var selectedObject = MapController.GetObjectAtPosition(startPosition);
-            if (selectedObject != null)
-            {
-                var astar = new AStar();
-
-                AIAgent aiController;
-                if (selectedObject.TryGetComponent(out aiController))
-                {
-                    return astar.FindPath(selectedObject.transform.position, endPosition, aiController.AI.Actions);
-                }
-            }
-            return null;
-        }
-
-        private void PrintPath(List<AgentActionDTO> path)
-        {
-            foreach (var action in path)
-            {
-                action.PrintingPerformer(action).ForEach(marker => Markers.Add(marker));
-            }
-        }
-
-        private void GetScreneBoundaries()
-        {
-            sceneMinPosition = MapController.CameraObj.ScreenToWorldPoint(new Vector3(0, 0));
-            sceneMaxPosition = MapController.CameraObj.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
-        }
-
-        private void SetStart()
+        private AIAgent FindSelectedObject()
         {
             if (MapController.Data.ContainsKey(0))
             {
@@ -139,34 +94,20 @@ namespace Assets.Scripts.GameEditor.AI
                 {
                     if (MapController.Selected.ContainsKey(position))
                     {
-                        if (IsPositionInBoundaries(position))
+                        if (MapController.IsPositionInBoundaries(position))
                         {
-                            startPosition = position;
+                            var selectedObject = MapController.GetObjectAtPosition(position);
+
+                            AIAgent agent;
+                            if (selectedObject.TryGetComponent(out agent))
+                            {
+                                return agent;
+                            }
                         }
                     }
                 }
             }
-        }
-
-        private void SetEnd()
-        {
-            if (MapController.Data.ContainsKey(1))
-            {
-                foreach (var endPoint in MapController.Data[1])
-                {
-                    if (IsPositionInBoundaries(endPoint.Key))
-                    {
-                        endPosition = endPoint.Key;
-                    }
-                }
-            }
-        }
-        private bool IsPositionInBoundaries(Vector3 position)
-        {
-            if (sceneMaxPosition.x < position.x || sceneMinPosition.x > position.x ||
-               sceneMaxPosition.y < position.y || sceneMinPosition.y > position.y)
-                return false;
-            return true;
+            return null; //TODO: Fix, proper fail. Also rework the method to be more exact in selection of object.
         }
 
         private void ShowWalkableTiles()
@@ -179,26 +120,22 @@ namespace Assets.Scripts.GameEditor.AI
                 foreach (var item in row)
                 {
                     var position = item.Key;
-                    if (position == endPosition)
-                        continue;
-
                     var upperNeighbourPosition = MapController.GetCellCenterPosition(new Vector3(position.x, position.y + cellSize.y));
                     if (MapController.ContainsObjectAtPosition(upperNeighbourPosition) || item.Value.layer != 7)
                         continue;
 
-                    Markers.Add(MapController.CreateMarkAtPosition(upperNeighbourPosition));
+                    markers.Add(MapController.CreateMarkAtPosition(upperNeighbourPosition));
                 }
             }
-            Markers.Add(MapController.CreateMarkAtPosition(endPosition));
         }
 
         private void DestroyAllMarkers()
         {
-            foreach (var mark in Markers)
+            foreach (var mark in markers)
             {
                 MapController.DestroyMark(mark);
             }
-            Markers.Clear();
+            markers.Clear();
         }
 
         #endregion

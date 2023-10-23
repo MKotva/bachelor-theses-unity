@@ -1,15 +1,18 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
 {
     public class JumpAIAction : AIActionBase
     {
-        private GameObject _jumpingObject;
+        private GameObject performer;
         private Rigidbody2D _rigid;
 
         private float _defaultBounceForce = 0.1f;
@@ -26,9 +29,9 @@ namespace Assets.Scripts.GameEditor.AI
 
         public JumpAIAction(MapCanvasController context, GameObject jumpingObject, float jumpForce = 5, float moveSpeed = 2) : base(context, 50)
         {
-            _jumpingObject = jumpingObject;
-            _rigid = _jumpingObject.GetComponent<Rigidbody2D>();
-            var boxCollider = _jumpingObject.GetComponent<BoxCollider2D>();
+            performer = jumpingObject;
+            _rigid = performer.GetComponent<Rigidbody2D>();
+            var boxCollider = performer.GetComponent<BoxCollider2D>();
 
             if (!boxCollider.enabled)
                 boxCollider.enabled = true;
@@ -63,7 +66,7 @@ namespace Assets.Scripts.GameEditor.AI
             {
                 if (IsWalkable(item.Position))
                 {
-                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAction, PrintAction);
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformActionAsync, PrintActionAsync);
                     reacheablePositions.Add(action);
                 }
             }
@@ -72,7 +75,7 @@ namespace Assets.Scripts.GameEditor.AI
             {
                 if (IsWalkable(item.Position))
                 {
-                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAction, PrintAction);
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformActionAsync, PrintActionAsync);
                     reacheablePositions.Add(action);
                 }
             }
@@ -80,13 +83,22 @@ namespace Assets.Scripts.GameEditor.AI
             return reacheablePositions;
         }
 
-        public override void PerformAction(AgentActionDTO action)
+        public override async Task PerformActionAsync(AgentActionDTO action)
         {
            var jumpDirection = MathHelper.GetVector3FromString(action.PositionActionParameter);
-            _rigid.AddForce(jumpDirection);
+            _rigid.AddForce(jumpDirection * 50);
+
+            await Task.Delay(100);
+            while (IsPerforming())
+            {
+                await Task.Delay(100);
+            }
+
+            performer.transform.position = context.GetCellCenterPosition(action.EndPosition);
+            await Task.Delay(1000);
         }
 
-        public override List<GameObject> PrintAction(AgentActionDTO action)
+        public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
         {
             var trajectory = GetTrajectory(action.StartPosition, MathHelper.GetVector3FromString(action.PositionActionParameter));
             return context.CreateMarkAtPosition(context.MarkerDotPrefab, trajectory);
@@ -94,10 +106,10 @@ namespace Assets.Scripts.GameEditor.AI
 
         public override bool IsPerforming()
         {
-            RaycastHit2D hit = Physics2D.Raycast(_jumpingObject.transform.position, Vector2.down, 1, LayerMask.GetMask("Box"));
+            RaycastHit2D hit = Physics2D.Raycast(performer.transform.position, Vector2.down, context.GridLayout.cellSize.y * 0.6f, LayerMask.GetMask("Box"));
             if (hit.collider != null)
-                return true;
-            return false;
+                return false;
+            return true;
         }
 
         public override List<GameObject> PrintReacheables(Vector3 startPosition)
