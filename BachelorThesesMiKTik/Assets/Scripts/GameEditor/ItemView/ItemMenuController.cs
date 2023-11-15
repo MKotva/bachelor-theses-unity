@@ -31,6 +31,10 @@ public class ItemMenuController : MonoBehaviour
         EntitiesMenu.SetActive(false);
     }
 
+    /// <summary>
+    /// Activates selected group panel.(Switch between group view panels)
+    /// </summary>
+    /// <param name="group"></param>
     public void ShowGroup(GameObject group)
     {
         if(_active != null)
@@ -40,6 +44,10 @@ public class ItemMenuController : MonoBehaviour
         _active.SetActive(true);
     }
 
+
+    /// <summary>
+    /// Finds closest string distance between item name and string typed to search bar.
+    /// </summary>
     public void OnSelect()
     {
         GameObject groupWithMinDistance = null;

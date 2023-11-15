@@ -1,78 +1,76 @@
-using System.Collections;
+using Assets.Core.GameEditor.Animation;
+using Assets.Core.GameEditor.AssetLoaders;
+using Assets.Core.GameEditor.DTOS;
+using Assets.Core.GameEditor.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-
 public class BackgroundController : MonoBehaviour
 {
     [SerializeField] public GameObject LayerPrefab;
-    [SerializeField] public List<GameObject> DefaultBackground;
-    [SerializeField] public List<GameObject> BackgroundImages;
+    [SerializeField] public List<GameObject> DefaultBackgroundPrefabs;
 
-    private AssetLoader loader;
+    public List<GameObject> Background { get; private set; }
 
     private void Start()
     {
-        loader = new AssetLoader();
+        Background = new List<GameObject>();
+        SetDefault();
     }
 
-
-    public async Task SetImageAsync(string pathToSource, int layer)
+    public async Task SetBackground(List<SourceDTO> sources)
     {
-        var texture = await loader.LoadImageAsset(pathToSource);
-        texture.Apply();
-
-        AppendBackgroundLayer(texture, BackgroundImages.Count);
-    }
-
-    public async Task SetImagesAsync(List<string> images)
-    {
-        var texturesTasks = new List<Task<Texture2D>>();
-        foreach (var image in images)
+        ClearBackground();
+        var texturesTasks = new List<Task>();
+        for (int i = 0; i < sources.Count; i++)
         {
-            texturesTasks.Add(loader.LoadImageAsset(image));
+            var layer = AppendBackgroundLayer(i);
+            texturesTasks.Add(SetLayer(layer, sources[i]));
         }
 
         await Task.WhenAll(texturesTasks);
-
-        ClearBackground();
-        for (int i = 0; i < texturesTasks.Count; i++)
-        {
-            var texture = texturesTasks[i].Result;
-            texture.Apply(texture);
-
-            AppendBackgroundLayer(texture, i + 1);
-        }
     }
 
-    private void AppendBackgroundLayer(Texture2D texture, int sortingLayerID)
+    public void SetDefault()
     {
-        GameObject layer = Instantiate(LayerPrefab, transform);
-        var spriteRenderer = layer.GetComponent<SpriteRenderer>();
-        spriteRenderer.sortingLayerID = -1 * sortingLayerID; //TODO: Fix orientation of camera, so the layer must not be negative.
-        spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-        Scale(spriteRenderer);
-
-        BackgroundImages.Add(layer);
+        foreach(var backgroundPrefab in DefaultBackgroundPrefabs)
+        {
+            Background.Add(Instantiate(backgroundPrefab, transform));
+        }
     }
 
     public void ClearBackground()
     {
-        foreach (GameObject background in BackgroundImages)
+        foreach (GameObject background in Background)
         {
             Destroy(background);
         }
-        BackgroundImages.Clear();
+        Background.Clear();
+    }
+    private GameObject AppendBackgroundLayer(int sortingOrder)
+    {
+        GameObject layer = Instantiate(LayerPrefab, transform);
+        var spriteRenderer = layer.GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = -1 * sortingOrder; //TODO: Fix orientation of camera, so the layer must not be negative.
+        Background.Add(layer);
+
+        return layer;
     }
 
-    private void Scale(SpriteRenderer spriteRenderer)
+    private async Task SetLayer(GameObject layer, SourceDTO source)
     {
-        var width = spriteRenderer.sprite.bounds.size.x;
-        var height = spriteRenderer.sprite.bounds.size.y;
-
-        var worldScreenHeight = Camera.main.orthographicSize * 2.0;
-        var worldScreenWidth = worldScreenHeight / Screen.height * Screen.width;
-
-        spriteRenderer.transform.localScale = new Vector3((float) worldScreenWidth / width, (float)worldScreenHeight / height, 1);
+        switch (source.Type) 
+        {
+            case SourceType.Image:
+                await SpriteLoader.SetSprite(layer, source.URL, 1920, 1080);
+                break;
+            case SourceType.Video: 
+                break;
+            case SourceType.Animation:
+                await AnimationLoader.SetAnimation(layer, ( (AnimationSourceDTO) source ).AnimationData, 1920, 1080);
+                break;
+            default: 
+                break;
+        }
     }
 }
