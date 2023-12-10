@@ -6,14 +6,12 @@ using UnityEngine;
 
 public class JournalHandler : MonoBehaviour
 {
-    [SerializeField] MapCanvasController MapController;
-
     private Journal _journal;
 
     private void Start()
     {
         if(_journal == null)
-            _journal = MapController.MapJournal;
+            _journal = Editor.Instance.MapJournal;
     }
 
     public void OnUndoClick()

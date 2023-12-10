@@ -9,19 +9,17 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
     public class GroupSelectionAction : EditorActionBase
     {
         bool _isMouseDown;
-
-        public GroupSelectionAction(MapCanvasController context) : base(context) {}
         public override void OnMouseDown(MouseButton key) 
         {
             _lastActionRecord = null;
             _lastActionRecordReverse = null;
 
             _isMouseDown = true;
-            if (context.Selected.Count != 0)
+            if (editor.Selected.Count != 0)
             {
                 var positions = GetSelectedPositionsString();
                 _lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
-                context.UnSelectAll();
+                editor.UnSelectAll();
             }
             else
             {
@@ -53,31 +51,31 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
             if (descriptions[0] == "SG")
             {
-                context.UnSelectAll();
+                editor.UnSelectAll();
                 SelectAllGroupItems(MathHelper.GetVector3FromString(descriptions[1]));
             }
             else if(descriptions[0] == "SUA")
             {
-                context.UnSelectAll();
+                editor.UnSelectAll();
             }
         }
 
         private void SelectAllGroupItems(Vector3 position)
         {
-            var worldCellPosition = context.GetCellCenterPosition(position);
-            GameObject objectAtPos = context.GetObjectAtPosition(worldCellPosition);
+            var worldCellPosition = editor.GetCellCenterPosition(position);
+            GameObject objectAtPos = editor.GetObjectAtPosition(worldCellPosition);
 
             if (objectAtPos == null)
                 return;
 
-            foreach (var key in context.Data.Keys)
+            foreach (var key in editor.Data.Keys)
             {
-                if (context.Data[key].ContainsKey(worldCellPosition))
+                if (editor.Data[key].ContainsKey(worldCellPosition))
                 {
-                    foreach (var item in context.Data[key])
+                    foreach (var item in editor.Data[key])
                     {
-                        context.MarkObject(item.Value);
-                        context.Selected.Add(item.Key, (item.Value, false));
+                        editor.MarkObject(item.Value);
+                        editor.Selected.Add(item.Key, (item.Value, false));
                     }
                 }
             }
@@ -85,7 +83,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private string GetSelectedPositionsString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var selectedPos in context.Selected.Keys)
+            foreach (var selectedPos in editor.Selected.Keys)
             {
                 sb.Append($"{selectedPos.x}:{selectedPos.y};");
             }

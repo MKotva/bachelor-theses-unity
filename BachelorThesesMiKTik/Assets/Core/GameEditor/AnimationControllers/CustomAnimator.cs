@@ -11,9 +11,9 @@ namespace Assets.Core.GameEditor.AnimationControllers
     public class CustomAnimator
     {
         public bool IsAnimating { get; private set; }
+        public CustomAnimation Animation { get; private set; }
 
         private SpriteRenderer spriteRenderer;
-        private CustomAnimation animation; //TODO: add event driven system. Something like list off events with animations to change the animation.
         private CustomAnimationFrame actualFrame;
 
         private float timeSinceLastFrame;
@@ -23,7 +23,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
         {
             IsAnimating = true;
             spriteRenderer = renderer;
-            animation = newAnimation;
+            Animation = newAnimation;
             SetAnimationFrame(newAnimation.Frames[0]);
 
             timeSinceLastFrame = 0;
@@ -36,7 +36,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
                 return;
 
             timeSinceLastFrame += timeDelta;
-            if (timeSinceLastFrame >= animation.Frames[index].DisplayTime)
+            if (timeSinceLastFrame >= Animation.Frames[index].DisplayTime)
             {
                 SetAnimationFrame(GetNextCustomFrame());
                 Scale(spriteRenderer, 1920, 1080);
@@ -56,7 +56,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
         public void ResetAnimation()
         {
             timeSinceLastFrame = 0;
-            actualFrame = animation.Frames[0];
+            actualFrame = Animation.Frames[0];
             index = 0;
         }
 
@@ -70,12 +70,12 @@ namespace Assets.Core.GameEditor.AnimationControllers
         private CustomAnimationFrame GetNextCustomFrame()
         {
             index++;
-            if (index >= animation.Frames.Count)
+            if (index >= Animation.Frames.Count)
             {
                 index = 0;
             }
 
-            return animation.Frames[index];
+            return Animation.Frames[index];
         }
 
         private void Scale(SpriteRenderer spriteRenderer, uint xSize, uint ySize)

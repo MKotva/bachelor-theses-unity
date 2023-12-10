@@ -7,9 +7,23 @@ using UnityEngine;
 public class ItemData : ScriptableObject
 {
     public string ShownName;
+    public string GroupName;
     public Sprite ShownImage;
     public GameObject Prefab;
     public int Id;
+
+    public static ItemData CreateInstance(string shownName, string groupName, Sprite shownImage, GameObject prefab, int id)
+    {
+        var data = ScriptableObject.CreateInstance<ItemData>();
+        
+        data.ShownName = shownName;
+        data.GroupName = groupName;
+        data.ShownImage = shownImage;
+        data.Prefab = prefab;
+        data.Id = id;
+
+        return data;
+    }
 
     public Sprite GetImage()
     {

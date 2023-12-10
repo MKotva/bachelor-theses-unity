@@ -51,5 +51,10 @@ namespace Assets.Scripts.GameEditor.Controllers
         {
             animator.ResetAnimation();
         }
+
+        public Sprite GetAnimationPreview()
+        {
+            return animator.Animation.Frames[0].Sprite;
+        }
     }
 }

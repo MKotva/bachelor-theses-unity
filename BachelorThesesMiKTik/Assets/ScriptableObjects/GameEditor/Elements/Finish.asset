@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Finish
   m_EditorClassIdentifier: 
   ShownName: Finish
+  GroupName: Entities
   ShownImage: {fileID: 21300000, guid: 4668f08864533f24b9b5980d5cc57089, type: 3}
   Prefab: {fileID: 6427231433783823927, guid: 6bdff98f73aa5fa438642465ba90eb9b, type: 3}
   Id: 1

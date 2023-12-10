@@ -14,12 +14,12 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private List<Vector3> _newObjectPostions;
         private InsertAction _insertAction;
 
-        public RemoveAction(MapCanvasController context) : base(context) 
+        public RemoveAction()
         {
             _newObjectPostions = new List<Vector3>();
-            _insertAction = new InsertAction(context, true); 
+            _insertAction = new InsertAction( true); 
         }
-        public RemoveAction(MapCanvasController context, bool dummy) : base(context) 
+        public RemoveAction(bool dummy) 
         {
             _newObjectPostions = new List<Vector3>();
         }
@@ -51,8 +51,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (_isMouseDown)
             {
-                var position = context.GetCellCenterPosition(mousePosition);
-                if (context.Selected.ContainsKey(position))
+                var position = editor.GetCellCenterPosition(mousePosition);
+                if (editor.Selected.ContainsKey(position))
                 {
                     RemoveSelection();
                     var positionsString = GetPositionsString(_newObjectPostions);
@@ -81,9 +81,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (descriptions[0] == "RS")
             {
                 var position = MathHelper.GetVector3FromString(descriptions[1]);
-                position = context.GetCellCenterPosition(position);
+                position = editor.GetCellCenterPosition(position);
 
-                if (context.Selected.ContainsKey(position))
+                if (editor.Selected.ContainsKey(position))
                 {
                     RemoveSelection();
                 }
@@ -103,24 +103,24 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void Remove(Vector3 position)
         {
-            position = context.GetCellCenterPosition(position);
-            GameObject objectAtPos = context.GetObjectAtPosition(position);
+            position = editor.GetCellCenterPosition(position);
+            GameObject objectAtPos = editor.GetObjectAtPosition(position);
             if (objectAtPos != null)
             {
-                context.Erase(objectAtPos, position);
+                editor.Erase(objectAtPos, position);
             }
         }
 
         private void RemoveSelection()
         {
-            var keys = context.Selected.Keys.ToArray();
-            for (int i = 0; i < context.Selected.Count(); i++)
+            var keys = editor.Selected.Keys.ToArray();
+            for (int i = 0; i < editor.Selected.Count(); i++)
             {
                 var position = keys[i];
-                if (!context.Selected[position].Item2)
+                if (!editor.Selected[position].Item2)
                 {
-                    context.Erase(context.Selected[position].Item1, position);
-                    context.Selected[position] = (context.CreateMarkAtPosition(position), true);
+                    editor.Erase(editor.Selected[position].Item1, position);
+                    editor.Selected[position] = (editor.CreateMarkAtPosition(position), true);
 
                     if (!_newObjectPostions.Contains(position))
                         _newObjectPostions.Add(position);

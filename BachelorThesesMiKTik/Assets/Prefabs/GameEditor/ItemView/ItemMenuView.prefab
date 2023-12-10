@@ -328,7 +328,6 @@ GameObject:
   - component: {fileID: 7738830993854909049}
   - component: {fileID: 7738830993854909050}
   - component: {fileID: 7738830993854909051}
-  - component: {fileID: 7738830993854909028}
   m_Layer: 5
   m_Name: Viewport
   m_TagString: Untagged
@@ -408,29 +407,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
---- !u!114 &7738830993854909028
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7738830993854909030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd75c56dc8c149740a739b4b8bc83451, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MapCanvas: {fileID: 0}
-  ButtonPrefab: {fileID: 0}
-  ParentObject: {fileID: 7738830992523326081}
-  ViewBox: {fileID: 0}
-  ItemDatas:
-  - {fileID: 11400000, guid: 6c68e79f83c6bcd419b4202ca7b7661a, type: 2}
-  - {fileID: 11400000, guid: 9efc122ec733cc449b7b439070f8760a, type: 2}
-  - {fileID: 11400000, guid: 7adde0af90df6ac4a9e8060a6f1f9d41, type: 2}
-  - {fileID: 11400000, guid: a6dde4e14e5f73d46b82426fbd154ba6, type: 2}
-  - {fileID: 11400000, guid: 8a702c96535611140b7c95bbec377ff0, type: 2}
-  - {fileID: 11400000, guid: 370480679ad7a3349b9c666cc2bcb248, type: 2}
 --- !u!1 &7738830994007387001
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,6 +419,7 @@ GameObject:
   - component: {fileID: 7738830994007387005}
   - component: {fileID: 7738830994007387006}
   - component: {fileID: 7738830994007387007}
+  - component: {fileID: 7484121913999909151}
   m_Layer: 5
   m_Name: ItemMenuView
   m_TagString: Untagged
@@ -467,10 +444,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 40, y: 79}
-  m_SizeDelta: {x: 200, y: 200}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 630, y: 0}
+  m_SizeDelta: {x: 580, y: 240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7738830994007387005
 CanvasRenderer:
@@ -540,3 +517,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7484121913999909151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7738830994007387001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f266b1785555c54a8cf1e146bb950c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ButtonPrefab: {fileID: 1161064152761621849, guid: 9c7db049595ca07458c5c3e52eeb7127, type: 3}
+  ParentObject: {fileID: 7738830992523326081}
+  ItemDatas: []

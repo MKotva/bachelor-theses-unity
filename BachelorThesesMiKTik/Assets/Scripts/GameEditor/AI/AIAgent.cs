@@ -8,7 +8,7 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public abstract class AIAgent : MonoBehaviour
     {
-        public MapCanvasController context;
+        public Editor editor;
         public AIObject AI;
         public IAIPathFinder pathFinder;   
 

@@ -7,27 +7,32 @@ using UnityEngine;
 
 public class LoadDataHandler : MonoBehaviour
 {
+    [SerializeField] string DefaultPath;
 
-    public MapCanvasController MapController;
+    private Editor editor;
+    private void Awake()
+    {
+        editor = Editor.Instance;
+    }
 
     public void OnLoad()
     {
-        MapController.OnDisable();
+        editor.OnDisable();
         FileBrowser.SetFilters(true, new FileBrowser.Filter("Files", ".json", ".txt"));
         FileBrowser.SetDefaultFilter(".json");
         FileBrowser.SetExcludedExtensions(".lnk", ".tmp", ".zip", ".rar", ".exe");
         FileBrowser.AddQuickLink("Users", "C:\\Users", null);
-        FileBrowser.ShowLoadDialog((paths) => { OnSucces(paths[0]); }, OnFail, FileBrowser.PickMode.Files, false, null, null, "Select Map", "Select");
+        FileBrowser.ShowLoadDialog((paths) => { OnSucces(paths[0]); }, OnFail, FileBrowser.PickMode.Files, false, DefaultPath, null, "Select Map", "Select");
     }
 
     private void OnSucces(string path)
     {
-        MapController.OnEnable();
-        MapController.LoadMap(path);
+        editor.OnEnable();
+        editor.LoadMap(path);
     }
 
     private void OnFail()
     {
-        MapController.OnEnable();
+        editor.OnEnable();
     }
 }

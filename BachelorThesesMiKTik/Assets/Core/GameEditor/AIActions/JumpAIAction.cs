@@ -27,7 +27,7 @@ namespace Assets.Scripts.GameEditor.AI
 
         private int depth;
 
-        public JumpAIAction(MapCanvasController context, GameObject jumpingObject, float jumpForce = 5, float moveSpeed = 2) : base(context, 50)
+        public JumpAIAction(GameObject jumpingObject, float jumpForce = 5, float moveSpeed = 2) : base(50)
         {
             performer = jumpingObject;
             _rigid = performer.GetComponent<Rigidbody2D>();
@@ -49,7 +49,7 @@ namespace Assets.Scripts.GameEditor.AI
             depth = 40;
         }
 
-        public JumpAIAction(MapCanvasController context, GameObject jumpingObject, float defaultBounceForce, float jumpForce, float moveSpeed) : this(context, jumpingObject, jumpForce, moveSpeed)
+        public JumpAIAction(GameObject jumpingObject, float defaultBounceForce, float jumpForce, float moveSpeed) : this(jumpingObject, jumpForce, moveSpeed)
         {
             _defaultBounceForce = defaultBounceForce;
         }
@@ -94,19 +94,19 @@ namespace Assets.Scripts.GameEditor.AI
                 await Task.Delay(100);
             }
 
-            performer.transform.position = context.GetCellCenterPosition(action.EndPosition);
+            performer.transform.position = editor.GetCellCenterPosition(action.EndPosition);
             await Task.Delay(1000);
         }
 
         public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
         {
             var trajectory = GetTrajectory(action.StartPosition, MathHelper.GetVector3FromString(action.PositionActionParameter));
-            return context.CreateMarkAtPosition(context.MarkerDotPrefab, trajectory);
+            return editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory);
         }
 
         public override bool IsPerforming()
         {
-            RaycastHit2D hit = Physics2D.Raycast(performer.transform.position, Vector2.down, context.GridLayout.cellSize.y * 0.6f, LayerMask.GetMask("Box"));
+            RaycastHit2D hit = Physics2D.Raycast(performer.transform.position, Vector2.down, editor.GridLayout.cellSize.y * 0.6f, LayerMask.GetMask("Box"));
             if (hit.collider != null)
                 return false;
             return true;
@@ -114,7 +114,7 @@ namespace Assets.Scripts.GameEditor.AI
 
         public override List<GameObject> PrintReacheables(Vector3 startPosition)
         {
-            return context.CreateMarkAtPosition(context.MarkerDotPrefab, GetReacheablePositions(startPosition));
+            return editor.CreateMarkAtPosition(editor.MarkerDotPrefab, GetReacheablePositions(startPosition));
         }
 
         public List<GameObject> PrintAllPossibleJumps(Vector3 position)
@@ -130,7 +130,7 @@ namespace Assets.Scripts.GameEditor.AI
             var markers = new List<GameObject>();
             foreach(var trajectory in trajectories)
             {
-               context.CreateMarkAtPosition(context.MarkerDotPrefab, trajectory).ForEach(x => markers.Add(x));
+               editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory).ForEach(x => markers.Add(x));
             }
 
             return markers;
@@ -158,7 +158,7 @@ namespace Assets.Scripts.GameEditor.AI
                 var motionDirection = ( Vector2.up * adjustedJumppower ) - ( jumpDirection * motionPower );
                 var result = GetTrajectory(position, motionDirection);
                 trajectories.Add(result);
-                jumpRecords.Add(new JumpPositionDTO(context.GetCellCenterPosition(result.Last()), motionDirection));
+                jumpRecords.Add(new JumpPositionDTO(editor.GetCellCenterPosition(result.Last()), motionDirection));
                 adjustedJumppower = adjustedJumppower - adjustment;
             }
 
@@ -205,10 +205,10 @@ namespace Assets.Scripts.GameEditor.AI
 
             for (int i = 0; i < actualPositionCorners.Length; i++)
             {
-                var centered = context.GetCellCenterPosition(actualPositionCorners[i]);
-                if (context.ContainsObjectAtPosition(centered, new int[] { 7, 8 })) //TODO: For every ai object, have list of layers.
+                var centered = editor.GetCellCenterPosition(actualPositionCorners[i]);
+                if (editor.ContainsObjectAtPosition(centered, new int[] { 7, 8 })) //TODO: For every ai object, have list of layers.
                 {
-                    hittedObject = context.GetObjectAtPosition(centered);
+                    hittedObject = editor.GetObjectAtPosition(centered);
                     preHitPositions = previousPositionCorners[i];
                     return true;
                 }

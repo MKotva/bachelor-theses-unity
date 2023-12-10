@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Creeper
   m_EditorClassIdentifier: 
   ShownName: Creeper
+  GroupName: Decor
   ShownImage: {fileID: 21300030, guid: a44ad40bac7cb7746a8235704640ff25, type: 3}
   Prefab: {fileID: 3136555801967572471, guid: 7fde51c14bb6d1b4990875c45b380727, type: 3}
   Id: 4

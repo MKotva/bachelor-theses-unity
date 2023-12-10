@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class SourcePanelController : MonoBehaviour
 {
-    [SerializeField] public GameObject DropDown;
+    [SerializeField] public TMP_Dropdown DropDown;
     [SerializeField] public GameObject AnimationButton;
     [SerializeField] public GameObject SourceField;
     [SerializeField] public GameObject AnimationCreator;
@@ -15,20 +15,16 @@ public class SourcePanelController : MonoBehaviour
 
     public List<AnimationFrameDTO> Data { get; private set; }
 
-    private TMP_Dropdown menu;
     private GameObject Canvas;
-
     private GameObject panelInstantiate;
     private AnimationCreatorPopUpController controller;
     private bool isShowing;
 
 
-    void Start()
+    void Awake()
     {
         Data = new List<AnimationFrameDTO>();
-
-        menu = DropDown.GetComponent<TMP_Dropdown>();
-        menu.onValueChanged.AddListener(delegate
+        DropDown.onValueChanged.AddListener(delegate
         {
             ChangeField();
         });
@@ -38,7 +34,7 @@ public class SourcePanelController : MonoBehaviour
 
     private void ChangeField()
     {
-        if(menu.value == 2 && !AnimationButton.active)
+        if(DropDown.value == 2 && !AnimationButton.active)
         {
             SourceField.SetActive(false);
             AnimationButton.SetActive(true);
@@ -76,7 +72,7 @@ public class SourcePanelController : MonoBehaviour
 
     public SourceDTO GetData()
     {
-        switch(menu.value)
+        switch(DropDown.value)
         {
             case 0: return new SourceDTO(SourceType.Image, SourceField.GetComponentInChildren<TMP_InputField>().text);
             case 1: return new SourceDTO(SourceType.Video, SourceField.GetComponentInChildren<TMP_InputField>().text);

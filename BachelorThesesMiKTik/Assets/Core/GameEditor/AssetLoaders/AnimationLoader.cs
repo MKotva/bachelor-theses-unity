@@ -13,16 +13,21 @@ namespace Assets.Core.GameEditor.Animation
 {
     public static class AnimationLoader
     {
-        public static async Task SetAnimation(GameObject ob, List<AnimationFrameDTO> data, int xSize, int ySize)
+        public static async Task SetAnimation(GameObject ob, List<AnimationFrameDTO> data, uint xSize = 0, uint ySize = 0)
         {
             if(ob.TryGetComponent<CustomAnimationController>(out var controller)) 
             {
-                var animation = await LoadAnimation(data, xSize, ySize);
-                controller.SetCustomAnimation(animation); //TODO: Set scale
+                var animation = await LoadAnimation(data);
+                controller.SetCustomAnimation(animation);
+
+                if (xSize > 0 && ySize > 0)
+                {
+                    Scale(ob.GetComponent<SpriteRenderer>(), xSize, ySize);
+                }
             }
         }
 
-        public static async Task<CustomAnimation> LoadAnimation(List<AnimationFrameDTO> data, int xSize, int ySize)
+        public static async Task<CustomAnimation> LoadAnimation(List<AnimationFrameDTO> data)
         {
             var spriteTasks = new List<Task<Sprite>>();
             foreach (var frame in data) 
@@ -45,6 +50,16 @@ namespace Assets.Core.GameEditor.Animation
                 }        
             }
             return new CustomAnimation(frames);
+        }
+
+        private static void Scale(SpriteRenderer spriteRenderer, uint xSize, uint ySize)
+        {
+            var rect = spriteRenderer.sprite.rect;
+
+            var xScale = 1 / ( rect.width / xSize );
+            var yScale = 1 / ( rect.height / ySize );
+
+            spriteRenderer.transform.localScale = new Vector3((float) xScale, (float) yScale, 1);
         }
     }
 }

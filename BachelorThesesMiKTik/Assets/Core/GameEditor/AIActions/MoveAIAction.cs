@@ -10,25 +10,25 @@ namespace Assets.Scripts.GameEditor.AI
     {
         private GameObject performer;
 
-        public MoveAIAction(MapCanvasController controller, GameObject gameObject) : base(controller)
+        public MoveAIAction(GameObject gameObject)
         {
             performer = gameObject;
         }
 
         public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
         {
-            var cellSize = context.GridLayout.cellSize;
+            var cellSize = editor.GridLayout.cellSize;
 
             var reacheablePositions = new List<AgentActionDTO>();
             var newPositions = new Vector3[]
             {
-                context.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y)), //Right
-                context.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y - cellSize.y)), //LowerRight
-                context.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y + cellSize.y)), //UpperRight
+                editor.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y)), //Right
+                editor.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y - cellSize.y)), //LowerRight
+                editor.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y + cellSize.y)), //UpperRight
 
-                context.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y)), //Left
-                context.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y - cellSize.y)), //LowerLeft;
-                context.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y - cellSize.y)) //UpperLeft;
+                editor.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y)), //Left
+                editor.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y - cellSize.y)), //LowerLeft;
+                editor.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y - cellSize.y)) //UpperLeft;
             };
 
             var newPositionsParams = new string[]
@@ -61,12 +61,12 @@ namespace Assets.Scripts.GameEditor.AI
 
         public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
         { 
-            return new List<GameObject>() { context.CreateMarkAtPosition(action.StartPosition) };
+            return new List<GameObject>() { editor.CreateMarkAtPosition(action.StartPosition) };
         }
 
         private Vector3 GetPositionFromParam(Vector3 position, string param)
         {
-            var cellSize = context.GridLayout.cellSize;
+            var cellSize = editor.GridLayout.cellSize;
 
             switch (param)
             {
@@ -78,7 +78,7 @@ namespace Assets.Scripts.GameEditor.AI
                 case "M;-1:-1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //LowerLeft;
                 case "M;-1:1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //UpperLeft;
             }
-            return context.GetCellCenterPosition(position);
+            return editor.GetCellCenterPosition(position);
     }
 }
 }

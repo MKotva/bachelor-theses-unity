@@ -5,14 +5,21 @@ using System.IO;
 using UnityEngine;
 
 public class SaveDataHandler : MonoBehaviour
-{
-    public MapCanvasController MapController;
-    public string DefaultPath;
+{ 
+    [SerializeField] public string DefaultPath;
+    [SerializeField] public string DefaultSaveAsPath;
+
+    private Editor editor;
+
+    public void Awake()
+    {
+        editor = Editor.Instance;
+    }
 
     public void OnSaveClick()
     {
         var filepath = GetUniqueFilePath(DefaultPath);
-        MapController.SaveMap(filepath);
+        editor.SaveMap(filepath);
     }
 
     public void OnSaveAsClick()
@@ -21,18 +28,18 @@ public class SaveDataHandler : MonoBehaviour
     }
     private void SaveToPath()
     {
-        MapController.OnDisable();
-        FileBrowser.ShowSaveDialog((paths) => { OnSucces(paths[0]);}, OnFail, FileBrowser.PickMode.Files, false, "C:\\", "Map.json", "Save As", "Save");
+        editor.OnDisable();
+        FileBrowser.ShowSaveDialog((paths) => { OnSucces(paths[0]);}, OnFail, FileBrowser.PickMode.Files, false, DefaultSaveAsPath, "Map.json", "Save As", "Save");
     }
 
     private void OnSucces(string path)
     {
-        MapController.SaveMap(path);
-        MapController.OnEnable();
+       editor.SaveMap(path);
+       editor.OnEnable();
     }
     private void OnFail()
     {
-        MapController.OnEnable();
+       editor.OnEnable();
     }
 
     private string GetUniqueFilePath(string path)

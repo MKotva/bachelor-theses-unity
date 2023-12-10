@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Grass
   m_EditorClassIdentifier: 
   ShownName: Grass
+  GroupName: Boxes
   ShownImage: {fileID: 21300010, guid: a44ad40bac7cb7746a8235704640ff25, type: 3}
   Prefab: {fileID: 3686696415554171731, guid: a94d958b286aae348a3babe3596af3d6, type: 3}
   Id: 6

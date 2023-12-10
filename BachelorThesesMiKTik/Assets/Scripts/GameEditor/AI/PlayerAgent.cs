@@ -8,11 +8,11 @@ public class PlayerAgent : AIAgent
 {
     private void Awake()
     {
-        context = GameObject.Find("MapPanel").GetComponent<MapCanvasController>();
+        editor = Editor.Instance;
         var actions = new List<AIActionBase>()
         {
-            new JumpAIAction(context, gameObject),
-            new MoveAIAction(context, gameObject)
+            new JumpAIAction(gameObject),
+            new MoveAIAction(gameObject)
         };
 
         AI = new AIObject(gameObject, actions);
@@ -26,11 +26,11 @@ public class PlayerAgent : AIAgent
 
     private Vector3 FindDestination()
     {
-        if (context.Data.ContainsKey(1))
+        if (editor.Data.ContainsKey(10)) //TODO: Remove fixed id!!!!!!!!
         {
-            foreach (var endPoint in context.Data[1])
+            foreach (var endPoint in editor.Data[10])
             {
-                if (context.IsPositionInBoundaries(endPoint.Key))
+                if (editor.IsPositionInBoundaries(endPoint.Key))
                 {
                     return endPoint.Key;
                 }

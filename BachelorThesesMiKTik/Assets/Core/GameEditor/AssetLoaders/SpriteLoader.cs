@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
@@ -8,21 +9,25 @@ namespace Assets.Core.GameEditor.AssetLoaders
 {
     public static class SpriteLoader
     {
-        public static async Task SetSprite(GameObject ob, string url, uint xSize, uint ySize)
+        public static async Task SetSprite(GameObject ob, string url, uint xSize = 0, uint ySize = 0)
         {
             if (ob == null || url == string.Empty)
                 return;
 
             var spriteRenderer = ob.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = await LoadSprite(url);
-            Scale(spriteRenderer, xSize, ySize);
+
+            if (xSize > 0 && ySize > 0)
+            {
+                Scale(spriteRenderer, xSize, ySize);
+            }
         }
 
         public static async Task<Sprite> LoadSprite(string url)
         {
-            var texture =  await LoadTexture(url);
-            
-            if(texture == null)
+            var texture = await LoadTexture(url);
+
+            if (texture == null)
                 return null; // TODO Exception handling;
 
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
@@ -64,13 +69,12 @@ namespace Assets.Core.GameEditor.AssetLoaders
 
         private static void Scale(SpriteRenderer spriteRenderer, uint xSize, uint ySize)
         {
-            var width = spriteRenderer.sprite.bounds.size.x;
-            var height = spriteRenderer.sprite.bounds.size.y;
+            var rect = spriteRenderer.sprite.rect;
 
-            var worldScreenHeight = Camera.main.orthographicSize * 2.0;
-            var worldScreenWidth = worldScreenHeight / Screen.height * Screen.width;
+            var xScale = 1 / ( rect.width / xSize );
+            var yScale = 1 / ( rect.height / ySize );
 
-            spriteRenderer.transform.localScale = new Vector3((float) worldScreenWidth / width, (float) worldScreenHeight / height, 1);
+            spriteRenderer.transform.localScale = new Vector3((float) xScale, (float) yScale, 1);
         }
     }
 }

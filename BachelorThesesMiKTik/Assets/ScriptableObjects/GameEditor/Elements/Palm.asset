@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Palm
   m_EditorClassIdentifier: 
   ShownName: Palm
+  GroupName: Decor
   ShownImage: {fileID: 21300052, guid: a44ad40bac7cb7746a8235704640ff25, type: 3}
   Prefab: {fileID: 6054507948361284729, guid: 1924db0b39eb28f41a59aa24d89c2992, type: 3}
   Id: 10

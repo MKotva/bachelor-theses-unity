@@ -16,9 +16,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private Vector3 _lastMousePosition;
         private Vector3 _cameraOriginPosition;
 
-
-        public MoveAction(MapCanvasController context) : base(context) { }
-
         public override void OnMouseDown(MouseButton key)
         {
             if (key == MouseButton.LeftMouse)
@@ -27,15 +24,15 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 _lastActionRecordReverse = null;
 
                 _isMouseDown = true;
-                _startPosition = context.GetWorldMousePosition();
-                var worldCellPosition = context.GetCellCenterPosition(_startPosition);
-                if (context.Selected.ContainsKey(worldCellPosition))
+                _startPosition = editor.GetWorldMousePosition();
+                var worldCellPosition = editor.GetCellCenterPosition(_startPosition);
+                if (editor.Selected.ContainsKey(worldCellPosition))
                 {
                     _moveSelection = true;
                 }
                 else
                 {
-                    _cameraOriginPosition = context.CameraObj.transform.position;
+                    _cameraOriginPosition = editor.CameraObj.transform.position;
                 }
             }
         }
@@ -97,14 +94,14 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var xMove = fromPos.x - toPos.x;
             var yMove = fromPos.y - toPos.y;
 
-            var keys = context.Selected.Keys.ToArray();
-            for (int i = 0; i < context.Selected.Count; i++)
+            var keys = editor.Selected.Keys.ToArray();
+            for (int i = 0; i < editor.Selected.Count; i++)
             {
                 var originPosition = keys[i];
-                var originObjectInfo = context.Selected[originPosition];
+                var originObjectInfo = editor.Selected[originPosition];
 
                 var newPosition = new Vector3(originPosition.x - xMove, originPosition.y - yMove);
-                var newCellCenterPosition = context.GetCellCenterPosition(newPosition);
+                var newCellCenterPosition = editor.GetCellCenterPosition(newPosition);
 
                 originObjectInfo.Item1.transform.position = newCellCenterPosition;
             }
@@ -112,21 +109,21 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void SaveToMove()
         {
-            if (context.Selected.Count > 0)
+            if (editor.Selected.Count > 0)
             {
                 var movedSelection = new Dictionary<Vector3, (GameObject, bool)>();
-                var keys = context.Selected.Keys.ToArray();
-                for (int i = 0; i < context.Selected.Count; i++)
+                var keys = editor.Selected.Keys.ToArray();
+                for (int i = 0; i < editor.Selected.Count; i++)
                 {
                     var originPosition = keys[i];
-                    var objectInfo = context.Selected[originPosition];
+                    var objectInfo = editor.Selected[originPosition];
                     var newPosition = objectInfo.Item1.transform.position;
 
                     if (!objectInfo.Item2)
-                        context.ReplaceData(originPosition, newPosition, objectInfo.Item1);
+                        editor.ReplaceData(originPosition, newPosition, objectInfo.Item1);
                     movedSelection.Add(newPosition, objectInfo);
                 }
-                context.Selected = movedSelection;
+                editor.Selected = movedSelection;
             }
         }
 
@@ -135,7 +132,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var xMove = ( fromPosition.x - position.x ) * 0.75f;
             var yMove = ( fromPosition.y - position.y ) * 0.75f;
 
-            context.CameraObj.transform.position = new Vector3(_cameraOriginPosition.x + xMove, _cameraOriginPosition.y + yMove, _cameraOriginPosition.z);
+            editor.CameraObj.transform.position = new Vector3(_cameraOriginPosition.x + xMove, _cameraOriginPosition.y + yMove, _cameraOriginPosition.z);
         }
     }
 }

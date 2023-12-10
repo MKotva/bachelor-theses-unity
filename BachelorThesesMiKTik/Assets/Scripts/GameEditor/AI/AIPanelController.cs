@@ -5,10 +5,9 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class AIPanelController : MonoBehaviour
     {
-        public MapCanvasController MapController;
         private AIAgent agent;
         private List<GameObject> markers;
-
+        private Editor editor;
 
         public void OnShowWalkableTilesClick()
         {
@@ -78,6 +77,7 @@ namespace Assets.Scripts.GameEditor.AI
         private void Awake()
         {
             markers = new List<GameObject>();
+            editor = Editor.Instance;
         }
 
         private void Initialize()
@@ -88,15 +88,15 @@ namespace Assets.Scripts.GameEditor.AI
 
         private AIAgent FindSelectedObject()
         {
-            if (MapController.Data.ContainsKey(0))
+            if (editor.Data.ContainsKey(0))
             {
-                foreach (var position in MapController.Data[0].Keys)
+                foreach (var position in editor.Data[9].Keys) //TODO: Change so it will not be hardcoded.(Item Id selection)
                 {
-                    if (MapController.Selected.ContainsKey(position))
+                    if (editor.Selected.ContainsKey(position))
                     {
-                        if (MapController.IsPositionInBoundaries(position))
+                        if (editor.IsPositionInBoundaries(position))
                         {
-                            var selectedObject = MapController.GetObjectAtPosition(position);
+                            var selectedObject = editor.GetObjectAtPosition(position);
 
                             AIAgent agent;
                             if (selectedObject.TryGetComponent(out agent))
@@ -114,17 +114,17 @@ namespace Assets.Scripts.GameEditor.AI
         {
             Initialize();
 
-            var cellSize = MapController.GridLayout.cellSize;
-            foreach (var row in MapController.Data.Values)
+            var cellSize = editor.GridLayout.cellSize;
+            foreach (var row in editor.Data.Values)
             {
                 foreach (var item in row)
                 {
                     var position = item.Key;
-                    var upperNeighbourPosition = MapController.GetCellCenterPosition(new Vector3(position.x, position.y + cellSize.y));
-                    if (MapController.ContainsObjectAtPosition(upperNeighbourPosition) || item.Value.layer != 7)
+                    var upperNeighbourPosition = editor.GetCellCenterPosition(new Vector3(position.x, position.y + cellSize.y));
+                    if (editor.ContainsObjectAtPosition(upperNeighbourPosition) || item.Value.layer != 7)
                         continue;
 
-                    markers.Add(MapController.CreateMarkAtPosition(upperNeighbourPosition));
+                    markers.Add(editor.CreateMarkAtPosition(upperNeighbourPosition));
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace Assets.Scripts.GameEditor.AI
         {
             foreach (var mark in markers)
             {
-                MapController.DestroyMark(mark);
+                editor.DestroyMark(mark);
             }
             markers.Clear();
         }

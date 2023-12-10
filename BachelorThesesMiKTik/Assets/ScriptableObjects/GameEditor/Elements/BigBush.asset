@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BigBush
   m_EditorClassIdentifier: 
   ShownName: BigBush
+  GroupName: Decor
   ShownImage: {fileID: 21300056, guid: a44ad40bac7cb7746a8235704640ff25, type: 3}
   Prefab: {fileID: 1006761292877088866, guid: 3bd3b62d2d8d60349af1a101aac51584, type: 3}
   Id: 2

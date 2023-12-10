@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class ToolPanelController : MonoBehaviour
 {
-    [SerializeField] MapCanvasController MapCanvasController;
-
     private ToolButtonController _activeButtonController;
 
     public void HandleButtonClick(ToolButtonController buttonController, EditorActionBase action)
@@ -21,14 +19,13 @@ public class ToolPanelController : MonoBehaviour
 
         _activeButtonController = buttonController;
         _activeButtonController.ChangeStateToClicked();
-        MapCanvasController.SetAction(action);
+        Editor.Instance.SetAction(action);
     }
 
     private void SetDefault()
     {
         _activeButtonController.ChangeStateToUnclicked();
         _activeButtonController = null;
-        MapCanvasController.SetDefaultAction();
+        Editor.Instance.SetDefaultAction();
     }
-
 }

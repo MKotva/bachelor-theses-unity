@@ -1,60 +1,75 @@
-using Assets.Core.GameEditor.DTOS;
-using Assets.Scripts.GameEditor.ObjectEditors;
-using System.Collections;
+using Assets.Scripts.GameEditor.SourcePanels.Components;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
 public class ObjectCreatorController : MonoBehaviour
 {
-    [SerializeField] public GameObject DropDown;
-    [SerializeField] public GameObject BoxEditor;
-    [SerializeField] public GameObject TrapEditor;
-    [SerializeField] public GameObject DecorationEditor;
-    [SerializeField] public GameObject EntitiEditor;
+    [SerializeField] private GameObject ParentObject;
+    [SerializeField] private TMP_Dropdown DropDown;
+    [SerializeField] private ComponentData StaticComponent;
+    [SerializeField] private List<ComponentData> Components;
+    [SerializeField] private ObjectCreatorSourcePanelController ObjectCreator;
 
+    private Dictionary<string, GameObject> active;
 
-    private GameObject active;
-
-    private TMP_Dropdown menu;
-
-    void Start()
+    private void Awake()
     {
-        menu = DropDown.GetComponent<TMP_Dropdown>();
-        menu.onValueChanged.AddListener(delegate
-        {
-            ChangeField();
-        });
+        active = new Dictionary<string, GameObject>();
+        AddComponent(StaticComponent);
     }
 
+    public void OnAddComponent()
+    {
+        if (DropDown.value >= Components.Count)
+        {
+            //TODO: Exception
+            return;
+        }
+
+        AddComponent(Components[DropDown.value]);
+    }
     public void OnCreateClick()
     {
-       active.GetComponent<ObjectEditorController>().OnCreate();
+        ObjectCreator.Create(active.Values.ToList());
     }
 
-    private void ChangeField()
+
+    public void AddComponent(ComponentData data)
     {
-        switch(menu.value)
+        if (!active.ContainsKey(data.Name))
         {
-            case 0:
-                SwitchActive(BoxEditor);
-                break;
-            case 1:
-                SwitchActive(TrapEditor);
-                break; 
-            case 2:
-                SwitchActive(DecorationEditor);
-                break;
-            case 3:
-                SwitchActive(EntitiEditor);
-                break;
+            var component = Instantiate(data.Prefab, ParentObject.transform);
+            component.name = data.Name;
+            component.GetComponent<ObjectComponent>().SetExitMethod(DestroyComponent);
+
+            active.Add(component.name, component);
+            SetComponentPositions();
         }
     }
 
-    private void SwitchActive(GameObject activated)
+    private void SetComponentPositions()
     {
-        activated.SetActive(true);
-        active.SetActive(false);
-        active = activated;
+        var compoments = active.Values.ToList();
+        var actualHeight = 330f;
+
+        foreach (var compoment in compoments)
+        {
+            var rect = compoment.GetComponent<RectTransform>();
+
+            var halfHeight = rect.sizeDelta.y / 2;
+            actualHeight = actualHeight - halfHeight;
+            rect.localPosition = new Vector3(0, actualHeight, 0);
+            actualHeight = actualHeight - halfHeight - 5;
+        }
+
+    }
+
+    private void DestroyComponent(string componentName)
+    {
+        Destroy(active[componentName]);
+        active.Remove(componentName);
+        SetComponentPositions();
     }
 }

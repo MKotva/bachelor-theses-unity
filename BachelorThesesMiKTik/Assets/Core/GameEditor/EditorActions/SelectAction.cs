@@ -20,8 +20,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private Vector3 _squareStart;
         private Vector3 _lastMousePosition;
 
-        public SelectAction(MapCanvasController context) : base(context) { }
-
         public override void OnMouseDown(MouseButton button)
         {
             if (button == MouseButton.LeftMouse)
@@ -30,11 +28,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 _lastActionRecordReverse = null;
 
                 _isMouseDown = true;
-                if (context.Selected.Count != 0)
+                if (editor.Selected.Count != 0)
                 {
                     var positions = GetSelectedPositionsString();
                     _lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
-                    context.UnSelectAll();
+                    editor.UnSelectAll();
                 }
                 else
                 {
@@ -62,7 +60,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (key == Key.LeftShift || key == Key.RightShift)
             {
-                _squareStart = context.GetWorldMousePosition();
+                _squareStart = editor.GetWorldMousePosition();
                 _isKeyDown = true;
             }
         }
@@ -103,7 +101,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (descriptions.Length < 2)
                     return;
 
-                context.UnSelectAll();
+                editor.UnSelectAll();
                 for (int i = 1; i < descriptions.Length; i++)
                 {
                     if (descriptions[i] == "")
@@ -117,7 +115,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (descriptions.Length != 3)
                     return;
 
-                context.UnSelectAll();
+                editor.UnSelectAll();
                 var fromPos = MathHelper.GetVector3FromString(descriptions[1]);
                 var toPos = MathHelper.GetVector3FromString(descriptions[2]);
 
@@ -125,51 +123,51 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
             else if (descriptions[0] == "SUA")
             {
-                context.UnSelectAll();
+                editor.UnSelectAll();
             }
         }
 
         private void SingleSelection(Vector3 mousePosition)
         {
-            var cellCenter = context.GetCellCenterPosition(mousePosition);
-            if (context.Selected.ContainsKey(cellCenter))
+            var cellCenter = editor.GetCellCenterPosition(mousePosition);
+            if (editor.Selected.ContainsKey(cellCenter))
                 return;
 
-            var objectAtPositon = context.GetObjectAtPosition(cellCenter);
+            var objectAtPositon = editor.GetObjectAtPosition(cellCenter);
             if (objectAtPositon != null)
             {
 
-                context.MarkObject(objectAtPositon);
-                context.Selected.Add(cellCenter, (objectAtPositon, false));
+                editor.MarkObject(objectAtPositon);
+                editor.Selected.Add(cellCenter, (objectAtPositon, false));
             }
         }
 
         private void SingleReselection(Vector3 mousePosition)
         {
-            var cellCenter = context.GetCellCenterPosition(mousePosition);
-            if (context.Selected.ContainsKey(cellCenter))
+            var cellCenter = editor.GetCellCenterPosition(mousePosition);
+            if (editor.Selected.ContainsKey(cellCenter))
                 return;
 
-            var objectAtPositon = context.GetObjectAtPosition(cellCenter);
+            var objectAtPositon = editor.GetObjectAtPosition(cellCenter);
             if (objectAtPositon != null)
             {
 
-                context.MarkObject(objectAtPositon);
-                context.Selected.Add(cellCenter, (objectAtPositon, false));
+                editor.MarkObject(objectAtPositon);
+                editor.Selected.Add(cellCenter, (objectAtPositon, false));
             }
             else
             {
-                var marker = context.CreateMarkAtPosition(cellCenter);
-                context.Selected.Add(cellCenter, (marker, true));
+                var marker = editor.CreateMarkAtPosition(cellCenter);
+                editor.Selected.Add(cellCenter, (marker, true));
             }
         }
 
         private void SquareSelection(Vector3 fromPos, Vector3 toPos)
         {
-            context.UnSelectAll();
+            editor.UnSelectAll();
 
-            var xCellSize = context.GridLayout.cellSize.x;
-            var yCellSize = context.GridLayout.cellSize.y;
+            var xCellSize = editor.GridLayout.cellSize.x;
+            var yCellSize = editor.GridLayout.cellSize.y;
 
             var xMove = ( fromPos.x - toPos.x ) / xCellSize;
             var yMove = ( fromPos.y - toPos.y ) / yCellSize;
@@ -182,21 +180,18 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 for (int j = 0; j < Math.Abs(yMove) + 1; j++)
                 {
                     var calculatedPosition = new Vector3(toPos.x + ( xSign * i * xCellSize ), toPos.y + ( ySign * j * yCellSize ));
-                    var cellCenter = context.GetCellCenterPosition(calculatedPosition);
-                    GameObject objectAtPos = context.GetObjectAtPosition(cellCenter);
-
-                    //if (context.Selected.ContainsKey(cellCenter))
-                    //    continue;
+                    var cellCenter = editor.GetCellCenterPosition(calculatedPosition);
+                    GameObject objectAtPos = editor.GetObjectAtPosition(cellCenter);
 
                     if (objectAtPos != null)
                     {
-                        context.MarkObject(objectAtPos);
-                        context.Selected.Add(cellCenter, (objectAtPos, false));
+                        editor.MarkObject(objectAtPos);
+                        editor.Selected.Add(cellCenter, (objectAtPos, false));
                     }
                     else
                     {
-                        var newMarker = context.CreateMarkAtPosition(cellCenter);
-                        context.Selected.Add(cellCenter, (newMarker, true));
+                        var newMarker = editor.CreateMarkAtPosition(cellCenter);
+                        editor.Selected.Add(cellCenter, (newMarker, true));
                     }
                 }
             }
@@ -205,7 +200,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private string GetSelectedPositionsString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var selectedPos in context.Selected.Keys)
+            foreach (var selectedPos in editor.Selected.Keys)
             {
                 sb.Append($"{selectedPos.x}:{selectedPos.y};");
             }
