@@ -1,6 +1,5 @@
-﻿using Assets.Core.GameEditor.Compile;
-using Assets.Core.GameEditor.DTOS;
-using System;
+﻿using Assets.Core.GameEditor.DTOS;
+using Assets.Core.SimpleCompiler.Semantic;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;

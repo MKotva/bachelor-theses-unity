@@ -1,0 +1,8 @@
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\obj\Debug\RegexTest.csproj.AssemblyReference.cache
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\obj\Debug\RegexTest.csproj.SuggestedBindingRedirects.cache
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\obj\Debug\RegexTest.csproj.CoreCompileInputs.cache
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\bin\Debug\RegexTest.exe.config
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\bin\Debug\RegexTest.exe
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\bin\Debug\RegexTest.pdb
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\obj\Debug\RegexTest.exe
+C:\Users\mkotv\source\repos\RegexTest\RegexTest\obj\Debug\RegexTest.pdb
