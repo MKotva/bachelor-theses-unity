@@ -1,9 +1,4 @@
 ﻿using Assets.Core.GameEditor.Animation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.AnimationControllers
@@ -11,6 +6,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
     public class CustomAnimator
     {
         public bool IsAnimating { get; private set; }
+        public bool HasFinished { get; private set; }
         public CustomAnimation Animation { get; private set; }
 
         private SpriteRenderer spriteRenderer;
@@ -73,6 +69,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
             if (index >= Animation.Frames.Count)
             {
                 index = 0;
+                HasFinished = true;
             }
 
             return Animation.Frames[index];

@@ -1137,11 +1137,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c5b166decc43694980a2da3cc4166b3, type: 3}
---- !u!1 &8027845511880311465 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8914020172595495569, guid: 5c5b166decc43694980a2da3cc4166b3, type: 3}
+--- !u!114 &3865939801708125235 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2412459557783919627, guid: 5c5b166decc43694980a2da3cc4166b3, type: 3}
   m_PrefabInstance: {fileID: 1503169748147339320}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d6c0b16f6bfaed44bb1c342b22fb6b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3631857365323829947
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1180,7 +1186,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3302544307030679497, guid: ccc3bf0b3dff1ea4bbe0dd9dc9dd74bc, type: 3}
       propertyPath: m_text
-      value: 'Image:'
+      value: Image component
       objectReference: {fileID: 0}
     - target: {fileID: 4348897111386393422, guid: ccc3bf0b3dff1ea4bbe0dd9dc9dd74bc, type: 3}
       propertyPath: m_Pivot.x
@@ -1276,7 +1282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7800291416798656871, guid: ccc3bf0b3dff1ea4bbe0dd9dc9dd74bc, type: 3}
       propertyPath: m_Name
-      value: ImageEditorComponent Variant
+      value: ImageComponent
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ccc3bf0b3dff1ea4bbe0dd9dc9dd74bc, type: 3}
@@ -1304,4 +1310,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   XSizeField: {fileID: 4276023431353946370}
   YSizeField: {fileID: 8735032080580951548}
-  SourcePanel: {fileID: 8027845511880311465}
+  SourcePanel: {fileID: 3865939801708125235}

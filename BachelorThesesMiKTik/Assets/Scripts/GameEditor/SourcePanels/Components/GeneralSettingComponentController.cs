@@ -1,7 +1,9 @@
-﻿using Assets.Scripts.GameEditor.ItemView;
+﻿using Assets.Core.GameEditor.DTOS.Components;
+using Assets.Scripts.GameEditor.ItemView;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
@@ -12,10 +14,30 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] TMP_InputField GroupField;
         [SerializeField] TMP_Dropdown GroupDropDown;
 
-        private void Start()
+        public override void SetComponent(ComponentDTO component)
+        {
+            if (component is GeneralSettingComponentDTO)
+            {
+                var general = (GeneralSettingComponentDTO) component;
+                NameField.text = general.Name;
+                SetGroup(general.Group);
+            }
+            else
+            {
+                InfoPanelController.Instance.ShowMessage("General component parsing error!");
+            }
+        }
+
+        public override async Task<ComponentDTO> GetComponent()
+        {
+            return await Task.Run(() => CreateComponent());
+        }
+
+        #region PRIVATE
+        private void Awake()
         {
             var groupNames = new List<string>();
-            foreach(var groupPair in GameItemController.Instance.GroupViews)
+            foreach (var groupPair in GameItemController.Instance.GroupViews)
             {
                 groupNames.Add(groupPair.Key);
             }
@@ -23,19 +45,44 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             GroupDropDown.AddOptions(groupNames);
         }
 
-        public override async Task SetItem(ItemData item)
+        private void SetGroup(string groupName)
         {
-            item.ShownName = NameField.text;
-            item.Prefab.name = NameField.text;
-
-            if(GroupDropDown.value != 0)
+            for (int i = 0; i < GroupDropDown.options.Count; i++)
             {
-                item.GroupName = GroupDropDown.options[GroupDropDown.value].text;
+                if (GroupDropDown.options[i].text == groupName)
+                {
+                    GroupDropDown.value = i;
+                    return;
+                }
+            }
+            GroupField.text = groupName;
+        }
+
+        private ComponentDTO CreateComponent()
+        {
+            var name = NameField.text;
+            if (name == "")
+            {
+                InfoPanelController.Instance.ShowMessage($"Invalid item name, name is empty!");
+                return null;
+            }
+
+            string groupName = "";
+            if (GroupDropDown.value != 0)
+            {
+                groupName = GroupDropDown.options[GroupDropDown.value].text;
             }
             else
             {
-                item.GroupName = GroupField.text;
+                if (GroupField.text == "")
+                {
+                    InfoPanelController.Instance.ShowMessage($"Invalid group name, name is empty or Group! Please select or create group!");
+                    return null;
+                }
+                groupName = GroupField.text;
             }
+            return new GeneralSettingComponentDTO(name, groupName);
         }
+        #endregion
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -12,6 +10,21 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class JumpAIAction : AIActionBase
     {
+
+        private static List<string> actionTypes = new List<string>
+        {
+            "Jump left",
+            "Jump right",
+            "Jump up"
+        };
+        public static List<string> ActionTypes
+        {
+            get
+            {
+                return new List<string>(actionTypes);
+            }
+        }
+
         private GameObject performer;
         private Rigidbody2D _rigid;
 
@@ -35,7 +48,7 @@ namespace Assets.Scripts.GameEditor.AI
 
             if (!boxCollider.enabled)
                 boxCollider.enabled = true;
-            
+
             _boxColliderSize = new Vector2(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
             boxCollider.enabled = false;
 
@@ -85,7 +98,7 @@ namespace Assets.Scripts.GameEditor.AI
 
         public override async Task PerformActionAsync(AgentActionDTO action)
         {
-           var jumpDirection = MathHelper.GetVector3FromString(action.PositionActionParameter);
+            var jumpDirection = MathHelper.GetVector3FromString(action.PositionActionParameter);
             _rigid.AddForce(jumpDirection * 50);
 
             await Task.Delay(100);
@@ -101,7 +114,8 @@ namespace Assets.Scripts.GameEditor.AI
         public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
         {
             var trajectory = GetTrajectory(action.StartPosition, MathHelper.GetVector3FromString(action.PositionActionParameter));
-            return editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory);
+            var result = editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory);
+            return await Task.FromResult(result);
         }
 
         public override bool IsPerforming()
@@ -128,9 +142,9 @@ namespace Assets.Scripts.GameEditor.AI
             trajectoriesLeft.ForEach(x => trajectories.Add(x));
 
             var markers = new List<GameObject>();
-            foreach(var trajectory in trajectories)
+            foreach (var trajectory in trajectories)
             {
-               editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory).ForEach(x => markers.Add(x));
+                editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory).ForEach(x => markers.Add(x));
             }
 
             return markers;
@@ -278,6 +292,11 @@ namespace Assets.Scripts.GameEditor.AI
                 new Vector2(maxPosition.x, minPosition.y),
                 new Vector2(minPosition.y, maxPosition.x),
             };
+        }
+
+        public override void PerformAction(string action)
+        {
+            throw new System.NotImplementedException();
         }
     }
     #endregion

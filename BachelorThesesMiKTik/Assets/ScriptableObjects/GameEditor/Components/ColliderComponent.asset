@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e6a1044d5b48948b07132815d031a1, type: 3}
   m_Name: ColliderComponent
   m_EditorClassIdentifier: 
-  Name: ColliderComponent
+  Name: Collider
   Prefab: {fileID: 6894633908598351887, guid: 6719898ca4ba7aa41a688d3f15039b43, type: 3}

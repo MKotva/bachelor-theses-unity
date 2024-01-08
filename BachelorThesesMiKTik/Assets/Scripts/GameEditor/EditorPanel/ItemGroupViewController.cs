@@ -43,6 +43,14 @@ namespace Assets.Scripts.GameEditor.ItemView
             Items.Add(item, button);
         }
 
+        public void RemoveItemButton(ItemData item) 
+        {
+            if(Items.ContainsKey(item)) 
+            {
+                Destroy(Items[item].gameObject);
+                Items.Remove(item);
+            }
+        }
 
 
         public ItemData FindClosestItem(string name, out int minDistance)

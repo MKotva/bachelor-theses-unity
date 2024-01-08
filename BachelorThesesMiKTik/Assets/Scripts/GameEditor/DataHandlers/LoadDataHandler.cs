@@ -1,8 +1,6 @@
-using Assets.Scenes.GameEditor.Core.DTOS;
+using Assets.Core.GameEditor.Serializers;
 using SimpleFileBrowser;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class LoadDataHandler : MonoBehaviour
@@ -10,10 +8,6 @@ public class LoadDataHandler : MonoBehaviour
     [SerializeField] string DefaultPath;
 
     private Editor editor;
-    private void Awake()
-    {
-        editor = Editor.Instance;
-    }
 
     public void OnLoad()
     {
@@ -25,14 +19,29 @@ public class LoadDataHandler : MonoBehaviour
         FileBrowser.ShowLoadDialog((paths) => { OnSucces(paths[0]); }, OnFail, FileBrowser.PickMode.Files, false, DefaultPath, null, "Select Map", "Select");
     }
 
+    public async Task LoadMap(string path)
+    {
+        if (JSONSerializer.Deserialize(path, out var gameData))
+        {
+            await GameDataSerializer.SetGame(gameData);
+        }
+    }
+
+    #region PRIVATE
+    private void Awake()
+    {
+        editor = Editor.Instance;
+    }
+
     private void OnSucces(string path)
     {
         editor.OnEnable();
-        editor.LoadMap(path);
+        var task = LoadMap(path);
     }
 
     private void OnFail()
     {
         editor.OnEnable();
     }
+    #endregion
 }

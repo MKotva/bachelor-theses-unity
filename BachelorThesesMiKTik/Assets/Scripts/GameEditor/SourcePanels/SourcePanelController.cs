@@ -3,7 +3,6 @@ using Assets.Core.GameEditor.Enums;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SourcePanelController : MonoBehaviour
 {
@@ -11,7 +10,6 @@ public class SourcePanelController : MonoBehaviour
     [SerializeField] public GameObject AnimationButton;
     [SerializeField] public GameObject SourceField;
     [SerializeField] public GameObject AnimationCreator;
-
 
     public List<AnimationFrameDTO> Data { get; private set; }
 
@@ -34,12 +32,12 @@ public class SourcePanelController : MonoBehaviour
 
     private void ChangeField()
     {
-        if(DropDown.value == 2 && !AnimationButton.active)
+        if(DropDown.value == 2 && !AnimationButton.activeSelf)
         {
             SourceField.SetActive(false);
             AnimationButton.SetActive(true);
         }
-        else if(!SourceField.active)
+        else if(!SourceField.activeSelf)
         {
             AnimationButton.SetActive(false);
             SourceField.SetActive(true);
@@ -79,5 +77,24 @@ public class SourcePanelController : MonoBehaviour
             case 2: return new AnimationSourceDTO(SourceType.Animation, Data);
         }
         return new SourceDTO(SourceType.None, string.Empty);
+    }
+    public void SetData(SourceDTO source)
+    {
+        switch(source.Type)
+        {
+            case SourceType.Image:
+                DropDown.value = 0;
+                SourceField.GetComponentInChildren<TMP_InputField>().text = source.URL;
+                break;
+            case SourceType.Video:
+                break;
+            case SourceType.Animation:
+                DropDown.value = 2;
+                Data = ( (AnimationSourceDTO) ( source ) ).AnimationData;
+                break;
+            default:
+                InfoPanelController.Instance.ShowMessage("Image/Animation panel setting error!");
+                break;
+        }
     }
 }

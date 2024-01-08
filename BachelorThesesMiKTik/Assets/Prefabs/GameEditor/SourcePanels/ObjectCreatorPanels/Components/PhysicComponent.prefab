@@ -3077,7 +3077,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3302544307030679497, guid: ccc3bf0b3dff1ea4bbe0dd9dc9dd74bc, type: 3}
       propertyPath: m_text
-      value: 'Physics:'
+      value: Physics component
       objectReference: {fileID: 0}
     - target: {fileID: 4348897111386393422, guid: ccc3bf0b3dff1ea4bbe0dd9dc9dd74bc, type: 3}
       propertyPath: m_Pivot.x

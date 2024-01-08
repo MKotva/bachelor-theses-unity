@@ -16,7 +16,6 @@ public class ToolKitController : MonoBehaviour
 
   public void OnItemsButtonClick()
   {
-
     if (_last != CanvasType.None)
     {
       if(_last == CanvasType.ItemMenu) 

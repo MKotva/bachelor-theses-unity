@@ -8,11 +8,30 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class MoveAIAction : AIActionBase
     {
-        private GameObject performer;
+        private static List<string> actionTypes = new List<string>
+        {
+            "Move left",
+            "Move right",
+        };
+        public static List<string> ActionTypes
+        {
+            get
+            {
+                return new List<string>(actionTypes);
+            }
+        }
 
-        public MoveAIAction(GameObject gameObject)
+        private GameObject performer;
+        private float speed;
+        private float speedCap;
+        private bool canFall;
+
+        public MoveAIAction(GameObject gameObject, float moveSpeed = 1, float moveSpeedCap = 1, bool canFallOf = false)
         {
             performer = gameObject;
+            speed = moveSpeed;
+            speedCap = moveSpeedCap;
+            canFall = canFallOf;
         }
 
         public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
@@ -60,8 +79,9 @@ namespace Assets.Scripts.GameEditor.AI
         }
 
         public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
-        { 
-            return new List<GameObject>() { editor.CreateMarkAtPosition(action.StartPosition) };
+        {
+            var result = new List<GameObject>() { editor.CreateMarkAtPosition(action.StartPosition) };
+            return await Task.FromResult(result);
         }
 
         private Vector3 GetPositionFromParam(Vector3 position, string param)
@@ -80,5 +100,15 @@ namespace Assets.Scripts.GameEditor.AI
             }
             return editor.GetCellCenterPosition(position);
     }
-}
+
+        public override bool IsPerforming()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void PerformAction(string action)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

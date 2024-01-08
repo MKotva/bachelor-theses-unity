@@ -46,7 +46,7 @@ namespace Assets.Scripts.GameEditor.AI
 
         }
 
-        public virtual bool IsActionFinished()
+        public virtual bool HasActions()
         {
             if (actionsToPerform.Count == 0)
                 return true;

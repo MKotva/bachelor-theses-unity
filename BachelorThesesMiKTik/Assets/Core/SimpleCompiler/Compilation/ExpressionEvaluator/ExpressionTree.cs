@@ -35,9 +35,12 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator
             if (operands.Count == 1)
                 return operands.Pop();
 
-            return null;
+            throw new CompilationException("Invalid number of operators!");
         }
 
+        /// <summary>
+        /// Checks given expression members for unary operators '-','!' and marks them as unary.
+        /// </summary>
         private void CheckForUnaryOperators()
         {
             Item previous = new Item() { Type = ExpressionItemType.Operator };
@@ -57,6 +60,10 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator
             }
         }
 
+        /// <summary>
+        /// Based on expression member type, this method will create Expression tree node.
+        /// </summary>
+        /// <exception cref="SyntaxException"></exception>
         private void ParseExpressions()
         {
             foreach (var expr in Expressions)
@@ -85,25 +92,35 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator
                         AddOperator(expr.Content, OperatorType.Binary);
                         break;
                     default:
-                        break;
+                        throw new SyntaxException($"Uknown element(syntaxt fail): {expr.Content}");
                 }
             }
         }
 
+        /// <summary>
+        /// Creates expression tree value node from expression member
+        /// </summary>
+        /// <param name="expr">Expression member</param>
+        /// <exception cref="SyntaxException">Exeption for value parsing error</exception>
         private void AddValue(ExpressionItem expr)
         {
             if (expr.ValueType == ValueType.ERROR || expr.ValueType == ValueType.Empty)
             {
-                throw new CompilationException($"Value parsing error in value {expr.Content}");
+                throw new SyntaxException($"Value parsing error in value {expr.Content}");
             }
             operands.Push(new OperandNode(new Operand(expr.Value, expr.ValueType)));
         }
 
+        /// <summary>
+        /// Creates expression tree function node from expression member
+        /// </summary>
+        /// <param name="func">Expression member</param>
+        /// <exception cref="SyntaxException">Exception for name or argument parsing</exception>
         private void AddFunction(MethodItem func)
         {
             if (func.FunctionName == "" || func.Arguments == null)
             {
-                throw new CompilationException($"Function parsing error! Function name or argument parsing went wrong! Name: {func.FunctionName}");
+                throw new SyntaxException($"Function parsing error! Function name or argument parsing went wrong! Name: {func.FunctionName}");
             }
 
             var arguments = new List<TreeNode>();
@@ -117,18 +134,30 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator
             operands.Push(new MethodNode(context, func.FunctionName, arguments));
         }
 
+        /// <summary>
+        /// Creates expression tree variable node from expression member
+        /// </summary>
+        /// <param name="expr">Expression member</param>
         private void AddVariable(ExpressionItem expr)
         {
             operands.Push(new VariableNode(context, expr.Content));
         }
 
+        /// <summary>
+        /// Creates expression tree operator node. If operator has higher priority than
+        /// last added operator, creates new expression tree(subtree) from previously added
+        /// tree nodes.
+        /// </summary>
+        /// <param name="opText">Operator string representation</param>
+        /// <param name="type">None,Bracket,Unary,Binary,Assign</param>
+        /// <exception cref="CompilationException">Exception for uknown operator</exception>
         private void AddOperator(string opText, OperatorType type)
         {
             var op = new Operator(opText, type);
             while (operators.Count != 0)
             {
                 if (op.Priority == 0)
-                    return;
+                    throw new CompilationException($"Invalid operator {opText} exception!");
 
                 if (operators.Peek().Priority >= op.Priority)
                     break;
@@ -137,6 +166,11 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator
             operators.Push(op); // Push operator;
         }
 
+        /// <summary>
+        /// If close parenthesse is found, this method will create expression tree(subtree) from
+        /// all nodes between open and close parenthesse.
+        /// </summary>
+        /// <exception cref="CompilationException">Exception for parethesse without pair.</exception>
         private void EvaluateBracket()
         {
             bool pairFound = false;
@@ -162,6 +196,13 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator
             var operation = CreateOperation();
             operands.Push(operation);
         }
+
+        /// <summary>
+        /// Creates expression tree operatio node from two operand nodes(Variable, Funciton etc.) and 
+        /// one operator node.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="CompilationException">Exception for insufficient number of operands or operators.</exception>
         private TreeNode CreateOperation()
         {
             if (operators.Count < 1)

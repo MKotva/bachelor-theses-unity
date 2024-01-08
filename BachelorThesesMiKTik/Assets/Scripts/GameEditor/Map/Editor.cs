@@ -2,10 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
-using System.IO;
-using Assets.Scenes.GameEditor.Core.DTOS;
 using UnityEngine.UIElements;
-using System.Linq;
 using Assets.Scenes.GameEditor.Core.EditorActions;
 using Assets.Core.GameEditor.Journal;
 using Assets.Scripts.GameEditor.ItemView;
@@ -41,72 +38,8 @@ public class Editor : Singleton<Editor>
 
     private bool _isActionAllowed;
 
-    private void Awake()
-    {
-        MapJournal = new Journal(JournalCapacity);
 
-        _editorActions = new EditorInputActions();
-        _keyPressed = _editorActions.Player.KeyPressed;
-
-        _keyPressed.started += ctx =>
-        {
-            _isActionAllowed = true;
-            _actualAction.OnKeyDown(Key.LeftShift);
-        };
-        _keyPressed.canceled += ctx =>
-        {
-            _isActionAllowed = false;
-            _actualAction.OnKeyUp();
-        };
-
-        _mousePressed = _editorActions.Player.MousePressed;
-        _mousePressed.started += ctx =>
-        {
-            if (Input.mousePosition.y < 830 && Input.mousePosition.y > 0 
-                && Input.mousePosition.x > 0 && Input.mousePosition.x < 1920)
-            {
-                _isActionAllowed = true;
-                _actualAction.OnMouseDown(GetPressedMouseButton());
-            }
-        };
-        _mousePressed.canceled += ctx =>
-        {
-            if (Input.mousePosition.y < 830 && Input.mousePosition.y > 0
-                && Input.mousePosition.x > 0 && Input.mousePosition.x < 1920)
-            {
-                _isActionAllowed = false;
-                _actualAction.OnMouseUp();
-                if (IsRecording)
-                {
-                    MapJournal.Record(_actualAction.GetLastActionRecord(), _actualAction.GetLastActionRecordReverse());
-                }
-            }
-        };
-
-        _defaultAction = new MoveAction();
-        _actualAction = _defaultAction;
-
-        Selected = new Dictionary<Vector3, (GameObject, bool)>();
-        Data = new Dictionary<int, Dictionary<Vector3, GameObject>>();
-    }
-
-    private void FixedUpdate()
-    {
-        if (_isActionAllowed)
-            _actualAction.OnUpdate(GetWorldMousePosition());
-    }
-
-    private MouseButton GetPressedMouseButton()
-    {
-        if (Input.GetMouseButtonDown(0))
-            return MouseButton.LeftMouse;
-
-        if (Input.GetMouseButtonDown(1))
-            return MouseButton.RightMouse;
-
-        return MouseButton.MiddleMouse;
-    }
-
+    #region PUBLIC
     public void OnEnable()
     {
         _keyPressed.Enable();
@@ -130,7 +63,7 @@ public class Editor : Singleton<Editor>
 
     public GameObject CreateMarkAtPosition(Vector3 position)
     {
-        return Paint(MarkerPrefab, Parent, GridLayout, position);
+        return TileBase.Instantiate(MarkerPrefab, position, Quaternion.identity, GridLayout.transform);
     }
 
     public List<GameObject> CreateMarkAtPosition(List<Vector3> positions)
@@ -144,7 +77,7 @@ public class Editor : Singleton<Editor>
 
     public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector3 position)
     {
-        return Paint(markerPrefab, Parent, GridLayout, position);
+        return TileBase.Instantiate(markerPrefab, position, Quaternion.identity, GridLayout.transform); ;
     }
 
     public List<GameObject> CreateMarkAtPosition(GameObject markerPrefab, List<Vector3> positions)
@@ -158,7 +91,7 @@ public class Editor : Singleton<Editor>
 
     public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector3 position, Color color)
     {
-        var marker = Paint(markerPrefab, Parent, GridLayout, position);
+        var marker = TileBase.Instantiate(markerPrefab, position, Quaternion.identity, GridLayout.transform); ;
         marker.GetComponent<Renderer>().material.color = color;
         return marker;
     }
@@ -170,7 +103,7 @@ public class Editor : Singleton<Editor>
 
     public void UnSelectAll()
     {
-        foreach(var item in Selected)
+        foreach (var item in Selected)
         {
             if (item.Value.Item2)
             {
@@ -187,10 +120,11 @@ public class Editor : Singleton<Editor>
     public void MarkObject(GameObject gameObject)
     {
         Renderer renderer;
-        if(!gameObject.TryGetComponent(out renderer))
-           renderer = gameObject.GetComponentInChildren<Renderer>();
+        if (!gameObject.TryGetComponent(out renderer))
+            renderer = gameObject.GetComponentInChildren<Renderer>();
 
-        renderer.material.color = new Color(2f, 0f, 0f, 0.7f);
+        if(renderer != null)
+            renderer.material.color = new Color(2f, 0f, 0f, 0.7f);
     }
 
     public void UnMarkObject(GameObject gameObject)
@@ -199,28 +133,14 @@ public class Editor : Singleton<Editor>
         if (!gameObject.TryGetComponent(out renderer))
             renderer = gameObject.GetComponentInChildren<Renderer>();
 
-        renderer.material.color = originalColor;
+        if (renderer != null)
+            renderer.material.color = originalColor;
     }
 
-    public void InsertToData(Vector3 position, GameObject gameobject)
-    {
-        if (Data.ContainsKey(ActualPrefab.Id))
-        {
-            Data[ActualPrefab.Id].Add(position, gameobject);
-        }
-        else
-        {
-            var itemGroup = new Dictionary<Vector3, GameObject>
-            {
-                    { position, gameobject }
-            };
-            Data.Add(ActualPrefab.Id, itemGroup);
-        }
-    }
 
     public void ReplaceData(Vector3 oldKey, Vector3 newKey, GameObject newValue)
     {
-        foreach(var group in Data)
+        foreach (var group in Data)
         {
             var groupMembers = group.Value;
             if (groupMembers.ContainsKey(oldKey))
@@ -240,7 +160,7 @@ public class Editor : Singleton<Editor>
         }
     }
 
-    public bool IsPositionInBoundaries(Vector3 position)
+    public bool IsPositionInCameraView(Vector3 position)
     {
         var sceneMinPosition = CameraObj.ScreenToWorldPoint(new Vector3(0, 0));
         var sceneMaxPosition = CameraObj.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
@@ -253,7 +173,7 @@ public class Editor : Singleton<Editor>
 
     public bool ContainsObjectAtPosition(Vector3 position)
     {
-        foreach(var group in Data.Values)
+        foreach (var group in Data.Values)
         {
             if (group.ContainsKey(position))
                 return true;
@@ -268,9 +188,9 @@ public class Editor : Singleton<Editor>
             if (group.ContainsKey(position))
             {
                 var obj = group[position];
-                foreach( var layer in layers)
+                foreach (var layer in layers)
                 {
-                    if(obj.layer == layer)
+                    if (obj.layer == layer)
                         return true;
                 }
             }
@@ -295,20 +215,10 @@ public class Editor : Singleton<Editor>
 
     public void RemoveFromData(Vector3 position)
     {
-        foreach(var group in Data.Values)
+        foreach (var group in Data.Values)
         {
-            if(group.ContainsKey(position))
+            if (group.ContainsKey(position))
                 group.Remove(position);
-        }
-    }
-
-    //TODO: Fix this, cannot search by ActualPrefab ID!!!!
-    public void RemoveFromData(GameObject gameobject)
-    {
-        if (Data.ContainsKey(ActualPrefab.Id))
-        {
-            var item = Data[ActualPrefab.Id].First(kvp => kvp.Value == gameObject);
-            Data[ActualPrefab.Id].Remove(item.Key);
         }
     }
 
@@ -320,15 +230,33 @@ public class Editor : Singleton<Editor>
         }
     }
 
-    public GameObject Paint(GameObject prefab, GameObject parentObject, Grid grid, Vector3 position)
+    /// <summary>
+    /// Returns group of object instances with the same id (same prefab).
+    /// If group is not found, returns empty dictionary(empty group).
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <returns></returns>
+    public Dictionary<Vector3, GameObject> GetGroup(int groupId)
     {
-        if (ActualPrefab)
+        if (Data.ContainsKey(groupId))
         {
-            GameObject newInstance = TileBase.Instantiate(prefab, position, Quaternion.identity, parentObject.transform);
-            newInstance.transform.SetParent(parentObject.transform);
-            return newInstance;
+            return Data[groupId];
         }
-        return null;
+        return new Dictionary<Vector3, GameObject>();
+    }
+
+    public GameObject Paint(ItemData item, Vector3 position)
+    {
+        GameObject newInstance = TileBase.Instantiate(item.Prefab, position, Quaternion.identity, GridLayout.transform);
+        InsertToData(item, newInstance, position);
+        return newInstance;
+    }
+
+    public void ReplaceItem(ItemData newItem, Vector3 position)
+    {
+        GameObject newInstance = TileBase.Instantiate(newItem.Prefab, position, Quaternion.identity, GridLayout.transform);
+        Destroy(Data[newItem.Id][position]);
+        Data[newItem.Id][position] = newInstance;
     }
 
     public void Erase(GameObject gameobject)
@@ -344,9 +272,9 @@ public class Editor : Singleton<Editor>
 
     public void EraseMap()
     {
-        foreach(var item in Data)
+        foreach (var item in Data)
         {
-            foreach(var gameObj in item.Value)
+            foreach (var gameObj in item.Value)
             {
                 Erase(gameObj.Value);
             }
@@ -374,44 +302,98 @@ public class Editor : Singleton<Editor>
     {
         return GridLayout.GetCellCenterWorld(GridLayout.WorldToCell(mousePosition));
     }
+    #endregion
 
-    public void SaveMap(string path)
+    #region PRIVATE
+    protected override void Awake()
     {
-        var _mapData = new MapDataDTO();
-        foreach (var id in Data.Keys)
+        base.Awake();
+
+        MapJournal = new Journal(JournalCapacity);
+
+        _editorActions = new EditorInputActions();
+        _keyPressed = _editorActions.Player.KeyPressed;
+        _keyPressed.started += ctx => OnKeyPress();
+        _keyPressed.canceled += ctx => OnKeyRelease();
+
+        _mousePressed = _editorActions.Player.MousePressed;
+        _mousePressed.started += ctx => OnMousePress();
+        _mousePressed.canceled += ctx => OnMouseRelease();
+
+        _defaultAction = new MoveAction();
+        _actualAction = _defaultAction;
+
+        Selected = new Dictionary<Vector3, (GameObject, bool)>();
+        Data = new Dictionary<int, Dictionary<Vector3, GameObject>>();
+    }
+
+    private void Update()
+    {
+        if (_isActionAllowed)
+            _actualAction.OnUpdate(GetWorldMousePosition());
+    }
+
+    private MouseButton GetPressedMouseButton()
+    {
+        if (Input.GetMouseButtonDown(0))
+            return MouseButton.LeftMouse;
+
+        if (Input.GetMouseButtonDown(1))
+            return MouseButton.RightMouse;
+
+        return MouseButton.MiddleMouse;
+    }
+
+    private void InsertToData(ItemData item, GameObject gameobject, Vector3 position)
+    {
+        if (Data.ContainsKey(item.Id))
         {
-            foreach (var position in Data[id].Keys)
-            {
-                _mapData.mapObjects.Add(new MapObjectDTO(id, position));
-            }
+            Data[item.Id].Add(position, gameobject);
         }
-
-        string json = JsonUtility.ToJson(_mapData);
-
-        using (var sw = new StreamWriter(path))
+        else
         {
-            sw.Write(json);
+            var itemGroup = new Dictionary<Vector3, GameObject>
+            {
+                    { position, gameobject }
+            };
+            Data.Add(item.Id, itemGroup);
         }
     }
 
-    public void LoadMap(string path)
+    private void OnMousePress()
     {
-        string map = "";
-        using (var sr = new StreamReader(path))
+        if (Input.mousePosition.y < 830 && Input.mousePosition.y > 0
+            && Input.mousePosition.x > 0 && Input.mousePosition.x < 1920)
         {
-            map = sr.ReadToEnd();
+            _isActionAllowed = true;
+            _actualAction.OnMouseDown(GetPressedMouseButton());
         }
+    }
 
-        var _mapData = JsonUtility.FromJson<MapDataDTO>(map);
-        if(_mapData != null)
+    private void OnMouseRelease()
+    {
+        if (Input.mousePosition.y < 830 && Input.mousePosition.y > 0
+            && Input.mousePosition.x > 0 && Input.mousePosition.x < 1920)
         {
-            EraseMap();
-            foreach (var obj in _mapData.mapObjects)
+            _isActionAllowed = false;
+            _actualAction.OnMouseUp();
+            if (IsRecording)
             {
-                var item = GameItemController.Instance.Items[obj.Id];
-                var newObject = Paint(item.Prefab, Parent, GridLayout, obj.Position);
-                InsertToData(obj.Position, newObject);
+                MapJournal.Record(_actualAction.GetLastActionRecord(), _actualAction.GetLastActionRecordReverse());
             }
         }
     }
+
+    private void OnKeyPress()
+    {
+        _isActionAllowed = true;
+        _actualAction.OnKeyDown(Key.LeftShift);
+    }
+
+    private void OnKeyRelease()
+    {
+        _isActionAllowed = false;
+        _actualAction.OnKeyUp();
+    }
+    #endregion
 }

@@ -17,10 +17,17 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionItems
 
     public class Operator
     {
+        /// <summary>
+        /// All valid unary operators sorted in priority groups. 
+        /// </summary>
         private static string[][] UnaryOperatorGroups =
         {
             new string [] {"!", "-"}
         };
+
+        /// <summary>
+        /// All valid binary operators sorted in priority groups. 
+        /// </summary>
         private static string[][] BinaryOperatorGroups =
         {
             new string[] {"*", "/", "%"},
@@ -58,6 +65,10 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionItems
             }
         }
 
+        /// <summary>
+        /// Finds unary operator priority based on position in array[position][].
+        /// </summary>
+        /// <returns>Operator priority</returns>
         private int GetUnaryPriority()
         {
             for (int i = 0; i < UnaryOperatorGroups.Length; i++)
@@ -70,6 +81,10 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionItems
             return 0;
         }
 
+        /// <summary>
+        /// Finds binary operator priority based on position in array[position][].
+        /// </summary>
+        /// <returns>Operator priority</returns>
         private int GetBinaryPriority()
         {
             for (int i = 0; i < BinaryOperatorGroups.Length; i++)

@@ -1,5 +1,4 @@
 ﻿using Assets.Core.GameEditor.DTOS;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,8 +8,8 @@ namespace Assets.Core.GameEditor.Journal
     {
         private int _capacity;
 
-        private Stack<(JournalActionDTO, JournalActionDTO)> _performedActions;
-        private Stack<(JournalActionDTO, JournalActionDTO)> _undoedActions;
+        private Stack<(JournalActionDTO, JournalActionDTO)> performedActions;
+        private Stack<(JournalActionDTO, JournalActionDTO)> undoedActions;
 
         public Journal(int capacity) 
         {
@@ -23,54 +22,75 @@ namespace Assets.Core.GameEditor.Journal
                 _capacity = capacity;
             }
 
-            _performedActions = new Stack<(JournalActionDTO, JournalActionDTO)>();
-            _undoedActions = new Stack<(JournalActionDTO, JournalActionDTO)>();
+            performedActions = new Stack<(JournalActionDTO, JournalActionDTO)>();
+            undoedActions = new Stack<(JournalActionDTO, JournalActionDTO)>();
         }
 
+        /// <summary>
+        /// Creates record of performed action. Stores action and counter 
+        /// action (performed, undoed).
+        /// </summary>
+        /// <param name="performedAction"></param>
+        /// <param name="inverseAction"></param>
         public void Record(JournalActionDTO performedAction, JournalActionDTO inverseAction)
         {
-            if(_undoedActions.Count != 0)
+            if(undoedActions.Count != 0)
             {
-                _undoedActions.Clear();
+                undoedActions.Clear();
             }
-            if(_performedActions.Count == _capacity) 
+            if(performedActions.Count == _capacity) 
             {
                 CutHalfRecords();
             }
-            _performedActions.Push((performedAction, inverseAction));
+            performedActions.Push((performedAction, inverseAction));
         }
 
-
+        /// <summary>
+        /// If there are some performed actions, takes last of them and returns its 
+        /// counter action. 
+        /// </summary>
+        /// <returns></returns>
         public JournalActionDTO GetUndoAction()
         {
-            if (_performedActions.Count == 0)
+            if (performedActions.Count == 0)
                 return null;
 
-            var actions = _performedActions.Pop();
-            _undoedActions.Push(actions);
+            var actions = performedActions.Pop();
+            undoedActions.Push(actions);
             return actions.Item2;
         }
 
+        /// <summary>
+        /// If there are some undoed actions, takes last of them and returns its 
+        /// counter action. 
+        /// </summary>
+        /// <returns></returns>
         public JournalActionDTO GetRedoAction() 
         {
-            if(_undoedActions.Count == 0)
+            if(undoedActions.Count == 0)
                 return null;
 
-            var actions = _undoedActions.Pop();
-            _performedActions.Push(actions);
+            var actions = undoedActions.Pop();
+            performedActions.Push(actions);
             return actions.Item1;
         }
 
+        /// <summary>
+        /// Resets journal to initial state
+        /// </summary>
         public void Clear()
         {
-            _performedActions.Clear();
-            _undoedActions.Clear();
+            performedActions.Clear();
+            undoedActions.Clear();
         }
 
+        /// <summary>
+        /// Cuts performed action in half and stores the newest actions.
+        /// </summary>
         private void CutHalfRecords()
         {
-            var halfIndex = _performedActions.Count / 2;
-            _performedActions = new Stack<(JournalActionDTO, JournalActionDTO)>(_performedActions.ToList().GetRange(0, halfIndex));
+            var halfIndex = performedActions.Count / 2;
+            performedActions = new Stack<(JournalActionDTO, JournalActionDTO)>(performedActions.ToList().GetRange(0, halfIndex));
         }
     }
 }

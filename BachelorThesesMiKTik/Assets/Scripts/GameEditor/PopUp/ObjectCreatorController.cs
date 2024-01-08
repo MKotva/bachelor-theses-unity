@@ -1,75 +1,154 @@
+using Assets.Core.GameEditor.DTOS.Components;
+using Assets.Scripts.GameEditor.ItemView;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public class ObjectCreatorController : MonoBehaviour
+public class ObjectCreatorController : PopUpController
 {
     [SerializeField] private GameObject ParentObject;
-    [SerializeField] private TMP_Dropdown DropDown;
+    [SerializeField] private TMP_Dropdown ComponentDropDown;
     [SerializeField] private ComponentData StaticComponent;
-    [SerializeField] private List<ComponentData> Components;
+    [SerializeField] private List<ComponentData> ComponentsData;
     [SerializeField] private ObjectCreatorSourcePanelController ObjectCreator;
+    [SerializeField] private TMP_Text OutputConsole;
 
-    private Dictionary<string, GameObject> active;
+    private Dictionary<string, ObjectComponent> active;
+    private bool IsEditing;
 
-    private void Awake()
-    {
-        active = new Dictionary<string, GameObject>();
-        AddComponent(StaticComponent);
-    }
 
+    /// <summary>
+    /// Button click handler. Adds component by selected name in dropdown.
+    /// </summary>
     public void OnAddComponent()
     {
-        if (DropDown.value >= Components.Count)
+        if (ComponentDropDown.value >= ComponentsData.Count)
         {
             //TODO: Exception
             return;
         }
 
-        AddComponent(Components[DropDown.value]);
+        AddComponent(ComponentsData[ComponentDropDown.value]);
     }
-    public void OnCreateClick()
+
+    /// <summary>
+    /// Button click handler. Creates element with given components.
+    /// </summary>
+    public async void OnSetClick()
     {
-        ObjectCreator.Create(active.Values.ToList());
+        if (IsEditing)
+        {
+            await ObjectCreator.EditItem(active.Values.ToList());
+        }
+        else
+        {
+            await ObjectCreator.CreateItem(active.Values.ToList());
+        }
     }
 
 
+    /// <summary>
+    /// Adds component to editor if editor does no already contains component of same type.
+    /// </summary>
+    /// <param name="data">Component scriptable object with data.</param>
     public void AddComponent(ComponentData data)
     {
         if (!active.ContainsKey(data.Name))
         {
-            var component = Instantiate(data.Prefab, ParentObject.transform);
-            component.name = data.Name;
-            component.GetComponent<ObjectComponent>().SetExitMethod(DestroyComponent);
-
+            var component = CreateComponentPanel(data);
             active.Add(component.name, component);
-            SetComponentPositions();
         }
     }
 
-    private void SetComponentPositions()
+    /// <summary>
+    /// Sets object editor based on created object.
+    /// </summary>
+    public void EditActualObject()
     {
-        var compoments = active.Values.ToList();
-        var actualHeight = 330f;
-
-        foreach (var compoment in compoments)
+        IsEditing = true;
+        var actual = GameItemController.Instance.ActualSelectedItem;
+        foreach(var component in actual.Components) 
         {
-            var rect = compoment.GetComponent<RectTransform>();
+            if (component.ComponentName == StaticComponent.Name)
+            {
+                active["General Setting"].SetComponent(component);
+                continue;
+            }
 
-            var halfHeight = rect.sizeDelta.y / 2;
-            actualHeight = actualHeight - halfHeight;
-            rect.localPosition = new Vector3(0, actualHeight, 0);
-            actualHeight = actualHeight - halfHeight - 5;
+            foreach(var componentData in ComponentsData) 
+            {
+                if(component.ComponentName == componentData.Name) 
+                {
+                    var componentPanel = CreateComponentPanel(componentData);
+                    componentPanel.SetComponent(component);
+                    active.Add(componentPanel.name, componentPanel);
+                }
+            }
         }
-
     }
 
-    private void DestroyComponent(string componentName)
+    #region PRIVATE
+    private void Awake()
     {
-        Destroy(active[componentName]);
-        active.Remove(componentName);
-        SetComponentPositions();
+        DropDownSet(ComponentsData);
+        active = new Dictionary<string, ObjectComponent>();
+        AddComponent(StaticComponent);
     }
+
+    private void OnEnable()
+    {
+        InfoPanelController.Instance.AddOnShowListener("Object creator", LogToConsole);
+    }
+
+    private void OnDisable()
+    {
+        if (InfoPanelController.Instance != null)
+            InfoPanelController.Instance.RemoveListener("Object creator");
+    }
+
+    /// <summary>
+    /// Sets component dropdown. Adds options based on given ComponentData list in init.
+    /// </summary>
+    /// <param name="data">Component data init list.</param>
+    private void DropDownSet(List<ComponentData> data)
+    {
+        var options = new List<string>();
+        foreach (var compoment in data)
+        {
+            options.Add(compoment.Name);
+        }
+        ComponentDropDown.ClearOptions();
+        ComponentDropDown.AddOptions(options);
+    }
+
+    /// <summary>
+    /// Callback method for each component at destroy.
+    /// </summary>
+    /// <param name="componentName">Component name</param>
+    private void DestroyComponentPanel(string componentName)
+    {
+        Destroy(active[componentName].gameObject);
+        active.Remove(componentName);
+    }
+
+    /// <summary>
+    /// Instantiates new component based on given component data.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    private ObjectComponent CreateComponentPanel(ComponentData data)
+    {
+        var component = Instantiate(data.Prefab, ParentObject.transform).GetComponent<ObjectComponent>();
+        component.name = data.Name;
+        component.SetExitMethod(DestroyComponentPanel);
+        return component;
+    }
+
+    private void LogToConsole(string message)
+    {
+        OutputConsole.text = message;
+    }
+    #endregion
 }

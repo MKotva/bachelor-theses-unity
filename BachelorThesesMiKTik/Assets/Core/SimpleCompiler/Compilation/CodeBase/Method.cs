@@ -20,6 +20,13 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
                 IsReturning = true;
         }
 
+        /// <summary>
+        /// Finds method with right argument types and invokes it.
+        /// If invoked method returns, method will try to parse return value.
+        /// If not, returns just empty operand.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
         public Operand Invoke(object[] arguments)
         {
             var method = SelectMethod(arguments);
@@ -35,6 +42,12 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
             return new Operand(null, ValueType.Empty);
         }
 
+        /// <summary>
+        /// From given methods with correct name, selects one with correct argument type
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        /// <exception cref="RuntimeException"></exception>
         private MethodInfo SelectMethod(object[] arguments)
         {
             foreach (var methodInfo in MethodInfo)

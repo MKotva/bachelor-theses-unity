@@ -107,14 +107,14 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
+        #region PRIVATE
         private void Insert(Vector3 position)
         {
             position = editor.GetCellCenterPosition(position);
             GameObject objectAtPos = editor.GetObjectAtPosition(position);
             if (objectAtPos == null)
             {
-                var newObject = editor.Paint(editor.ActualPrefab.Prefab, editor.Parent, editor.GridLayout, position);
-                editor.InsertToData(position, newObject);
+                editor.Paint(editor.ActualPrefab, position);
             }
         }
 
@@ -128,10 +128,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 {
                     editor.Erase(editor.Selected[position].Item1);
                     
-                    var newObject = editor.Paint(editor.ActualPrefab.Prefab, editor.Parent, editor.GridLayout, position);
+                    var newObject = editor.Paint(editor.ActualPrefab, position);
                     editor.MarkObject(newObject);
                     editor.Selected[position] = (newObject, false);
-                    editor.InsertToData(position, newObject);
                 }
             }
 
@@ -148,10 +147,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             {
                 editor.Erase(editor.Selected[position].Item1);
 
-                var newObject = editor.Paint(editor.ActualPrefab.Prefab, editor.Parent, editor.GridLayout, position);
+                var newObject = editor.Paint(editor.ActualPrefab, position);
                 editor.MarkObject(newObject);
                 editor.Selected[position] = (newObject, false);
-                editor.InsertToData(position, newObject);
             }
         }
 
@@ -164,5 +162,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
             return sb.ToString();
         }
+        #endregion
     }
 }

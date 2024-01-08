@@ -1,8 +1,10 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Assets.Scenes.GameEditor.Core.AIActions
 {
@@ -17,14 +19,11 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             actionCost = cost;
         }
 
+        public abstract void PerformAction(string action);
         public abstract Task PerformActionAsync(AgentActionDTO action);
         public abstract Task<List<GameObject>> PrintActionAsync(AgentActionDTO action);
-        public abstract List<AgentActionDTO> GetPossibleActions(Vector3 position); 
-        
-        public virtual bool IsPerforming()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<AgentActionDTO> GetPossibleActions(Vector3 position);
+        public abstract bool IsPerforming();
 
         public virtual List<Vector3> GetReacheablePositions(Vector3 position)
         {

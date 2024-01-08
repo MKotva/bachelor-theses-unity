@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.DTOS.Components;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -20,46 +18,39 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] Toggle YToggle;
         [SerializeField] Toggle XToggle;
 
-        public override async Task SetItem(ItemData item)
+        public override void SetComponent(ComponentDTO component)
         {
-            item.Prefab.AddComponent<Rigidbody2D>();
-            SetRigid(item.Prefab.GetComponent<Rigidbody2D>());
-        }
-
-        private void SetRigid(Rigidbody2D rigidbody) 
-        {
-            if(TryLoadInputFieldData(MassInputField, out float mass))
-                rigidbody.mass = mass;
-
-            if(TryLoadInputFieldData(GravityScaleInputField, out float gravity))
-                rigidbody.gravityScale = gravity;
-
-            if(TryLoadInputFieldData(LinearDragInputField, out float linearDrag))
-                rigidbody.drag = linearDrag;
-
-            if(TryLoadInputFieldData(AngularDragInputField, out float angular))
-                rigidbody.angularDrag = angular;
-
-            if (ZToggle.isOn)
-                rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-
-            if (YToggle.isOn)
-                rigidbody.constraints = RigidbodyConstraints2D.FreezePositionY;
-
-            if (XToggle.isOn)
-                rigidbody.constraints = RigidbodyConstraints2D.FreezePositionX;
-        }
-
-        private bool TryLoadInputFieldData(TMP_InputField field, out float value)
-        {
-            value = 0;
-            if (field.text == String.Empty)
+            if (component is PhysicsComponentDTO)
             {
-                return false;
-            }
+                var physics = (PhysicsComponentDTO) component;
 
-            value = (float) Convert.ToDouble(field.text);
-            return true;
+                MassInputField.text = physics.Mass.ToString();
+                GravityScaleInputField.text = physics.Gravity.ToString();
+                LinearDragInputField.text = physics.LinearDrag.ToString();
+                AngularDragInputField.text = physics.AngularDrag.ToString();
+
+                ZToggle.isOn = physics.IsZRotationFreeze;
+                YToggle.isOn = physics.IsYPositionFreeze;
+                XToggle.isOn = physics.IsXPositionFreeze;
+            }
+            else
+            {
+                InfoPanelController.Instance.ShowMessage("Physics component parsing error!", "ObjectCreate");
+            }
+        }
+
+        public override async Task<ComponentDTO> GetComponent()
+        {
+            return await Task.Run(() => CreateComponent());
+        }
+
+        private PhysicsComponentDTO CreateComponent()
+        {
+            var mass = MathHelper.GetFloat(MassInputField.text, "Mass"); ;
+            var gravityScale = MathHelper.GetFloat(GravityScaleInputField.text, "Gravity");
+            var drag = MathHelper.GetFloat(LinearDragInputField.text, "Linear drag");
+            var angularDrag = MathHelper.GetFloat(AngularDragInputField.text, "Angular drag"); ;
+            return new PhysicsComponentDTO(mass, gravityScale, drag, angularDrag, ZToggle.isOn, YToggle.isOn, ZToggle.isOn);
         }
     }
 }

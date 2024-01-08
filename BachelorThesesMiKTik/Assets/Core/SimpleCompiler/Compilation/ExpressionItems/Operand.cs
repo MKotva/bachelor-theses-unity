@@ -6,11 +6,13 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionItems
     {
         public object Value { get; set; }
         public ValueType Type { get; set; }
+        public string Name { get; set; }
 
-        public Operand(object value, ValueType type)
+        public Operand(object value, ValueType type, string name = "")
         {
             Value = value;
             Type = type;
+            Name = name;
         }
     }
 }

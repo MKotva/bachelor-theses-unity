@@ -1,14 +1,11 @@
 using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.Enums;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class BackgroundPopUpController : PopUpController
 {
     [SerializeField] GameObject ContentView; //Parent gameobject for source panel instance.
     [SerializeField] GameObject LinePrefab; //Source panel frefab.
-    [SerializeField] GameObject Background; //Background parent with background controller.
     //[SerializeField] List<string> DefaultSources;
 
     private BackgroundController backgroundController;
@@ -17,7 +14,7 @@ public class BackgroundPopUpController : PopUpController
 
     private void Start()
     {
-        backgroundController = Background.GetComponent<BackgroundController>();
+        backgroundController = BackgroundController.Instance;
         lines = new Stack<GameObject>();
         assetSources = new List<SourceDTO>();
     }

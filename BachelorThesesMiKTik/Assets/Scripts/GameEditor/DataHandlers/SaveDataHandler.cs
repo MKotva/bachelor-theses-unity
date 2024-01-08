@@ -1,8 +1,12 @@
+using Assets.Core.GameEditor.DTOS;
+using Assets.Core.GameEditor.Serializers;
 using Assets.Scenes.GameEditor.Core.DTOS;
-using Mono.Cecil.Cil;
+using Assets.Scripts.GameEditor.ItemView;
 using SimpleFileBrowser;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class SaveDataHandler : MonoBehaviour
 { 
@@ -16,17 +20,38 @@ public class SaveDataHandler : MonoBehaviour
         editor = Editor.Instance;
     }
 
+    /// <summary>
+    /// Handles save button click. Finds new unique path in DefaultPath(./Maps) and then
+    /// saves map into JSON.
+    /// </summary>
     public void OnSaveClick()
     {
         var filepath = GetUniqueFilePath(DefaultPath);
-        editor.SaveMap(filepath);
+        SaveMap(filepath);
     }
 
+    /// <summary>
+    /// Creates "Save file browser window" (from unity package) which handles whole save procces.
+    /// </summary>
     public void OnSaveAsClick()
     {
-        SaveToPath();
+        ShowDialogWindow();
     }
-    private void SaveToPath()
+
+    /// <summary>
+    /// Gets GameDTO object which represents actual game status and calls JSON serialization.
+    /// </summary>
+    /// <param name="path"></param>
+    public void SaveMap(string path)
+    {
+        JSONSerializer.Serialize(GameDataSerializer.GetGameDTO(), path);
+    }
+
+    #region PRIVATE
+    /// <summary>
+    /// Creates "Save dialog window" and sets OnSucces(If selected path is valid) and OnFail(otherwise).
+    /// </summary>
+    private void ShowDialogWindow()
     {
         editor.OnDisable();
         FileBrowser.ShowSaveDialog((paths) => { OnSucces(paths[0]);}, OnFail, FileBrowser.PickMode.Files, false, DefaultSaveAsPath, "Map.json", "Save As", "Save");
@@ -34,7 +59,7 @@ public class SaveDataHandler : MonoBehaviour
 
     private void OnSucces(string path)
     {
-       editor.SaveMap(path);
+       SaveMap(path);
        editor.OnEnable();
     }
     private void OnFail()
@@ -42,6 +67,11 @@ public class SaveDataHandler : MonoBehaviour
        editor.OnEnable();
     }
 
+    /// <summary>
+    /// Extracts directory and file name, and adjusts name to be unique.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     private string GetUniqueFilePath(string path)
     {
         string directoryPath = Path.GetDirectoryName(path);
@@ -56,4 +86,6 @@ public class SaveDataHandler : MonoBehaviour
             path = Path.Combine(directoryPath, name + "-" + i + extension);
         }
     }
+
+    #endregion
 }

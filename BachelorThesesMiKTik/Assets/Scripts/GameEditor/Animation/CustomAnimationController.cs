@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using Assets.Core.GameEditor.Animation;
-using UnityEngine.Rendering;
 using Assets.Core.GameEditor.AnimationControllers;
 
 namespace Assets.Scripts.GameEditor.Controllers
@@ -14,27 +8,30 @@ namespace Assets.Scripts.GameEditor.Controllers
     {
         private CustomAnimator animator;
         private SpriteRenderer spriteRenderer;
+        private bool shouldLoop;
 
         private void Start()
         {
             TryGetComponent(out spriteRenderer);
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             if (spriteRenderer == null || animator == null)
             {
                 return;
             }
 
-            animator.Animate(Time.fixedDeltaTime);
+            if(shouldLoop || !animator.HasFinished)
+                animator.Animate(Time.deltaTime);
         }
 
-        public void SetCustomAnimation(CustomAnimation animation)
+        public void SetCustomAnimation(CustomAnimation animation, bool loop)
         {
             if (animation == null || animation.Frames.Count == 0)
                 return; //TODO: Add exception handling.
             animator = new CustomAnimator(spriteRenderer, animation);
+            shouldLoop = loop;
         }
 
         public void PauseAnimation()
@@ -50,6 +47,16 @@ namespace Assets.Scripts.GameEditor.Controllers
         public void ResetAnimation()
         {
             animator.ResetAnimation();
+        }
+
+        public void StopAfterFinishingLoop()
+        {
+            shouldLoop = false;
+        }
+
+        public bool HasFinishedLoop()
+        {
+            return animator.HasFinished;
         }
 
         public Sprite GetAnimationPreview()

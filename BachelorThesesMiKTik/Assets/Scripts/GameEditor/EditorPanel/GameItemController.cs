@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 namespace Assets.Scripts.GameEditor.ItemView
 {
@@ -17,83 +16,90 @@ namespace Assets.Scripts.GameEditor.ItemView
         [SerializeField] private List<ItemData> DefaultItems;
 
         public ItemData ActualSelectedItem { get; private set; }
-        public Dictionary<string, GameObject> GroupViews {  get; private set; }
+        public Dictionary<string, ItemGroupViewController> GroupViews {  get; private set; }
         public List<ItemData> Items { get; private set; }
+        public Dictionary<string, int> ItemsNameIdPair { get; private set; }
 
-        private GameObject activeGroup;
+        private ItemGroupViewController activeGroup;
 
         private void Start()
         {
             GroupViewSelector.onValueChanged.AddListener( delegate { OnSelectorValueChanged(); });
             ActualSelectedItem = DefaultItems[0];
-            GroupViews = new Dictionary<string, GameObject>();
+            GroupViews = new Dictionary<string, ItemGroupViewController>();
             Items = new List<ItemData>();
+            ItemsNameIdPair = new Dictionary<string, int>();
 
             foreach (var item in DefaultItems) 
             {
                 AddItem(item);
             }
+
             activeGroup = GroupViews.Values.First();
-            activeGroup.SetActive(true);
+            activeGroup.gameObject.SetActive(true);
         }
 
         public void AddItem(ItemData item)
         {
-            var groupName = item.GroupName;
-            if (!GroupViews.ContainsKey(groupName))
-            {
-                var group = Instantiate(ViewPanelPrefab, transform);
-                group.SetActive(false);
-
-                GroupViews.Add(groupName, group);
-                GroupViewSelector.AddOptions(new List<TMP_Dropdown.OptionData> { new TMP_Dropdown.OptionData(groupName) });
-            }
-
-            var controller = GroupViews[groupName].GetComponent<ItemGroupViewController>();
-            controller.AddItemButton(item, ViewPlanelButtonClick);
-
+            AddToGroup(item);
             item.Id = Items.Count;
             Items.Add(item);
+            ItemsNameIdPair.Add(item.ShownName, item.Id);
         }
 
+        public void EditActualSelectedItem(ItemData oldData, ItemData newData)
+        {
+            EditItem(oldData, newData);
+            ActualSelectedItem = newData;
+        }
+
+        public void EditItem(ItemData oldItem, ItemData newItem)
+        {
+            if(ItemsNameIdPair.ContainsKey(oldItem.ShownName)) 
+            {
+                var id = ItemsNameIdPair[oldItem.ShownName];
+                ItemsNameIdPair.Remove(oldItem.ShownName);
+                ItemsNameIdPair.Add(newItem.ShownName, id);
+
+                GroupViews[oldItem.GroupName].RemoveItemButton(oldItem);
+                AddToGroup(newItem);
+
+                newItem.Id = id;
+                Items[id] = newItem;
+
+                var group = Editor.Instance.GetGroup(id).Keys.ToList();
+                foreach (var itemPosition in group) 
+                {
+                    Editor.Instance.ReplaceItem(newItem, itemPosition);
+                }
+            }
+        }
 
         public UnityAction ViewPlanelButtonClick(ItemData item)
         {
             ActualSelectedItem = item;
             ChangeActualItemView(item);
-            //MapCanvasController.SetPrefab(item);
             return null;
         }
 
-
-        public ItemData FindClosestItem(string name, out GameObject itemGroup)
+        public bool TryFindIdByName(string itemName, out int id)
         {
-            itemGroup = GroupViews.Values.First();
-            ItemData itemData = Items[0];
-            int minDistance = int.MaxValue;
-         
-            foreach (var group in GroupViews) 
+            if (ItemsNameIdPair.ContainsKey(itemName))
             {
-                var controller = group.Value.GetComponent<ItemGroupViewController>();
-                var item = controller.FindClosestItem(name, out var distance);
-                if(minDistance > distance)
-                {
-                    itemGroup = group.Value;
-                    itemData = item;
-                    minDistance = distance;
-                }
-
+                id = ItemsNameIdPair[itemName];
+                return false;
             }
-            return itemData;
+                
+
+            id = ItemsNameIdPair[itemName];
+            return true;
         }
 
         public void OnFindClick()
         {
             var name = SearchItemField.GetComponent<TMP_InputField>().text;
-            ActualSelectedItem = FindClosestItem(name, out var selectedGroup);
-            //MapCanvasController.SetPrefab(ActualSelectedItem);
+            ActualSelectedItem = FindClosestItemName(name, out var selectedGroup);
             SetActiveGroupView(selectedGroup);
-
             ChangeActualItemView(ActualSelectedItem);
         }
 
@@ -109,6 +115,43 @@ namespace Assets.Scripts.GameEditor.ItemView
             SetActiveGroupView(GroupViews[selectedGroup]);
         }
 
+        private void AddToGroup(ItemData newItem)
+        {
+            var groupName = newItem.GroupName;
+            if (!GroupViews.ContainsKey(groupName))
+            {
+                var group = Instantiate(ViewPanelPrefab, transform).GetComponent<ItemGroupViewController>();
+                group.gameObject.SetActive(false);
+
+                GroupViews.Add(groupName, group);
+                GroupViewSelector.AddOptions(new List<TMP_Dropdown.OptionData> { new TMP_Dropdown.OptionData(groupName) });
+            }
+
+            var controller = GroupViews[groupName];
+            controller.AddItemButton(newItem, ViewPlanelButtonClick);
+        }
+
+        private ItemData FindClosestItemName(string name, out ItemGroupViewController itemGroup)
+        {
+            itemGroup = GroupViews.Values.First();
+            ItemData itemData = Items[0];
+            int minDistance = int.MaxValue;
+
+            foreach (var group in GroupViews)
+            {
+                ;
+                var item = group.Value.FindClosestItem(name, out var distance);
+                if (minDistance > distance)
+                {
+                    itemGroup = group.Value;
+                    itemData = item;
+                    minDistance = distance;
+                }
+
+            }
+            return itemData;
+        }
+
         private void ChangeActualItemView(ItemData item)
         {
             //TODO: Exception
@@ -116,11 +159,11 @@ namespace Assets.Scripts.GameEditor.ItemView
             image.sprite = item.GetImage();
         }
 
-        private void SetActiveGroupView(GameObject group)
+        private void SetActiveGroupView(ItemGroupViewController group)
         {
-            activeGroup.SetActive(false);
+            activeGroup.gameObject.SetActive(false);
             activeGroup = group;
-            activeGroup.SetActive(true);
+            activeGroup.gameObject.SetActive(true);
         }
     }
 }
