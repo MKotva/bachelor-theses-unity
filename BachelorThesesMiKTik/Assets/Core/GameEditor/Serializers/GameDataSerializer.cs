@@ -88,12 +88,12 @@ namespace Assets.Core.GameEditor.Serializers
         /// <returns>List of MapObjectDTO representing all instances of objects in map.</returns>
         private static List<MapObjectDTO> GetMapObjects()
         {
-            var editor = Editor.Instance;
+            var map = MapCanvas.Instance;
             var mapObjects = new List<MapObjectDTO>();
 
-            foreach (var id in editor.Data.Keys)
+            foreach (var id in map.Data.Keys)
             {
-                foreach (var position in editor.Data[id].Keys)
+                foreach (var position in map.Data[id].Keys)
                 {
                     mapObjects.Add(new MapObjectDTO(id, position));
                 }
@@ -107,13 +107,13 @@ namespace Assets.Core.GameEditor.Serializers
         /// <param name="mapObjects"></param>
         private static void SetObjectToMap(List<MapObjectDTO> mapObjects)
         {
-            var editor = Editor.Instance;
-            editor.MapJournal.Clear();
-            editor.EraseMap();
+            var map = MapCanvas.Instance;
+            map.MapJournal.Clear();
+            map.EraseMap();
             foreach (var obj in mapObjects)
             {
                 var item = GameItemController.Instance.Items[obj.Id];
-                editor.Paint(item, obj.Position);
+                map.Paint(item, obj.Position);
             }
         }
 

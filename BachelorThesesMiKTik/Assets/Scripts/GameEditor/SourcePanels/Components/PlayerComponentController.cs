@@ -1,7 +1,6 @@
 ﻿using Assets.Core.GameEditor.DTOS.Components;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
 using Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings;
-using Assets.Scripts.GameEditor.Entiti;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -49,7 +48,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
             if (!isInitialized)
             {
                 OnActionChange(ActionSettings.ActualPanel.GetActionTypes());
-                ActionSettings.AddListener(OnActionChange);
+                ActionSettings.OnActionChange += OnActionChange;
                 isInitialized = true;
             }
         }

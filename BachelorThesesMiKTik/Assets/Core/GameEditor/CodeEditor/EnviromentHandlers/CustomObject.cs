@@ -114,7 +114,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (frames == null)
                 throw new RuntimeException("You can not set animation before adding at least one frame via \"AddAnimationFrame()\"");
 
-            CustomController.SetSource(new AnimationSourceDTO(SourceType.Animation, frames), xSize, ySize, shouldLoop);
+            CustomController.SetSource(new AnimationSourceDTO(frames, "", SourceType.Animation), xSize, ySize, shouldLoop);
         }
 
         public bool IsAnimationComplete()
@@ -126,19 +126,19 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         public void PauseAnimation()
         {
             CheckAnimationConditions();
-            CustomController.AnimationController.PauseAnimation();
+            CustomController.AnimationController.Pause();
         }
 
         public void ResumeAnimation()
         {
             CheckAnimationConditions();
-            CustomController.AnimationController.ResumeAnimation();
+            CustomController.AnimationController.Resume();
         }
 
         public void ResetAnimation()
         {
             CheckAnimationConditions();
-            CustomController.AnimationController.ResetAnimation();
+            CustomController.AnimationController.ResetClip();
         }
         #endregion
 

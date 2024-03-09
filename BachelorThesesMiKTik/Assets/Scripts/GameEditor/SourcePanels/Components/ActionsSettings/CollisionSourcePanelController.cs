@@ -5,7 +5,6 @@ using Assets.Scripts.GameEditor.ItemView;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
 {
@@ -14,12 +13,14 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         [SerializeField] private TMP_Dropdown ObjectSelection;
         [SerializeField] private GameObject CodeEditor;
 
-
+        private GameObject ParentCanvas;
+        private CodeEditorPopupController codeController;
         private SimpleCode handler;
         private void Awake()
         {
             ObjectSelection.ClearOptions();
             ObjectSelection.AddOptions(GameItemController.Instance.ItemsNameIdPair.Keys.ToList());
+            ParentCanvas = EditorController.Instance.PopUpCanvas.gameObject;
         }
 
         public CollisionDTO Get()
@@ -41,10 +42,19 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
 
         public void ShowEditor()
         {
-            var controller = Instantiate(CodeEditor, transform).GetComponent<CodeEditorPopupController>(); //TODO: Check the transform.
+            codeController = Instantiate(CodeEditor, ParentCanvas.transform).GetComponent<CodeEditorPopupController>(); //TODO: Check the transform.
             if(handler != null) 
             {
-                controller.Initialize(handler);
+                codeController.Initialize(handler);
+            }
+            codeController.onExit += OnEditorExit;
+        }
+
+        public void OnEditorExit()
+        {
+            if(codeController.CompilationCode != null) 
+            {
+                handler = codeController.CompilationCode;
             }
         }
 

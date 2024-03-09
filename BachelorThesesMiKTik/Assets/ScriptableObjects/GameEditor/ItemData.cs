@@ -28,7 +28,7 @@ public class ItemData : ScriptableObject
         
         data.ShownName = shownName;
         data.GroupName = groupName;
-        data.Prefab = new GameObject("Random");
+        data.Prefab = new GameObject("CustomObjectPrefab");
         var texture = new Texture2D(32, 16);
         data.ShownImage = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         data.Components = new List<ComponentDTO>();

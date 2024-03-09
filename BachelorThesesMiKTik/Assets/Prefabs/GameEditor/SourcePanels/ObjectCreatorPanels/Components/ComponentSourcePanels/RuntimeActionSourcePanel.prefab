@@ -1489,8 +1489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ActionSelection: {fileID: 8317293683604303621}
   EditButton: {fileID: 6887515328950880218}
-  EditorPrefab: {fileID: 4774379685961148065, guid: 017f4931ffcd08a46bd1c5c8c4ff3d74, type: 3}
-  PopUp: {fileID: 0}
+  EditorPrefab: {fileID: 6139910173952661679, guid: 36eb2a34dc197d040900fbd1ee2d86d8, type: 3}
 --- !u!1 &8653253628879726934
 GameObject:
   m_ObjectHideFlags: 0

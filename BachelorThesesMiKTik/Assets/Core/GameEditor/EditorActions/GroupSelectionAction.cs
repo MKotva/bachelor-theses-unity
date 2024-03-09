@@ -11,19 +11,19 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         bool _isMouseDown;
         public override void OnMouseDown(MouseButton key) 
         {
-            _lastActionRecord = null;
-            _lastActionRecordReverse = null;
+            lastActionRecord = null;
+            lastActionRecordReverse = null;
 
             _isMouseDown = true;
-            if (editor.Selected.Count != 0)
+            if (map.Selected.Count != 0)
             {
                 var positions = GetSelectedPositionsString();
-                _lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
-                editor.UnSelectAll();
+                lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
+                map.UnSelectAll();
             }
             else
             {
-                _lastActionRecordReverse = new JournalActionDTO("SUA", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO("SUA", PerformAction);
             }
         }
 
@@ -37,7 +37,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if(_isMouseDown)
             {
                 SelectAllGroupItems(mousePosition);
-                _lastActionRecord = new JournalActionDTO($"SG;{mousePosition.x}:{mousePosition.y}", PerformAction);
+                lastActionRecord = new JournalActionDTO($"SG;{mousePosition.x}:{mousePosition.y}", PerformAction);
             }
             _isMouseDown = false;
         }
@@ -51,31 +51,31 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
             if (descriptions[0] == "SG")
             {
-                editor.UnSelectAll();
+                map.UnSelectAll();
                 SelectAllGroupItems(MathHelper.GetVector3FromString(descriptions[1]));
             }
             else if(descriptions[0] == "SUA")
             {
-                editor.UnSelectAll();
+                map.UnSelectAll();
             }
         }
 
         private void SelectAllGroupItems(Vector3 position)
         {
-            var worldCellPosition = editor.GetCellCenterPosition(position);
-            GameObject objectAtPos = editor.GetObjectAtPosition(worldCellPosition);
+            var worldCellPosition = map.GetCellCenterPosition(position);
+            GameObject objectAtPos = map.GetObjectAtPosition(worldCellPosition);
 
             if (objectAtPos == null)
                 return;
 
-            foreach (var key in editor.Data.Keys)
+            foreach (var key in map.Data.Keys)
             {
-                if (editor.Data[key].ContainsKey(worldCellPosition))
+                if (map.Data[key].ContainsKey(worldCellPosition))
                 {
-                    foreach (var item in editor.Data[key])
+                    foreach (var item in map.Data[key])
                     {
-                        editor.MarkObject(item.Value);
-                        editor.Selected.Add(item.Key, (item.Value, false));
+                        map.Marker.MarkObject(item.Value);
+                        map.Selected.Add(item.Key, (item.Value, false));
                     }
                 }
             }
@@ -83,7 +83,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private string GetSelectedPositionsString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var selectedPos in editor.Selected.Keys)
+            foreach (var selectedPos in map.Selected.Keys)
             {
                 sb.Append($"{selectedPos.x}:{selectedPos.y};");
             }

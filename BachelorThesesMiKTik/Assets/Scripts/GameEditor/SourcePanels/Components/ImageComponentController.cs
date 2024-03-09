@@ -1,6 +1,10 @@
+using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.Animation;
+using Assets.Core.GameEditor.AssetLoaders;
+using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Components;
+using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
-using System;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -9,7 +13,8 @@ public class ImageComponentController : ObjectComponent
 {
     [SerializeField] TMP_InputField XSizeField;
     [SerializeField] TMP_InputField YSizeField;
-    [SerializeField] SourcePanelController SourcePanel;
+    [SerializeField] AssetSourcePanelController SourcePanel;
+    [SerializeField] GameObject PreviewObject;
 
     public override void SetComponent(ComponentDTO component)
     {
@@ -28,28 +33,31 @@ public class ImageComponentController : ObjectComponent
 
     public override async Task<ComponentDTO> GetComponent()
     {
-        return CreateComponent();
+        return await Task.Run(() => CreateComponent());
+    }
+
+    public async void OnPreviewPress()
+    {
+        var component = (ImageComponentDTO)CreateComponent();
+        if(component.Data.Type == SourceType.Image)
+        {
+            await SpriteLoader.SetSprite(PreviewObject, ((SourceDTO)component.Data).URL);
+        }
+        else
+        {
+            await AnimationLoader.SetAnimation(PreviewObject, (AnimationSourceDTO)component.Data, true, true);
+        }
     }
 
     #region PRIVATE
     private ComponentDTO CreateComponent()
     {
         var sourceDTO = SourcePanel.GetData();
-        var xSize = GetSize(XSizeField);
-        var ySize = GetSize(YSizeField);
+        var xSize = MathHelper.GetUInt(XSizeField.text, 30, "Image x Size", "Object creator");
+        var ySize = MathHelper.GetUInt(YSizeField.text, 30, "Image y Size", "Object creator");
         return new ImageComponentDTO(xSize, ySize, sourceDTO);
     }
 
-    private uint GetSize(TMP_InputField field)
-    {
-        try
-        {
-            return Convert.ToUInt32(field.text);
-        }
-        catch
-        {
-            return 30;
-        }
-    }
+
     #endregion
 }

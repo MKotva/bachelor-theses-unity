@@ -1,5 +1,4 @@
 ﻿using Assets.Core.GameEditor.DTOS;
-using Assets.Core.SimpleCompiler.Compilation.ExpressionItems;
 using Assets.Scripts.GameEditor.SourcePanels;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace Assets.Scripts.GameEditor.PopUp.CodeEditor
         [SerializeField] GameObject SourceLinePrefab;
         [SerializeField] GameObject ContentView;
 
-        private Stack<GlobalVariableSourcePanelController> lines = new Stack<GlobalVariableSourcePanelController>();
+        private List<GlobalVariableSourcePanelController> lines = new List<GlobalVariableSourcePanelController>();
 
 
         /// <summary>
@@ -39,27 +38,32 @@ namespace Assets.Scripts.GameEditor.PopUp.CodeEditor
             {
                 var line = AddLine();
                 line.Set(env);
-                lines.Push(line);
+                lines.Add(line);
             }
         }
 
         public void OnAddClick()
         {
-            lines.Push(AddLine());
-        }
-
-        public void OnRemoveClick()
-        {
-            if (lines.Count > 0)
-            {
-                var line = lines.Pop();
-                Destroy(line.gameObject);
-            }
+            lines.Add(AddLine());
         }
 
         private GlobalVariableSourcePanelController AddLine()
         {
-            return Instantiate(SourceLinePrefab, ContentView.transform).GetComponent<GlobalVariableSourcePanelController>();
+            var line = Instantiate(SourceLinePrefab, ContentView.transform);
+            line.GetComponent<SourcePanelController>().onDestroy += DestroyPanel;
+            return line.GetComponent<GlobalVariableSourcePanelController>();
+
+        }
+
+        private void DestroyPanel(int id)
+        {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].GetInstanceID() == id)
+                {
+                    lines.RemoveAt(i);
+                }
+            }
         }
     }
 }

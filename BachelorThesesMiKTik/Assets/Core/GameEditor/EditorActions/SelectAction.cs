@@ -24,19 +24,19 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (button == MouseButton.LeftMouse)
             {
-                _lastActionRecord = null;
-                _lastActionRecordReverse = null;
+                lastActionRecord = null;
+                lastActionRecordReverse = null;
 
                 _isMouseDown = true;
-                if (editor.Selected.Count != 0)
+                if (map.Selected.Count != 0)
                 {
                     var positions = GetSelectedPositionsString();
-                    _lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
-                    editor.UnSelectAll();
+                    lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
+                    map.UnSelectAll();
                 }
                 else
                 {
-                    _lastActionRecordReverse = new JournalActionDTO($"SUA", PerformAction);
+                    lastActionRecordReverse = new JournalActionDTO($"SUA", PerformAction);
                 }
             }
         }
@@ -46,11 +46,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (_isMouseDown && !_isKeyDown)
             {
                 var positions = GetSelectedPositionsString();
-                _lastActionRecord = new JournalActionDTO($"SS;{positions}", PerformAction);
+                lastActionRecord = new JournalActionDTO($"SS;{positions}", PerformAction);
             }
             else if (_isMouseDown && _isKeyDown)
             {
-                _lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
+                lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
             }
 
             _isMouseDown = false;
@@ -60,7 +60,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (key == Key.LeftShift || key == Key.RightShift)
             {
-                _squareStart = editor.GetWorldMousePosition();
+                _squareStart = map.GetWorldMousePosition();
                 _isKeyDown = true;
             }
         }
@@ -69,7 +69,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             _isKeyDown = false;
             _isMouseDown = false;
-            _lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
+            lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
         }
 
         public override void OnUpdate(Vector3 mousePosition)
@@ -101,7 +101,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (descriptions.Length < 2)
                     return;
 
-                editor.UnSelectAll();
+                map.UnSelectAll();
                 for (int i = 1; i < descriptions.Length; i++)
                 {
                     if (descriptions[i] == "")
@@ -115,7 +115,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (descriptions.Length != 3)
                     return;
 
-                editor.UnSelectAll();
+                map.UnSelectAll();
                 var fromPos = MathHelper.GetVector3FromString(descriptions[1]);
                 var toPos = MathHelper.GetVector3FromString(descriptions[2]);
 
@@ -123,51 +123,51 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
             else if (descriptions[0] == "SUA")
             {
-                editor.UnSelectAll();
+                map.UnSelectAll();
             }
         }
 
         private void SingleSelection(Vector3 mousePosition)
         {
-            var cellCenter = editor.GetCellCenterPosition(mousePosition);
-            if (editor.Selected.ContainsKey(cellCenter))
+            var cellCenter = map.GetCellCenterPosition(mousePosition);
+            if (map.Selected.ContainsKey(cellCenter))
                 return;
 
-            var objectAtPositon = editor.GetObjectAtPosition(cellCenter);
+            var objectAtPositon = map.GetObjectAtPosition(cellCenter);
             if (objectAtPositon != null)
             {
 
-                editor.MarkObject(objectAtPositon);
-                editor.Selected.Add(cellCenter, (objectAtPositon, false));
+                map.Marker.MarkObject(objectAtPositon); //TODO : Initialize Marker, mb singleton?
+                map.Selected.Add(cellCenter, (objectAtPositon, false));
             }
         }
 
         private void SingleReselection(Vector3 mousePosition)
         {
-            var cellCenter = editor.GetCellCenterPosition(mousePosition);
-            if (editor.Selected.ContainsKey(cellCenter))
+            var cellCenter = map.GetCellCenterPosition(mousePosition);
+            if (map.Selected.ContainsKey(cellCenter))
                 return;
 
-            var objectAtPositon = editor.GetObjectAtPosition(cellCenter);
+            var objectAtPositon = map.GetObjectAtPosition(cellCenter);
             if (objectAtPositon != null)
             {
 
-                editor.MarkObject(objectAtPositon);
-                editor.Selected.Add(cellCenter, (objectAtPositon, false));
+                map.Marker.MarkObject(objectAtPositon);
+                map.Selected.Add(cellCenter, (objectAtPositon, false));
             }
             else
             {
-                var marker = editor.CreateMarkAtPosition(cellCenter);
-                editor.Selected.Add(cellCenter, (marker, true));
+                var marker = map.Marker.CreateMarkAtPosition(cellCenter);
+                map.Selected.Add(cellCenter, (marker, true));
             }
         }
 
         private void SquareSelection(Vector3 fromPos, Vector3 toPos)
         {
-            editor.UnSelectAll();
+            map.UnSelectAll();
 
-            var xCellSize = editor.GridLayout.cellSize.x;
-            var yCellSize = editor.GridLayout.cellSize.y;
+            var xCellSize = map.GridLayout.cellSize.x;
+            var yCellSize = map.GridLayout.cellSize.y;
 
             var xMove = ( fromPos.x - toPos.x ) / xCellSize;
             var yMove = ( fromPos.y - toPos.y ) / yCellSize;
@@ -180,18 +180,18 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 for (int j = 0; j < Math.Abs(yMove) + 1; j++)
                 {
                     var calculatedPosition = new Vector3(toPos.x + ( xSign * i * xCellSize ), toPos.y + ( ySign * j * yCellSize ));
-                    var cellCenter = editor.GetCellCenterPosition(calculatedPosition);
-                    GameObject objectAtPos = editor.GetObjectAtPosition(cellCenter);
+                    var cellCenter = map.GetCellCenterPosition(calculatedPosition);
+                    GameObject objectAtPos = map.GetObjectAtPosition(cellCenter);
 
                     if (objectAtPos != null)
                     {
-                        editor.MarkObject(objectAtPos);
-                        editor.Selected.Add(cellCenter, (objectAtPos, false));
+                        map.Marker.MarkObject(objectAtPos);
+                        map.Selected.Add(cellCenter, (objectAtPos, false));
                     }
                     else
                     {
-                        var newMarker = editor.CreateMarkAtPosition(cellCenter);
-                        editor.Selected.Add(cellCenter, (newMarker, true));
+                        var newMarker = map.Marker.CreateMarkAtPosition(cellCenter);
+                        map.Selected.Add(cellCenter, (newMarker, true));
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private string GetSelectedPositionsString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var selectedPos in editor.Selected.Keys)
+            foreach (var selectedPos in map.Selected.Keys)
             {
                 sb.Append($"{selectedPos.x}:{selectedPos.y};");
             }

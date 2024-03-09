@@ -65,12 +65,13 @@ namespace Assets.Scripts.GameEditor.ItemView
                 AddToGroup(newItem);
 
                 newItem.Id = id;
+                Destroy(Items[id].Prefab);
                 Items[id] = newItem;
 
-                var group = Editor.Instance.GetGroup(id).Keys.ToList();
+                var group = MapCanvas.Instance.GetGroup(id).Keys.ToList();
                 foreach (var itemPosition in group) 
                 {
-                    Editor.Instance.ReplaceItem(newItem, itemPosition);
+                    MapCanvas.Instance.ReplaceItem(newItem, itemPosition);
                 }
             }
         }

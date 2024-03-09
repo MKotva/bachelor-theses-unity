@@ -1,4 +1,6 @@
 using Assets.Core.GameEditor.DTOS;
+using Assets.Scripts.GameEditor.Audio;
+using Assets.Scripts.GameEditor.SourcePanels;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,37 +8,21 @@ public class BackgroundPopUpController : PopUpController
 {
     [SerializeField] GameObject ContentView; //Parent gameobject for source panel instance.
     [SerializeField] GameObject LinePrefab; //Source panel frefab.
-    //[SerializeField] List<string> DefaultSources;
+    [SerializeField] GameObject AudioLoader;
 
     private BackgroundController backgroundController;
-    private Stack<GameObject> lines;
+    private List<GameObject> lines;
     private List<SourceDTO> assetSources;
 
-    private void Start()
-    {
-        backgroundController = BackgroundController.Instance;
-        lines = new Stack<GameObject>();
-        assetSources = new List<SourceDTO>();
-    }
-
+    #region PUBLIC
     /// <summary>
     /// Adds new source line.
     /// </summary>
     public void OnAddLineClick()
-    { 
-        lines.Push(Instantiate(LinePrefab,ContentView.transform));
-    }
-
-    /// <summary>
-    /// Removes added source line.
-    /// </summary>
-    public void OnRemoveLineClick() 
     {
-        if (lines.Count > 0)
-        {
-            var line = lines.Pop();
-            Destroy(line);
-        }
+        var instance = Instantiate(LinePrefab, ContentView.transform);
+        instance.GetComponent<SourcePanelController>().onDestroy += DestroyPanel;
+        lines.Add(instance);
     }
 
     /// <summary>
@@ -68,7 +54,7 @@ public class BackgroundPopUpController : PopUpController
         assetSources.Clear();
         foreach (var line in lines)
         {
-            var controller = line.GetComponent<SourcePanelController>();
+            var controller = line.GetComponent<AssetSourcePanelController>();
             assetSources.Add(controller.GetData());
         }
 
@@ -83,4 +69,34 @@ public class BackgroundPopUpController : PopUpController
         backgroundController.SetDefault();
     }
 
+    public void OnSetAudioClick()
+    {
+        var audioLoader = Instantiate(AudioLoader, gameObject.transform).GetComponent<AudioLoaderController>();
+        var previous = BackgroundController.Instance.AudioController.AudioSourceDTO;
+        if (previous != null)
+            audioLoader.Initialize(previous);
+
+        audioLoader.OnSave += BackgroundController.Instance.SetAudioSource;
+    }
+    #endregion
+
+    #region PRIVATE
+    private void Start()
+    {
+        backgroundController = BackgroundController.Instance;
+        lines = new List<GameObject>();
+        assetSources = new List<SourceDTO>();
+    }
+
+    private void DestroyPanel(int id)
+    {
+        for (int i = 0; i < lines.Count; i++)
+        {
+            if (lines[i].GetInstanceID() == id)
+            {
+                lines.RemoveAt(i);
+            }
+        }
+    }
+    #endregion
 }

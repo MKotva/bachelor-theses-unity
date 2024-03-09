@@ -7,13 +7,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 {
     public class EditorActionBase
     {
-        public Editor editor;
-        internal JournalActionDTO _lastActionRecord;
-        internal JournalActionDTO _lastActionRecordReverse;
+        public MapCanvas map;
+        internal JournalActionDTO lastActionRecord;
+        internal JournalActionDTO lastActionRecordReverse;
 
         public EditorActionBase() 
         {
-            editor = Editor.Instance;
+            map = MapCanvas.Instance;
         }
 
         public virtual void OnMouseDown(MouseButton key) {}
@@ -25,12 +25,12 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         public virtual JournalActionDTO GetLastActionRecord() 
         {
-            return _lastActionRecord;
+            return lastActionRecord;
         }
 
         public virtual JournalActionDTO GetLastActionRecordReverse()
         {
-            return _lastActionRecordReverse;
+            return lastActionRecordReverse;
         }
     }
 }

@@ -46,10 +46,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
 
         private PhysicsComponentDTO CreateComponent()
         {
-            var mass = MathHelper.GetFloat(MassInputField.text, "Mass"); ;
-            var gravityScale = MathHelper.GetFloat(GravityScaleInputField.text, "Gravity");
-            var drag = MathHelper.GetFloat(LinearDragInputField.text, "Linear drag");
-            var angularDrag = MathHelper.GetFloat(AngularDragInputField.text, "Angular drag"); ;
+            var mass = MathHelper.GetFloat(MassInputField.text, "Mass", "Object creator"); ;
+            var gravityScale = MathHelper.GetFloat(GravityScaleInputField.text, "Gravity", "Object creator");
+            var drag = MathHelper.GetFloat(LinearDragInputField.text, "Linear drag", "Object creator");
+            var angularDrag = MathHelper.GetFloat(AngularDragInputField.text, "Angular drag", "Object creator"); ;
             return new PhysicsComponentDTO(mass, gravityScale, drag, angularDrag, ZToggle.isOn, YToggle.isOn, ZToggle.isOn);
         }
     }

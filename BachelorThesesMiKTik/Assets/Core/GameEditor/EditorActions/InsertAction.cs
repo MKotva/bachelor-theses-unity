@@ -22,8 +22,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         public InsertAction(bool dummy) { }
         public override void OnMouseDown(MouseButton key) 
         {
-            _lastActionRecord = null;
-            _lastActionRecordReverse = null;
+            lastActionRecord = null;
+            lastActionRecordReverse = null;
 
             if (key == MouseButton.LeftMouse)
             {
@@ -37,8 +37,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (_isMouseDown)
             {
                 var positionsString = GetPositionsString(_newObjectPostions);
-                _lastActionRecord = new JournalActionDTO($"I;{positionsString}", PerformAction);
-                _lastActionRecordReverse = new JournalActionDTO($"R;{positionsString}", _removeAction.PerformAction);
+                lastActionRecord = new JournalActionDTO($"I;{positionsString}", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO($"R;{positionsString}", _removeAction.PerformAction);
                 _isMouseDown = false;
             }
         }
@@ -47,12 +47,12 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if(_isMouseDown) 
             {
-                var position = editor.GetCellCenterPosition(mousePosition);
-                if (editor.Selected.ContainsKey(position))
+                var position = map.GetCellCenterPosition(mousePosition);
+                if (map.Selected.ContainsKey(position))
                 {
                     InsertSelection();
-                    _lastActionRecord = new JournalActionDTO($"IS;{mousePosition.x}:{mousePosition.y}", PerformAction);
-                    _lastActionRecordReverse = new JournalActionDTO($"RS;{mousePosition.x}:{mousePosition.y}", _removeAction.PerformAction);
+                    lastActionRecord = new JournalActionDTO($"IS;{mousePosition.x}:{mousePosition.y}", PerformAction);
+                    lastActionRecordReverse = new JournalActionDTO($"RS;{mousePosition.x}:{mousePosition.y}", _removeAction.PerformAction);
                     _isMouseDown = false;
                 }
                 else
@@ -76,9 +76,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (descriptions[0] == "IS")
             {
                 var position = MathHelper.GetVector3FromString(descriptions[1]);
-                position = editor.GetCellCenterPosition(position);
+                position = map.GetCellCenterPosition(position);
 
-                if (editor.Selected.ContainsKey(position))
+                if (map.Selected.ContainsKey(position))
                 {
                     InsertSelection();
                 }
@@ -110,27 +110,27 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         #region PRIVATE
         private void Insert(Vector3 position)
         {
-            position = editor.GetCellCenterPosition(position);
-            GameObject objectAtPos = editor.GetObjectAtPosition(position);
+            position = map.GetCellCenterPosition(position);
+            GameObject objectAtPos = map.GetObjectAtPosition(position);
             if (objectAtPos == null)
             {
-                editor.Paint(editor.ActualPrefab, position);
+                map.Paint(map.ActualPrefab, position);
             }
         }
 
         private void InsertSelection()
         {
-            var keys = editor.Selected.Keys.ToArray();
-            for (int i = 0; i < editor.Selected.Count; i++)
+            var keys = map.Selected.Keys.ToArray();
+            for (int i = 0; i < map.Selected.Count; i++)
             {
                 var position = keys[i];
-                if (editor.Selected[position].Item2) //TODO: Check selection prefab.
+                if (map.Selected[position].Item2) //TODO: Check selection prefab.
                 {
-                    editor.Erase(editor.Selected[position].Item1);
+                    map.Erase(map.Selected[position].Item1);
                     
-                    var newObject = editor.Paint(editor.ActualPrefab, position);
-                    editor.MarkObject(newObject);
-                    editor.Selected[position] = (newObject, false);
+                    var newObject = map.Paint(map.ActualPrefab, position);
+                    map.Marker.MarkObject(newObject);
+                    map.Selected[position] = (newObject, false);
                 }
             }
 
@@ -139,17 +139,17 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void InsertReverse(Vector3 position)
         {
-            position = editor.GetCellCenterPosition(position);
-            if (!editor.Selected.ContainsKey(position))
+            position = map.GetCellCenterPosition(position);
+            if (!map.Selected.ContainsKey(position))
                 return;
 
-            if (editor.Selected[position].Item2)
+            if (map.Selected[position].Item2)
             {
-                editor.Erase(editor.Selected[position].Item1);
+                map.Erase(map.Selected[position].Item1);
 
-                var newObject = editor.Paint(editor.ActualPrefab, position);
-                editor.MarkObject(newObject);
-                editor.Selected[position] = (newObject, false);
+                var newObject = map.Paint(map.ActualPrefab, position);
+                map.Marker.MarkObject(newObject);
+                map.Selected[position] = (newObject, false);
             }
         }
 

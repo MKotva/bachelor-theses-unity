@@ -10,12 +10,12 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
 {
     public abstract class AIActionBase
     {
-        internal Editor editor;
+        internal MapCanvas map;
         internal float actionCost;
 
         public AIActionBase(float cost = 1) 
         {
-            editor = Editor.Instance;
+            map = MapCanvas.Instance;
             actionCost = cost;
         }
 
@@ -43,22 +43,22 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             var reacheables = GetReacheablePositions(startPosition);
             
             foreach (var reacheable in reacheables)
-                markers.Add(editor.CreateMarkAtPosition(editor.MarkerDotPrefab, reacheable, color));
+                markers.Add(map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, reacheable, color));
 
             return markers;
         }
 
         internal bool IsWalkable(Vector3 position)
         {
-            if (editor.ContainsBlockingObjectAtPosition(position))
+            if (map.ContainsBlockingObjectAtPosition(position))
                 return false;
 
-            var _cellSize = editor.GridLayout.cellSize;
-            var lowerNeighbourPosition = editor.GetCellCenterPosition(new Vector3(position.x, position.y - _cellSize.y));
-            if (!editor.ContainsObjectAtPosition(lowerNeighbourPosition))
+            var _cellSize = map.GridLayout.cellSize;
+            var lowerNeighbourPosition = map.GetCellCenterPosition(new Vector3(position.x, position.y - _cellSize.y));
+            if (!map.ContainsObjectAtPosition(lowerNeighbourPosition))
                 return false;
 
-            var item = editor.GetObjectAtPosition(lowerNeighbourPosition);
+            var item = map.GetObjectAtPosition(lowerNeighbourPosition);
             if (item.layer != 7)
                 return false;
 

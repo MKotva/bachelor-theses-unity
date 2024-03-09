@@ -10,7 +10,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     private bool hasPassed;
     public async Task CreateItem(List<ObjectComponent> components)
     {
-        InfoPanelController.Instance.AddOnAddListener("ObjectCreate", ErrorHandler);
+        InfoPanelController.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
         var newItem = await CreateNewPrefab (components);
         if (hasPassed)
         {
@@ -21,7 +21,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
 
     public async Task EditItem(List<ObjectComponent> components)
     {
-        InfoPanelController.Instance.AddOnAddListener("ObjectCreate", ErrorHandler);
+        InfoPanelController.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
         var newItem = await CreateEditingPrefab(components);
         if (hasPassed)
         {

@@ -54,7 +54,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (animationData == null)
                 throw new RuntimeException("Exception in method \"AppendAnimationLayer\"! You must create new animation by calling \"CreateNewAnimationConcept\"");
 
-            newBackground.Add((SourceDTO) new AnimationSourceDTO(SourceType.Animation, animationData));
+            newBackground.Add((SourceDTO) new AnimationSourceDTO(animationData, "", SourceType.Animation));
         }
 
         [CodeEditorAttribute("Sets animation concept to existing background layer on index (num layer). " +
@@ -69,7 +69,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (BackgroundController.BackgroundLayers.Count <= layer || layer < 0)
                 throw new RuntimeException($"Ivalid layer id {layer}! Index out of range.");
 
-            BackgroundController.SetLayer((SourceDTO) new AnimationSourceDTO(SourceType.Animation, animationData), layer);
+            BackgroundController.SetLayer((SourceDTO) new AnimationSourceDTO(animationData, "", SourceType.Animation), layer);
         }
 
         [CodeEditorAttribute("Appends image layer to bacground concept, created by CreateBackgroundConcept()." +
@@ -142,7 +142,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (animationData.Count == 0)
                 throw new RuntimeException("Exception in method \"SetAnimationLayer\"! You must add some animation frames by calling \"AppendAnimationLayer\"");
 
-            BackgroundController.AppendLayer(new AnimationSourceDTO(SourceType.Animation, animationData), xSize, ySize);
+            BackgroundController.AppendLayer(new AnimationSourceDTO(animationData, "", SourceType.Animation), xSize, ySize);
         }
 
         [CodeEditorAttribute("Appends image layer to actual background with default scaling 1920x1080" +

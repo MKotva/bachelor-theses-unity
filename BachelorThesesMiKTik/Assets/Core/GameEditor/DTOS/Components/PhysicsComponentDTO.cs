@@ -35,6 +35,13 @@ namespace Assets.Core.GameEditor.DTOS.Components
             var rigid = GetOrAddComponent<Rigidbody2D>(item.Prefab);
             SetRigid(rigid);
         }
+
+        public override void SetInstance(ItemData item, GameObject instance)
+        {
+            //var rigid = GetOrAddComponent<Rigidbody2D>(instance);
+            //SetRigid(rigid);
+        }
+
         private void SetRigid(Rigidbody2D rigidbody)
         {
             rigidbody.mass = Mass;

@@ -16,7 +16,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] GameObject ContentView;
         [SerializeField] GameObject CollisionSourcePanel;
 
-        private Stack<CollisionSourcePanelController> instances;
+        private List<CollisionSourcePanelController> instances;
 
         public override void SetComponent(ComponentDTO component)
         {
@@ -27,7 +27,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
                 {
                     var panel = AddSourcePanel();
                     panel.Set(collider);
-                    instances.Push(panel);
+                    instances.Add(panel);
                 }
                 XInputField.text = boxCollider.XSize.ToString();
                 YInputField.text = boxCollider.YSize.ToString();
@@ -44,30 +44,19 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
 
         public void OnAdd()
         {
-            instances.Push(AddSourcePanel());
-        }
-
-        public void OnRemove()
-        {
-            var instace = instances.Pop();
-            Destroy(instace.gameObject);
+            instances.Add(AddSourcePanel());
         }
 
         #region PRIVATE
         private void Awake()
         {
-            instances = new Stack<CollisionSourcePanelController>();
-        }
-
-        private CollisionSourcePanelController AddSourcePanel()
-        {
-            return Instantiate(CollisionSourcePanel, ContentView.transform).GetComponent<CollisionSourcePanelController>();
+            instances = new List<CollisionSourcePanelController>();
         }
 
         private BoxColliderDTO CreateComponent()
         {
-            var xSize = MathHelper.GetPositiveFloat(XInputField.text, "X size");
-            var ySize = MathHelper.GetPositiveFloat(YInputField.text, "Y size");
+            var xSize = MathHelper.GetPositiveFloat(XInputField.text, "X size", "Object creator");
+            var ySize = MathHelper.GetPositiveFloat(YInputField.text, "Y size", "Object creator");
 
             var colliders = new List<CollisionDTO>();
             foreach (var instance in instances)
@@ -76,6 +65,24 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             }
 
             return new BoxColliderDTO(xSize, ySize, colliders);
+        }
+
+        private CollisionSourcePanelController AddSourcePanel()
+        {
+            var panel = Instantiate(CollisionSourcePanel, ContentView.transform);
+            panel.GetComponent<SourcePanelController>().onDestroy += PanelDestroyHandler;
+            return panel.GetComponent<CollisionSourcePanelController>();
+        }
+
+        private void PanelDestroyHandler(int id)
+        {
+            for (int i = 0; i < instances.Count; i++)
+            {
+                if (instances[i].GetInstanceID() == id)
+                {
+                    instances.RemoveAt(i);
+                }
+            }
         }
         #endregion
     }

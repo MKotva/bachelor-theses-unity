@@ -4,7 +4,7 @@
     {
         None,
         Image,
-        Video,
+        Sound,
         Animation
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Core.GameEditor.DTOS.Components
 {
@@ -23,5 +24,7 @@ namespace Assets.Core.GameEditor.DTOS.Components
             item.Prefab.name = Name;
             item.GroupName = Group;
         }
+
+        public override void SetInstance(ItemData item, GameObject instance) {}
     }
 }

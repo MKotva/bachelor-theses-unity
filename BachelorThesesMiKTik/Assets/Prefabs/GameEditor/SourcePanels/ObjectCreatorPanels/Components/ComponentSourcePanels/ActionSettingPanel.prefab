@@ -12470,8 +12470,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2347da19143b1ac4aa98313e80878f73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movePanel: {fileID: 0}
-  jumpPanel: {fileID: 0}
+  movePanel: {fileID: 5063800477679823282}
+  jumpPanel: {fileID: 6155953478269030175}
 --- !u!1 &6063600882690076567
 GameObject:
   m_ObjectHideFlags: 0
@@ -14649,7 +14649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c643c27449a71a446b360bfd41b3ca4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActionSelection: {fileID: 226278736586290170}
+  ActionType: {fileID: 226278736586290170}
   SettingPanels:
   - {fileID: 4213205093434744461}
   - {fileID: 5303446144294603282}

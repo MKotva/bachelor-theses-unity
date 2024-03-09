@@ -3,11 +3,8 @@ using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.CodeEditor;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Diagnostics.Tracing;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Scripts.GameEditor.SourcePanels
 {
@@ -110,7 +107,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         #region PRIVATE
         private void Awake()
         {
-            parent = GameObject.Find("PopUpCanvas");
+            parent = EditorController.Instance.PopUpCanvas.gameObject;
             ActionSelection.onValueChanged.AddListener(delegate { OnActionChange(); });
         }
 

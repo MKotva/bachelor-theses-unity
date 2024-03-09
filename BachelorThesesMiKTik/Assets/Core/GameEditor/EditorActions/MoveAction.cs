@@ -20,19 +20,19 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (key == MouseButton.LeftMouse)
             {
-                _lastActionRecord = null;
-                _lastActionRecordReverse = null;
+                lastActionRecord = null;
+                lastActionRecordReverse = null;
 
                 _isMouseDown = true;
-                _startPosition = editor.GetWorldMousePosition();
-                var worldCellPosition = editor.GetCellCenterPosition(_startPosition);
-                if (editor.Selected.ContainsKey(worldCellPosition))
+                _startPosition = map.GetWorldMousePosition();
+                var worldCellPosition = map.GetCellCenterPosition(_startPosition);
+                if (map.Selected.ContainsKey(worldCellPosition))
                 {
                     _moveSelection = true;
                 }
                 else
                 {
-                    _cameraOriginPosition = editor.CameraObj.transform.position;
+                    _cameraOriginPosition = map.CameraObj.transform.position;
                 }
             }
         }
@@ -42,14 +42,14 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (_moveSelection)
             {
                 SaveToMove();
-                _lastActionRecord = new JournalActionDTO($"MS;{_startPosition.x}:{_startPosition.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
-                _lastActionRecordReverse = new JournalActionDTO($"MS;{_lastMousePosition.x}:{_lastMousePosition.y};{_startPosition.x}:{_startPosition.y}", PerformAction);
+                lastActionRecord = new JournalActionDTO($"MS;{_startPosition.x}:{_startPosition.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO($"MS;{_lastMousePosition.x}:{_lastMousePosition.y};{_startPosition.x}:{_startPosition.y}", PerformAction);
                 _moveSelection = false;
             }
             else
             {
-                _lastActionRecord = new JournalActionDTO($"MC;{_startPosition.x}:{_startPosition.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
-                _lastActionRecordReverse = new JournalActionDTO($"MC;{_lastMousePosition.x}:{_lastMousePosition.y};{_startPosition.x}:{_startPosition.y}", PerformAction);
+                lastActionRecord = new JournalActionDTO($"MC;{_startPosition.x}:{_startPosition.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO($"MC;{_lastMousePosition.x}:{_lastMousePosition.y};{_startPosition.x}:{_startPosition.y}", PerformAction);
             }
             _isMouseDown = false;
         }
@@ -94,14 +94,14 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var xMove = fromPos.x - toPos.x;
             var yMove = fromPos.y - toPos.y;
 
-            var keys = editor.Selected.Keys.ToArray();
-            for (int i = 0; i < editor.Selected.Count; i++)
+            var keys = map.Selected.Keys.ToArray();
+            for (int i = 0; i < map.Selected.Count; i++)
             {
                 var originPosition = keys[i];
-                var originObjectInfo = editor.Selected[originPosition];
+                var originObjectInfo = map.Selected[originPosition];
 
                 var newPosition = new Vector3(originPosition.x - xMove, originPosition.y - yMove);
-                var newCellCenterPosition = editor.GetCellCenterPosition(newPosition);
+                var newCellCenterPosition = map.GetCellCenterPosition(newPosition);
 
                 originObjectInfo.Item1.transform.position = newCellCenterPosition;
             }
@@ -109,21 +109,21 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void SaveToMove()
         {
-            if (editor.Selected.Count > 0)
+            if (map.Selected.Count > 0)
             {
                 var movedSelection = new Dictionary<Vector3, (GameObject, bool)>();
-                var keys = editor.Selected.Keys.ToArray();
-                for (int i = 0; i < editor.Selected.Count; i++)
+                var keys = map.Selected.Keys.ToArray();
+                for (int i = 0; i < map.Selected.Count; i++)
                 {
                     var originPosition = keys[i];
-                    var objectInfo = editor.Selected[originPosition];
+                    var objectInfo = map.Selected[originPosition];
                     var newPosition = objectInfo.Item1.transform.position;
 
                     if (!objectInfo.Item2)
-                        editor.ReplaceData(originPosition, newPosition, objectInfo.Item1);
+                        map.ReplaceData(originPosition, newPosition, objectInfo.Item1);
                     movedSelection.Add(newPosition, objectInfo);
                 }
-                editor.Selected = movedSelection;
+                map.Selected = movedSelection;
             }
         }
 
@@ -132,7 +132,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var xMove = ( fromPosition.x - position.x ) * 0.75f;
             var yMove = ( fromPosition.y - position.y ) * 0.75f;
 
-            editor.CameraObj.transform.position = new Vector3(_cameraOriginPosition.x + xMove, _cameraOriginPosition.y + yMove, _cameraOriginPosition.z);
+            map.CameraObj.transform.position = new Vector3(_cameraOriginPosition.x + xMove, _cameraOriginPosition.y + yMove, _cameraOriginPosition.z);
         }
     }
 }

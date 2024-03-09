@@ -5,12 +5,14 @@ namespace Assets.Scripts.GameEditor.PopUp
     public class PopUpButtonController : MonoBehaviour
     {
         [SerializeField] GameObject PopUpCanvas;
-        [SerializeField] GameObject BackgroundPopUp;
+        [SerializeField] GameObject ToolkitCanvasPopUp;
+        [SerializeField] GameObject PopUpWindow;
 
-        public void OnClick()
+        public void OnCreate()
         {
+            ToolkitCanvasPopUp.SetActive(true);
             PopUpCanvas.SetActive(true);
-            BackgroundPopUp.SetActive(true);
+            Instantiate(PopUpWindow, PopUpCanvas.transform);
         }
     }
 }

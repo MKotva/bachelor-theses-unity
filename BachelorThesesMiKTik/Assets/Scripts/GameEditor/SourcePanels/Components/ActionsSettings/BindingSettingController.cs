@@ -9,30 +9,24 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         [SerializeField] GameObject SourcePanel;
         [SerializeField] GameObject Parent;
 
-        private Stack<BindingSourcePanelController> instances;
+        private List<BindingSourcePanelController> instances;
         private List<string> actualActions;
 
         private void Awake()
         {
-            instances = new Stack<BindingSourcePanelController>();
+            instances = new List<BindingSourcePanelController>();
             actualActions = new List<string> { "None", "Create code" };
         }
 
         public void OnAdd()
         {
-            instances.Push(CreatePanel());
-        }
-
-        public void OnRemove() 
-        {
-            var instance = instances.Pop();
-            Destroy(instance.gameObject);
+            instances.Add(CreatePanel());
         }
 
         public List<ActionBindDTO> GetBindings()
         {
             var bindings = new List<ActionBindDTO>();
-            foreach (var panel in instances) 
+            foreach (var panel in instances)
             {
                 if (panel.TryGet(out var actionBind))
                 {
@@ -44,11 +38,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
 
         public void SetBindings(List<ActionBindDTO> bindings)
         {
-            foreach(var binding in bindings)
+            foreach (var binding in bindings)
             {
                 var panel = CreatePanel();
                 panel.Set(binding);
-                instances.Push(panel);
+                instances.Add(panel);
             }
         }
 
@@ -58,9 +52,9 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <param name="actions"></param>
         public void SetActions(List<string> actions)
         {
-            var defaultactions = new List<string> {"None", "Create code"};
+            var defaultactions = new List<string> { "None", "Create code" };
             defaultactions.AddRange(actions);
-            foreach (var instance in instances) 
+            foreach (var instance in instances)
             {
                 instance.SetActions(defaultactions);
             }
@@ -76,13 +70,13 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <returns></returns>
         private bool OnBindingChange(List<KeyCode> bindings, int ID)
         {
-            foreach(var instance in instances) 
+            foreach (var instance in instances)
             {
-                if (instance.ID == ID || instance.BindingKeys.Count != bindings.Count) 
-                    continue;                
+                if (instance.ID == ID || instance.BindingKeys.Count != bindings.Count)
+                    continue;
 
                 bool eq = true;
-                for(int i = 0; i < instance.BindingKeys.Count; i++)
+                for (int i = 0; i < instance.BindingKeys.Count; i++)
                 {
                     if (instance.BindingKeys[i] != bindings[i])
                     {
@@ -112,8 +106,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 {
                     continue;
                 }
-                
-                if(instance.Action ==  action)
+
+                if (instance.Action == action)
                     return false;
             }
             return true;
@@ -121,12 +115,26 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
 
         private BindingSourcePanelController CreatePanel()
         {
-            var newRow = Instantiate(SourcePanel, Parent.transform).GetComponent<BindingSourcePanelController>();
-            newRow.SetActions(actualActions);
-            newRow.ID = instances.Count;
-            newRow.BindingSet += OnBindingChange;
-            newRow.ActionChange += OnActionChange;
-            return newRow;
+            var newRow = Instantiate(SourcePanel, Parent.transform);
+            newRow.GetComponent<SourcePanelController>().onDestroy += DestroyPanel;
+
+            var rowController = newRow.GetComponent<BindingSourcePanelController>();
+            rowController.SetActions(actualActions);
+            rowController.ID = newRow.GetInstanceID();
+            rowController.BindingSet += OnBindingChange;
+            rowController.ActionChange += OnActionChange;
+            return rowController;
+        }
+
+        private void DestroyPanel(int id)
+        {
+            for (int i = 0; i < instances.Count; i++) 
+            {
+                if (instances[i].GetInstanceID() == id) 
+                {
+                    instances.RemoveAt(i);
+                }
+            }
         }
     }
 }

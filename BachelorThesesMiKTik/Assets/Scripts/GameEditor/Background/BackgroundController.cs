@@ -1,17 +1,20 @@
 using Assets.Core.GameEditor.Animation;
 using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.DTOS;
+using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Core.GameEditor.DTOS.Background;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor;
+using Assets.Scripts.GameEditor.Audio;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class BackgroundController : Singleton<BackgroundController>
 {
-    [SerializeField] public GameObject LayerPrefab;
-    [SerializeField] public List<GameObject> DefaultBackgroundPrefabs;
+    [SerializeField] GameObject LayerPrefab;
+    [SerializeField] List<GameObject> DefaultBackgroundPrefabs;
+    [SerializeField] public AudioController AudioController;
 
     public List<BackgroundLayer> BackgroundLayers { get; private set; }
 
@@ -117,6 +120,17 @@ public class BackgroundController : Singleton<BackgroundController>
         Destroy(BackgroundLayers[layerId].Instance);
         BackgroundLayers.RemoveAt(layerId);
     }
+
+    /// <summary>
+    /// Sets audio source based on given DTO.
+    /// </summary>
+    /// <param name="audioSourceDTO"></param>
+    /// <returns></returns>
+    public async Task<bool> SetAudioSource(AudioSourceDTO audioSourceDTO)
+    {
+        return await AudioController.SetAudioClip(audioSourceDTO);
+    }
+
     #endregion
 
     #region PRIVATE
@@ -174,7 +188,7 @@ public class BackgroundController : Singleton<BackgroundController>
                 await SpriteLoader.SetSprite(layer, source.URL, xSize, ySize);
                 break;
             case SourceType.Animation:
-                await AnimationLoader.SetAnimation(layer, ( (AnimationSourceDTO) source ).AnimationData, xSize, ySize);
+                await AnimationLoader.SetAnimation(layer, (AnimationSourceDTO) source, true, true, xSize, ySize);
                 break;
             default: 
                 break;

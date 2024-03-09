@@ -32,36 +32,49 @@ namespace Assets.Core.GameEditor
 
             return powered;
         }
-        public static float GetFloat(string text, string name = "")
+        public static float GetFloat(string text, string name = "", string author = "")
         {
             var value = 1f;
             if (!float.TryParse(text, out value))
             {
-                InfoPanelController.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1");
+                InfoPanelController.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
                 return 1;
             }
             if(float.IsNaN(value))
             {
-                InfoPanelController.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1");
+                InfoPanelController.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
                 return 1;
             }
 
             return value;
         }
-        public static float GetPositiveFloat(string text, string name = "")
+        public static float GetPositiveFloat(string text, string name = "", string author = "")
         {
             var value = 1f;
             if (!float.TryParse(text, out value))
             {
-                InfoPanelController.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1");
+                InfoPanelController.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
                 return 1f;
             }
             if (value < 0f || float.IsNaN(value))
             {
-                InfoPanelController.Instance.ShowMessage($"{name} parsing error, value is below 0! {name} was setted to 1");
+                InfoPanelController.Instance.ShowMessage($"{name} parsing error, value is below 0! {name} was setted to 1", author);
                 return 1f;
             }
             return value;
+        }
+
+        public static uint GetUInt(string input, uint defaultValue = 0, string name = "", string author = "")
+        {
+            if (uint.TryParse(input, out uint value))
+            {
+                return value;
+            }
+            else
+            {
+                InfoPanelController.Instance.ShowMessage($"{name} parsing error! {name} was setted to {defaultValue}", author);
+                return defaultValue;
+            }
         }
     }
 }

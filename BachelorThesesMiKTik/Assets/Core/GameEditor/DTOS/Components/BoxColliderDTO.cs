@@ -33,10 +33,13 @@ namespace Assets.Core.GameEditor.DTOS.Components
         {
             var collider = GetOrAddComponent<BoxCollider2D>(item.Prefab);
             collider.enabled = true;
+            collider.size = new Vector2(XSize, YSize);
+        }
+
+        public override void SetInstance(ItemData item, GameObject instance)
+        {
             var collisionControler = GetOrAddComponent<CollisionController>(item.Prefab);
             collisionControler.Set(item.ShownName, Colliders);
-
-            collider.size = new Vector2(XSize, YSize);
         }
     }
 }

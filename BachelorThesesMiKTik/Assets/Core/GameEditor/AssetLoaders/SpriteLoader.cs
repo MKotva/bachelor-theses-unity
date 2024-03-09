@@ -1,7 +1,9 @@
+using Assets.Core.SimpleCompiler.Compilation.CodeBase;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 namespace Assets.Core.GameEditor.AssetLoaders
 {
@@ -40,12 +42,11 @@ namespace Assets.Core.GameEditor.AssetLoaders
 
             if(ob.TryGetComponent(out SpriteRenderer spriteRenderer)) 
             {
-                var sprite = await LoadSprite(url);
-                if (sprite != null)
-                {
-                    spriteRenderer.sprite = sprite;
-                    Scale(spriteRenderer, xSize, ySize);
-                }
+                await SetSprite(spriteRenderer, ob, url, xSize, ySize);
+            }
+            else if(ob.TryGetComponent(out Image image))
+            {
+                await SetSprite(image, ob, url, xSize, ySize);
             }
             else
             {
@@ -92,7 +93,6 @@ namespace Assets.Core.GameEditor.AssetLoaders
                     request.result == UnityWebRequest.Result.ConnectionError ||
                     request.result == UnityWebRequest.Result.DataProcessingError)
                 {
-                    //TODO: Throw an exception.
                     InfoPanelController.Instance.ShowMessage(request.error);
                     return null;
                 }
@@ -110,6 +110,25 @@ namespace Assets.Core.GameEditor.AssetLoaders
         private static string GetAssetPath(string relativePath)
         {
             return "file://" + Path.Combine(Application.streamingAssetsPath, relativePath);
+        }
+
+        private static async Task SetSprite(SpriteRenderer renderer, GameObject ob, string url, float xSize = 0, float ySize = 0)
+        {
+            var sprite = await LoadSprite(url);
+            if (sprite != null)
+            {
+                renderer.sprite = sprite;
+                Scale(renderer, xSize, ySize);
+            }
+        }
+
+        private static async Task SetSprite(Image image, GameObject ob, string url, float xSize = 0, float ySize = 0)
+        {
+            var sprite = await LoadSprite(url);
+            if (sprite != null)
+            {
+                image.sprite = sprite;
+            }
         }
 
         /// <summary>

@@ -1,4 +1,3 @@
-using Assets.Core.GameEditor.DTOS.Components;
 using Assets.Scripts.GameEditor.ItemView;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
 using System.Collections.Generic;
@@ -99,7 +98,7 @@ public class ObjectCreatorController : PopUpController
 
     private void OnEnable()
     {
-        InfoPanelController.Instance.AddOnShowListener("Object creator", LogToConsole);
+        InfoPanelController.Instance.AddOnShowListener("Object creator", LogToConsole, "Object creator");
     }
 
     private void OnDisable()

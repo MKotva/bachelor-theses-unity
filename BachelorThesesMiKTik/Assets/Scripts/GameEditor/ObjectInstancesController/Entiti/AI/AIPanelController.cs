@@ -9,7 +9,7 @@ namespace Assets.Scripts.GameEditor.AI
     {
         private AIAgent agent;
         private List<GameObject> markers;
-        private Editor editor;
+        private MapCanvas map;
 
         public void OnShowWalkableTilesClick()
         {
@@ -61,7 +61,7 @@ namespace Assets.Scripts.GameEditor.AI
         private void Awake()
         {
             markers = new List<GameObject>();
-            editor = Editor.Instance;
+            map = MapCanvas.Instance;
         }
 
         private bool TryInitialize()
@@ -71,14 +71,14 @@ namespace Assets.Scripts.GameEditor.AI
                 return true;
 
             InfoPanelController.Instance.ShowMessage("Selected object does not contain AIAgent component.");
-            return false; ;
+            return false;
         }
 
         private bool TryFindSelectedObject(out AIAgent aIAgent)
         {
-            if (editor.Selected.Count == 1)
+            if (map.Selected.Count == 1)
             {
-                var selectedObject = editor.GetObjectAtPosition(editor.Selected.Keys.First());
+                var selectedObject = map.GetObjectAtPosition(map.Selected.Keys.First());
                 if (selectedObject.TryGetComponent(out AIAgent agent))
                 {
                     aIAgent = agent;
@@ -93,9 +93,9 @@ namespace Assets.Scripts.GameEditor.AI
         {
             if (GameItemController.Instance.TryFindIdByName(name, out int edpointId))
             {
-                if (editor.Data.ContainsKey(edpointId))
+                if (map.Data.ContainsKey(edpointId))
                 {
-                    endPosition = editor.Data[edpointId].Keys.First();
+                    endPosition = map.Data[edpointId].Keys.First();
                     return true;
                 }
             }
@@ -110,17 +110,17 @@ namespace Assets.Scripts.GameEditor.AI
         {
             TryInitialize();
 
-            var cellSize = editor.GridLayout.cellSize;
-            foreach (var row in editor.Data.Values)
+            var cellSize = map.GridLayout.cellSize;
+            foreach (var row in map.Data.Values)
             {
                 foreach (var item in row)
                 {
                     var position = item.Key;
-                    var upperNeighbourPosition = editor.GetCellCenterPosition(new Vector3(position.x, position.y + cellSize.y));
-                    if (editor.ContainsObjectAtPosition(upperNeighbourPosition) || item.Value.layer != 7)
+                    var upperNeighbourPosition = map.GetCellCenterPosition(new Vector3(position.x, position.y + cellSize.y));
+                    if (map.ContainsObjectAtPosition(upperNeighbourPosition) || item.Value.layer != 7)
                         continue;
 
-                    markers.Add(editor.CreateMarkAtPosition(upperNeighbourPosition));
+                    markers.Add(map.Marker.CreateMarkAtPosition(upperNeighbourPosition));
                 }
             }
         }
@@ -129,7 +129,7 @@ namespace Assets.Scripts.GameEditor.AI
         {
             foreach (var mark in markers)
             {
-                editor.DestroyMark(mark);
+                map.Marker.DestroyMark(mark);
             }
             markers.Clear();
         }

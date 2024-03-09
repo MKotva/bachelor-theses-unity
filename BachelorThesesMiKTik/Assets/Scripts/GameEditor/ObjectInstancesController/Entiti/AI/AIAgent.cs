@@ -10,7 +10,7 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class AIAgent : MonoBehaviour
     {
-        public Editor editor;
+        public MapCanvas map;
         public AIObject AI;
         public IAIPathFinder pathFinder;
 
@@ -73,7 +73,7 @@ namespace Assets.Scripts.GameEditor.AI
         #region PRIVATE
         private void Awake()
         {
-            editor = Editor.Instance;
+            map = MapCanvas.Instance;
             pathFinder = new AStar();
 
             if (createAction != null)

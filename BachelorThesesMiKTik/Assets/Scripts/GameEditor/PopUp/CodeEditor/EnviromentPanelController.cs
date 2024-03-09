@@ -10,7 +10,7 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         [SerializeField] GameObject SourceLinePrefab;
         [SerializeField] GameObject ContentView;
         
-        private Stack<EnviromentSourcePanelController> lines = new Stack<EnviromentSourcePanelController>();
+        private List<EnviromentSourcePanelController> lines = new List<EnviromentSourcePanelController>();
 
         /// <summary>
         /// Checks all line instances and gets the data from them.
@@ -36,27 +36,31 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             {
                 var line = AddLine();
                 line.Set(env);
-                lines.Push(line);
+                lines.Add(line);
             }
         }
 
         public void OnAddClick()
         {
-            lines.Push(AddLine());
-        }
-
-        public void OnRemoveClick()
-        {
-            if (lines.Count > 0)
-            {
-                var line = lines.Pop();
-                Destroy(line.gameObject);
-            }
+            lines.Add(AddLine());
         }
 
         private EnviromentSourcePanelController AddLine()
         {
-            return Instantiate(SourceLinePrefab, ContentView.transform).GetComponent<EnviromentSourcePanelController>();
+            var line = Instantiate(SourceLinePrefab, ContentView.transform);
+            line.GetComponent<SourcePanelController>().onDestroy += DestroyPanel;
+            return line.GetComponent<EnviromentSourcePanelController>();
+        }
+
+        private void DestroyPanel(int id)
+        {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].GetInstanceID() == id)
+                {
+                    lines.RemoveAt(i);
+                }
+            }
         }
     }
 }

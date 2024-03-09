@@ -11,7 +11,7 @@ public class JournalHandler : MonoBehaviour
     private void Start()
     {
         if(_journal == null)
-            _journal = Editor.Instance.MapJournal;
+            _journal = MapCanvas.Instance.MapJournal;
     }
 
     public void OnUndoClick()

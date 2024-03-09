@@ -7,11 +7,11 @@ public class LoadDataHandler : MonoBehaviour
 {
     [SerializeField] string DefaultPath;
 
-    private Editor editor;
+    private MapCanvas map;
 
     public void OnLoad()
     {
-        editor.OnDisable();
+        map.OnDisable();
         FileBrowser.SetFilters(true, new FileBrowser.Filter("Files", ".json", ".txt"));
         FileBrowser.SetDefaultFilter(".json");
         FileBrowser.SetExcludedExtensions(".lnk", ".tmp", ".zip", ".rar", ".exe");
@@ -30,18 +30,18 @@ public class LoadDataHandler : MonoBehaviour
     #region PRIVATE
     private void Awake()
     {
-        editor = Editor.Instance;
+        map = MapCanvas.Instance;
     }
 
     private void OnSucces(string path)
     {
-        editor.OnEnable();
+        map.OnEnable();
         var task = LoadMap(path);
     }
 
     private void OnFail()
     {
-        editor.OnEnable();
+        map.OnEnable();
     }
     #endregion
 }

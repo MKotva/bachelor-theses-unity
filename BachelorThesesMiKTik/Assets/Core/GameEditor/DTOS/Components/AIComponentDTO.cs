@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Assets.Core.GameEditor.DTOS.Action;
 using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.AI;
+using UnityEngine;
 
 namespace Assets.Core.GameEditor.DTOS.Components
 {
@@ -23,9 +24,12 @@ namespace Assets.Core.GameEditor.DTOS.Components
             OnUpdateAction = updateAction;
         }
 
-        public override async Task Set(ItemData item)
+        public override async Task Set(ItemData item) {}
+
+        public override void SetInstance(ItemData item, GameObject instance)
+
         {
-            var agent = GetOrAddComponent<AIAgent>(item.Prefab);
+            var agent = GetOrAddComponent<AIAgent>(instance);
             agent.Initialize(this);
         }
     }

@@ -10,12 +10,14 @@ public class ToolButtonController : MonoBehaviour
     [SerializeField] string ActionName;
     [SerializeField] ToolPanelController PanelController;
 
-    private Color _selectionColor;
+    private Color selectionColor;
+    private Color originalColor;
     private EditorActionBase _action;
 
     private void Awake()
     {
-        _selectionColor = Color.cyan;
+        originalColor = new Color(0.7882353f, 0.9921569f, 0.9764706f, 1);
+        selectionColor = new Color(0.6886792f, 0.6729145f, 0.6594428f, 1);
 
         var type = Type.GetType("Assets.Scenes.GameEditor.Core.EditorActions." + ActionName);
         if (type != null)
@@ -35,11 +37,12 @@ public class ToolButtonController : MonoBehaviour
 
     public void ChangeStateToClicked() 
     {
-        GetComponent<Image>().color = _selectionColor;
+        originalColor = GetComponent<Image>().color;
+        GetComponent<Image>().color = selectionColor;
     }
 
     public void ChangeStateToUnclicked()
     {
-        GetComponent<Image>().color = Color.white;
+        GetComponent<Image>().color = originalColor;
     }
 }

@@ -13,11 +13,11 @@ public class SaveDataHandler : MonoBehaviour
     [SerializeField] public string DefaultPath;
     [SerializeField] public string DefaultSaveAsPath;
 
-    private Editor editor;
+    private MapCanvas map;
 
     public void Awake()
     {
-        editor = Editor.Instance;
+        map = MapCanvas.Instance;
     }
 
     /// <summary>
@@ -53,18 +53,18 @@ public class SaveDataHandler : MonoBehaviour
     /// </summary>
     private void ShowDialogWindow()
     {
-        editor.OnDisable();
+        map.OnDisable();
         FileBrowser.ShowSaveDialog((paths) => { OnSucces(paths[0]);}, OnFail, FileBrowser.PickMode.Files, false, DefaultSaveAsPath, "Map.json", "Save As", "Save");
     }
 
     private void OnSucces(string path)
     {
        SaveMap(path);
-       editor.OnEnable();
+       map.OnEnable();
     }
     private void OnFail()
     {
-       editor.OnEnable();
+       map.OnEnable();
     }
 
     /// <summary>

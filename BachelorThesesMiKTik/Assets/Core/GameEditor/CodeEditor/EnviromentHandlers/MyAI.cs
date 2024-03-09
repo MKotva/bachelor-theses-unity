@@ -12,14 +12,14 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
     {
         public AIAgent Agent { get; set; }
         private GameItemController itemController;
-        private Editor editor;
+        private MapCanvas editor;
 
         public override void SetInstance(GameObject instance) { }
 
         public MyAI()
         {
             itemController = GameItemController.Instance;
-            editor = Editor.Instance;
+            editor = MapCanvas.Instance;
         }
         
         [CodeEditorAttribute("Moves actual object to closest object with given name(objectName), if its possible, with use of given actions.", "( string objectName)")]

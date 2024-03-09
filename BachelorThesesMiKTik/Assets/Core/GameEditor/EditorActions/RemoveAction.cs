@@ -28,8 +28,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (key == MouseButton.LeftMouse)
             {
-                _lastActionRecord = null;
-                _lastActionRecordReverse = null;
+                lastActionRecord = null;
+                lastActionRecordReverse = null;
 
                 _isMouseDown = true;
                 _newObjectPostions.Clear();
@@ -41,8 +41,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (_isMouseDown)
             {
                 var positionsString = GetPositionsString(_newObjectPostions);
-                _lastActionRecord = new JournalActionDTO($"R;{positionsString}", PerformAction);
-                _lastActionRecordReverse = new JournalActionDTO($"I;{positionsString}", _insertAction.PerformAction);
+                lastActionRecord = new JournalActionDTO($"R;{positionsString}", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO($"I;{positionsString}", _insertAction.PerformAction);
                 _isMouseDown = false;
             }
         }
@@ -51,13 +51,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (_isMouseDown)
             {
-                var position = editor.GetCellCenterPosition(mousePosition);
-                if (editor.Selected.ContainsKey(position))
+                var position = map.GetCellCenterPosition(mousePosition);
+                if (map.Selected.ContainsKey(position))
                 {
                     RemoveSelection();
                     var positionsString = GetPositionsString(_newObjectPostions);
-                    _lastActionRecord = new JournalActionDTO($"RS;{position.x}:{position.y}", PerformAction);
-                    _lastActionRecordReverse = new JournalActionDTO($"IR;{positionsString}", _insertAction.PerformAction);
+                    lastActionRecord = new JournalActionDTO($"RS;{position.x}:{position.y}", PerformAction);
+                    lastActionRecordReverse = new JournalActionDTO($"IR;{positionsString}", _insertAction.PerformAction);
                     _isMouseDown = false;
                 }
                 else
@@ -81,9 +81,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if (descriptions[0] == "RS")
             {
                 var position = MathHelper.GetVector3FromString(descriptions[1]);
-                position = editor.GetCellCenterPosition(position);
+                position = map.GetCellCenterPosition(position);
 
-                if (editor.Selected.ContainsKey(position))
+                if (map.Selected.ContainsKey(position))
                 {
                     RemoveSelection();
                 }
@@ -103,24 +103,24 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void Remove(Vector3 position)
         {
-            position = editor.GetCellCenterPosition(position);
-            GameObject objectAtPos = editor.GetObjectAtPosition(position);
+            position = map.GetCellCenterPosition(position);
+            GameObject objectAtPos = map.GetObjectAtPosition(position);
             if (objectAtPos != null)
             {
-                editor.Erase(objectAtPos, position);
+                map.Erase(objectAtPos, position);
             }
         }
 
         private void RemoveSelection()
         {
-            var keys = editor.Selected.Keys.ToArray();
-            for (int i = 0; i < editor.Selected.Count(); i++)
+            var keys = map.Selected.Keys.ToArray();
+            for (int i = 0; i < map.Selected.Count(); i++)
             {
                 var position = keys[i];
-                if (!editor.Selected[position].Item2)
+                if (!map.Selected[position].Item2)
                 {
-                    editor.Erase(editor.Selected[position].Item1, position);
-                    editor.Selected[position] = (editor.CreateMarkAtPosition(position), true);
+                    map.Erase(map.Selected[position].Item1, position);
+                    map.Selected[position] = (map.Marker.CreateMarkAtPosition(position), true);
 
                     if (!_newObjectPostions.Contains(position))
                         _newObjectPostions.Add(position);

@@ -5,6 +5,7 @@ using Assets.Scripts.GameEditor.Entiti;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Core.GameEditor.DTOS.Components
 {
@@ -36,6 +37,12 @@ namespace Assets.Core.GameEditor.DTOS.Components
         public override async Task Set(ItemData item)
         {
             var playerController = GetOrAddComponent<PlayerObjectController>(item.Prefab);
+            playerController.Initialize(this);
+        }
+
+        public override void SetInstance(ItemData item, GameObject instance)
+        {
+            var playerController = GetOrAddComponent<PlayerObjectController>(instance);
             playerController.Initialize(this);
         }
     }

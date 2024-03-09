@@ -360,6 +360,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4957193391814476521, guid: 02f1973d3cd9fcb4097f2b65e8fa849f, type: 3}
+      propertyPath: EditorPrefab
+      value: 
+      objectReference: {fileID: 6139910173952661679, guid: 36eb2a34dc197d040900fbd1ee2d86d8, type: 3}
     - target: {fileID: 7256509825350981406, guid: 02f1973d3cd9fcb4097f2b65e8fa849f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -482,6 +486,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4957193391814476521, guid: 02f1973d3cd9fcb4097f2b65e8fa849f, type: 3}
+      propertyPath: EditorPrefab
+      value: 
+      objectReference: {fileID: 6139910173952661679, guid: 36eb2a34dc197d040900fbd1ee2d86d8, type: 3}
     - target: {fileID: 7256509825350981406, guid: 02f1973d3cd9fcb4097f2b65e8fa849f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

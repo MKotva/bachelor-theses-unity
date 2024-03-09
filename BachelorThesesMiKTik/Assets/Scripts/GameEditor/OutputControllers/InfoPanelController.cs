@@ -22,10 +22,10 @@ public class InfoPanelController : Singleton<InfoPanelController>
     // Start is called before the first frame update
     protected override void Awake()
     {
-        base.Awake();
         onShowListeners = new Dictionary<string, Dictionary<string, MessageAction>>();
         onAddMessageListeners = new Dictionary<string, Dictionary<string, MessageAction>>();
         messages = new Queue<(string, string)>();
+        base.Awake();
     }
 
     /// <summary>
@@ -33,6 +33,9 @@ public class InfoPanelController : Singleton<InfoPanelController>
     /// </summary>
     private void Update()
     {
+        if(messages == null)
+            messages = new Queue<(string, string)>();
+
         if(messages.Count > 0 && !isPerforming) 
         {
             isPerforming = true;

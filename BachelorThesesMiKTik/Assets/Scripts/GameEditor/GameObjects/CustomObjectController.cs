@@ -3,14 +3,13 @@ using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Controllers;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.GameObjects.Elements
 {
     public class CustomObjectController : MonoBehaviour
     {
-        [SerializeField] public CustomAnimationController AnimationController;
+        [SerializeField] public AnimationsController AnimationController;
         [SerializeField] public SpriteRenderer SpriteRenderer;
         [SerializeField] public Rigidbody2D Rigidbody;
         [SerializeField] public BoxCollider2D BoxCollider;
@@ -41,10 +40,10 @@ namespace Assets.Scripts.GameEditor.GameObjects.Elements
                 case SourceType.Image:
                     var sTask = SpriteLoader.SetSprite(gameObject, source.URL, xSize, ySize);
                     break;
-                case SourceType.Video:
+                case SourceType.Sound:
                     break;
                 case SourceType.Animation:
-                    var aTask = AnimationLoader.SetAnimation(gameObject, ((AnimationSourceDTO) source).AnimationData, xSize, ySize, shouldLoop);
+                    var aTask = AnimationLoader.SetAnimation(gameObject, (AnimationSourceDTO)source, shouldLoop, true, xSize, ySize);
                     break;
                 default:
                     break;

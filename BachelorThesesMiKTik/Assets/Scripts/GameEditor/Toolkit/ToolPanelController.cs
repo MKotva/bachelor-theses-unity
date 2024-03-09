@@ -19,13 +19,13 @@ public class ToolPanelController : MonoBehaviour
 
         _activeButtonController = buttonController;
         _activeButtonController.ChangeStateToClicked();
-        Editor.Instance.SetAction(action);
+        MapCanvas.Instance.SetAction(action);
     }
 
     private void SetDefault()
     {
         _activeButtonController.ChangeStateToUnclicked();
         _activeButtonController = null;
-        Editor.Instance.SetDefaultAction();
+        MapCanvas.Instance.SetDefaultAction();
     }
 }

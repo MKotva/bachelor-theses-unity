@@ -10,6 +10,7 @@ namespace Assets.Core.GameEditor.DTOS.Components
         public string ComponentName;
         public int ComponentID;
         public abstract Task Set(ItemData item);
+        public abstract void SetInstance(ItemData item, GameObject instance);
         public virtual T GetOrAddComponent<T>(GameObject ob) where T : Component
         {
             T component;

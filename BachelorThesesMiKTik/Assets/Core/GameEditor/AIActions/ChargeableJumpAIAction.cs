@@ -124,20 +124,20 @@ namespace Assets.Core.GameEditor.AIActions
                 await Task.Delay(100);
             }
 
-            performer.transform.position = editor.GetCellCenterPosition(action.EndPosition);
+            performer.transform.position = map.GetCellCenterPosition(action.EndPosition);
             await Task.Delay(1000);
         }
 
         public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
         {
             var trajectory = GetTrajectory(action.StartPosition, MathHelper.GetVector3FromString(action.PositionActionParameter));
-            var result = editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory);
+            var result = map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, trajectory);
             return await Task.FromResult(result);
         }
 
         public override bool IsPerforming()
         {
-            RaycastHit2D hit = Physics2D.Raycast(performer.transform.position, Vector2.down, editor.GridLayout.cellSize.y * 0.6f, LayerMask.GetMask("Box"));
+            RaycastHit2D hit = Physics2D.Raycast(performer.transform.position, Vector2.down, map.GridLayout.cellSize.y * 0.6f, LayerMask.GetMask("Box"));
             if (hit.collider != null)
                 return false;
             return true;
@@ -145,7 +145,7 @@ namespace Assets.Core.GameEditor.AIActions
 
         public override List<GameObject> PrintReacheables(Vector3 startPosition)
         {
-            return editor.CreateMarkAtPosition(editor.MarkerDotPrefab, GetReacheablePositions(startPosition));
+            return map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, GetReacheablePositions(startPosition));
         }
 
         public List<GameObject> PrintAllPossibleJumps(Vector3 position)
@@ -161,7 +161,7 @@ namespace Assets.Core.GameEditor.AIActions
             var markers = new List<GameObject>();
             foreach (var trajectory in trajectories)
             {
-                editor.CreateMarkAtPosition(editor.MarkerDotPrefab, trajectory).ForEach(x => markers.Add(x));
+                map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, trajectory).ForEach(x => markers.Add(x));
             }
 
             return markers;
@@ -189,7 +189,7 @@ namespace Assets.Core.GameEditor.AIActions
                 var motionDirection = ( Vector2.up * adjustedJumppower ) - ( jumpDirection * motionPower );
                 var result = GetTrajectory(position, motionDirection);
                 trajectories.Add(result);
-                jumpRecords.Add(new JumpPositionDTO(editor.GetCellCenterPosition(result.Last()), motionDirection));
+                jumpRecords.Add(new JumpPositionDTO(map.GetCellCenterPosition(result.Last()), motionDirection));
                 adjustedJumppower = adjustedJumppower - adjustment;
             }
 
@@ -236,10 +236,10 @@ namespace Assets.Core.GameEditor.AIActions
 
             for (int i = 0; i < actualPositionCorners.Length; i++)
             {
-                var centered = editor.GetCellCenterPosition(actualPositionCorners[i]);
-                if (editor.ContainsObjectAtPosition(centered, new int[] { 7, 8 })) //TODO: For every ai object, have list of layers.
+                var centered = map.GetCellCenterPosition(actualPositionCorners[i]);
+                if (map.ContainsObjectAtPosition(centered, new int[] { 7, 8 })) //TODO: For every ai object, have list of layers.
                 {
-                    hittedObject = editor.GetObjectAtPosition(centered);
+                    hittedObject = map.GetObjectAtPosition(centered);
                     preHitPositions = previousPositionCorners[i];
                     return true;
                 }
