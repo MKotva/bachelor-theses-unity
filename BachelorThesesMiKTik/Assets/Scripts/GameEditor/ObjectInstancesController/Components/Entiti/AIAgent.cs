@@ -1,27 +1,41 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Components;
-using Assets.Core.SimpleCompiler;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using Assets.Scripts.GameEditor.AI.PathFind;
+using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
 {
-    public class AIAgent : MonoBehaviour
+    public class AIAgent : MonoBehaviour, IObjectController
     {
         public MapCanvas map;
         public AIObject AI;
         public IAIPathFinder pathFinder;
 
-        private SimpleCode createAction;
-        private SimpleCode updateAction;
+        private AIComponentDTO aiSetting;
+        private bool wasPlayed;
+        private bool isPlaying;
 
         public void Initialize(AIComponentDTO component)
         {
             AI = new AIObject(gameObject, component.Action.GetAction(gameObject));
-            createAction = component.OnCreateAction;
-            updateAction = component.OnUpdateAction;
+        }
+
+        public void Play()
+        {
+            if (!wasPlayed)
+            {
+                aiSetting.OnCreateAction.Execute(gameObject);
+                wasPlayed = true;
+            }
+            isPlaying = true;
+        }
+
+        public void Pause()
+        {
+            isPlaying = false;
         }
 
         public virtual void EnqueAction(List<AgentActionDTO> agentActions)
@@ -75,17 +89,18 @@ namespace Assets.Scripts.GameEditor.AI
         {
             map = MapCanvas.Instance;
             pathFinder = new AStar();
-
-            if (createAction != null)
-                createAction.Execute(gameObject);
         }
 
         private void FixedUpdate()
         {
+            if (!isPlaying)
+                return;
+
+            if (aiSetting.OnUpdateAction != null)
+                aiSetting.OnUpdateAction.Execute(gameObject);
+
             if (AI != null)
             {
-                if(updateAction != null) 
-                    updateAction.Execute(gameObject);
                 AI.PerformActions();
             }
         }

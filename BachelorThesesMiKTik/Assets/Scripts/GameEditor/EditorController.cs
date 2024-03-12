@@ -17,13 +17,11 @@ namespace Assets.Scripts.GameEditor
         public void EnableEditor()
         {
             ToolkitCanvas.gameObject.SetActive(true);
-            PopUpCanvas.gameObject.SetActive(true);
         }
 
         public void DisableEditor()
         {
             ToolkitCanvas.gameObject.SetActive(false);
-            PopUpCanvas.gameObject.SetActive(false);
         }    
 
 
@@ -57,6 +55,8 @@ namespace Assets.Scripts.GameEditor
             }
             PlayModePause?.Invoke();
         }
+
+
 
         public void ExitPlayMode()
         {

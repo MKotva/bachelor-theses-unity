@@ -38,8 +38,8 @@ namespace Assets.Core.GameEditor.DTOS.Components
 
         public override void SetInstance(ItemData item, GameObject instance)
         {
-            var collisionControler = GetOrAddComponent<CollisionController>(item.Prefab);
-            collisionControler.Set(item.ShownName, Colliders);
+            var collisionControler = GetOrAddComponent<ColliderController>(item.Prefab);
+            collisionControler.Initialize(item.ShownName, this);
         }
     }
 }

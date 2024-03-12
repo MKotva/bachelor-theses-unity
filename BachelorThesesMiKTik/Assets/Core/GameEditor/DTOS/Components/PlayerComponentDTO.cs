@@ -36,8 +36,7 @@ namespace Assets.Core.GameEditor.DTOS.Components
 
         public override async Task Set(ItemData item)
         {
-            var playerController = GetOrAddComponent<PlayerObjectController>(item.Prefab);
-            playerController.Initialize(this);
+            GetOrAddComponent<PlayerObjectController>(item.Prefab);
         }
 
         public override void SetInstance(ItemData item, GameObject instance)

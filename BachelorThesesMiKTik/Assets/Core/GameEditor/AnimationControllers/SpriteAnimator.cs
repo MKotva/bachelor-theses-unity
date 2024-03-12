@@ -8,18 +8,24 @@ namespace Assets.Core.GameEditor.AnimationControllers
         public bool IsAnimating { get; private set; }
         public bool IsFinished { get; private set; }
         public CustomAnimation Animation { get; private set; }
+        public float XScaling { get; private set; }
+        public float YScaling { get; private set; }
 
-        public SpriteAnimator(SpriteRenderer renderer, CustomAnimation newAnimation, bool isAnimating) 
+        public SpriteAnimator(SpriteRenderer renderer, CustomAnimation newAnimation, bool isAnimating, float xSize = 30, float ySize = 30) 
         {
             IsAnimating = isAnimating;
             spriteRenderer = renderer;
             Animation = newAnimation;
             
+            XScaling = xSize; 
+            YScaling = ySize;
+
             if(newAnimation.Frames.Count != 0)
                 SetAnimationFrame(newAnimation.Frames[0]);
 
             timeSinceLastFrame = 0;
             index = 0;
+            Scale(renderer, xSize, ySize);
         }
 
         public void Animate(float timeDelta)
@@ -31,19 +37,6 @@ namespace Assets.Core.GameEditor.AnimationControllers
             if (timeSinceLastFrame >= Animation.Frames[index].DisplayTime)
             {
                 SetAnimationFrame(GetNextCustomFrame());
-            }
-        }
-
-        public void Animate(float timeDelta, uint xSize, uint ySize)
-        {
-            if (!IsAnimating)
-                return;
-
-            timeSinceLastFrame += timeDelta;
-            if (timeSinceLastFrame >= Animation.Frames[index].DisplayTime)
-            {
-                SetAnimationFrame(GetNextCustomFrame());
-                Scale(spriteRenderer, xSize, ySize);
             }
         }
 
@@ -80,6 +73,16 @@ namespace Assets.Core.GameEditor.AnimationControllers
             return Animation;
         }
 
+        public float GetXScaling()
+        {
+            return XScaling;
+        }
+
+        public float GetYScaling()
+        {
+            return YScaling;
+        }
+
         #region PRIVATE
 
         private SpriteRenderer spriteRenderer;
@@ -107,7 +110,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
             return Animation.Frames[index];
         }
 
-        private void Scale(SpriteRenderer spriteRenderer, uint xSize, uint ySize)
+        private void Scale(SpriteRenderer spriteRenderer, float xSize, float ySize)
         {
             var rect = spriteRenderer.sprite.rect;
 

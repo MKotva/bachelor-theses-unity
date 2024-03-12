@@ -15,6 +15,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
             this.IsAnimating = isAnimating;
             imageRenderer = renderer;
             Animation = newAnimation;
+
             if (newAnimation.Frames.Count != 0)
                 SetAnimationFrame(newAnimation.Frames[0]);
 
@@ -34,18 +35,6 @@ namespace Assets.Core.GameEditor.AnimationControllers
             }
         }
 
-        public void Animate(float timeDelta, uint xSize, uint ySize)
-        {
-            if (!IsAnimating)
-                return;
-
-            timeSinceLastFrame += timeDelta;
-            if (timeSinceLastFrame >= Animation.Frames[index].DisplayTime)
-            {
-                SetAnimationFrame(GetNextCustomFrame());
-                Scale(imageRenderer, xSize, ySize);
-            }
-        }
 
         public void PauseAnimation()
         {
@@ -80,6 +69,16 @@ namespace Assets.Core.GameEditor.AnimationControllers
             return Animation;
         }
 
+        public float GetXScaling()
+        {
+            return 1;
+        }
+
+        public float GetYScaling()
+        {
+            return 1;
+        }
+
         #region PRIVATE
         private Image imageRenderer;
         private CustomAnimationFrame actualFrame;
@@ -104,16 +103,6 @@ namespace Assets.Core.GameEditor.AnimationControllers
             }
 
             return Animation.Frames[index];
-        }
-
-        private void Scale(Image imageRenderer, uint xSize, uint ySize)
-        {
-            var rect = imageRenderer.sprite.rect;
-
-            var xScale = 1 / ( rect.width / xSize );
-            var yScale = 1 / ( rect.height / ySize );
-
-            imageRenderer.transform.localScale = new Vector3(xScale, yScale, 1);
         }
 
         #endregion

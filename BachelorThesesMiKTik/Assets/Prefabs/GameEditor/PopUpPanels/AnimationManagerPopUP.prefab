@@ -233,7 +233,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8515901642928547023, guid: 21b01563832aa564196c5f0ff6b2638d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 47.235184
+      value: 275.49155
       objectReference: {fileID: 0}
     - target: {fileID: 8515901642928547023, guid: 21b01563832aa564196c5f0ff6b2638d, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -296,7 +296,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c79fcf9df8f929449ae7f9bacb35808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NameField: {fileID: 0}
   OutputConsole: {fileID: 4221166687068467787}
   AnimationsView: {fileID: 2093238172876244890}
   NameButton: {fileID: 3428609037141630846, guid: 5eee17af087a8b047af836adf49508b5, type: 3}

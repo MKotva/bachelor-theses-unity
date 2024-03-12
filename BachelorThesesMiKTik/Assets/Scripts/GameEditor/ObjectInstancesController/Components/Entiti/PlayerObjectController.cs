@@ -1,16 +1,21 @@
 ﻿using Assets.Core.GameEditor.DTOS.Components;
 using Assets.Core.GameEditor.DTOS.SourcePanels;
 using Assets.Scenes.GameEditor.Core.AIActions;
+using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Assets.Scripts.GameEditor.Entiti
 {
-    public class PlayerObjectController : MonoBehaviour
+    public class PlayerObjectController : MonoBehaviour, IObjectController
     {
         private PlayerComponentDTO playerSetting;
         private List<AIActionBase> actions;
         private bool IsInitDone;
+        
+        private bool WasPlayed;
+        private bool IsPlaying;
 
         public void Initialize(PlayerComponentDTO component)
         {
@@ -19,9 +24,30 @@ namespace Assets.Scripts.GameEditor.Entiti
             IsInitDone = false;
         }
 
+        public void Play() 
+        { 
+            if(!WasPlayed) 
+            {
+                playerSetting.OnCreateAction.Execute(gameObject);
+                WasPlayed = true;
+            }
+            IsPlaying = true;
+        }
+
+        public void Pause()
+        {
+            IsPlaying = false;
+        }
+
+
         #region PRIVATE
         private void FixedUpdate()
         {
+            if(!IsPlaying) 
+            {
+                return;
+            }
+
             if (!IsInitDone && playerSetting.OnCreateAction != null) 
             {
                 playerSetting.OnCreateAction.Execute(gameObject);

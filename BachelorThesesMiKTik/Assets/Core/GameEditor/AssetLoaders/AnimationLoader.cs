@@ -23,13 +23,24 @@ namespace Assets.Core.GameEditor.Animation
         /// <returns></returns>
         public static async Task SetAnimation(GameObject ob, AnimationSourceDTO data, bool shouldLoop = true, bool animateOnAwake = false, float xSize = 0, float ySize = 0)
         {
-            if (ob.TryGetComponent(out SpriteRenderer spriteRenderer))
+            if (ob.TryGetComponent<AnimationsController>(out var controller))
             {
-                await SetAnimation(spriteRenderer, ob, data, shouldLoop, animateOnAwake, xSize, ySize);
-            }
-            else if(ob.TryGetComponent<Image>(out Image image))
-            {
-                await SetAnimation(image, ob, data, shouldLoop, animateOnAwake, xSize, ySize);
+                var animation = await LoadAnimation(data);
+                if (xSize == 0 || ySize == 0)
+                {
+                    if (ob.TryGetComponent(out RectTransform rect))
+                    {
+                        xSize = rect.rect.width;
+                        ySize = rect.rect.height;
+                    }
+                    else
+                    {
+                        InfoPanelController.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
+                        return;
+                    }
+                }
+
+                controller.SetCustomAnimation(animation, shouldLoop, animateOnAwake, xSize, ySize);
             }
         }
 
@@ -63,56 +74,6 @@ namespace Assets.Core.GameEditor.Animation
                 }
             }
             return new CustomAnimation(frames);
-        }
-
-
-        /// <summary>
-        /// Set sprite renderer to a given size;
-        /// </summary>
-        /// <param name="spriteRenderer"></param>
-        /// <param name="xSize"></param>
-        /// <param name="ySize"></param>
-        private static async Task SetAnimation(SpriteRenderer renderer, GameObject ob, AnimationSourceDTO data, bool shouldLoop = true, bool animateOnAwake = false, float xSize = 0, float ySize = 0)
-        {
-            if (ob.TryGetComponent<AnimationsController>(out var controller))
-            {
-                var animation = await LoadAnimation(data);
-                controller.SetCustomAnimation(new SpriteAnimator(renderer, animation, animateOnAwake), shouldLoop);
-
-                if (xSize == 0 || ySize == 0)
-                {
-                    if (ob.TryGetComponent(out RectTransform rect))
-                    {
-                        xSize = rect.rect.width;
-                        ySize = rect.rect.height;
-                    }
-                    else
-                    {
-                        InfoPanelController.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
-                        return;
-                    }
-                }
-                Scale(renderer, xSize, ySize);
-            }
-        }
-
-        private static async Task SetAnimation(Image image, GameObject ob, AnimationSourceDTO data, bool shouldLoop = true, bool animateOnAwake = false, float xSize = 0, float ySize = 0)
-        {
-            if (ob.TryGetComponent<AnimationsController>(out var controller))
-            {
-                var animation = await LoadAnimation(data);
-                controller.SetCustomAnimation(new ImageAnimator(image, animation, animateOnAwake), shouldLoop);
-            }
-        }
-
-        private static void Scale(SpriteRenderer spriteRenderer, float xSize, float ySize)
-        {
-            var rect = spriteRenderer.sprite.rect;
-
-            var xScale = 1 / ( rect.width / xSize );
-            var yScale = 1 / ( rect.height / ySize );
-
-            spriteRenderer.transform.localScale = new Vector3(xScale, yScale, 1);
         }
     }
 }

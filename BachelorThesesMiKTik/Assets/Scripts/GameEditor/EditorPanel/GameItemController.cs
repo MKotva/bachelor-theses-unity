@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using static UnityEditor.Timeline.Actions.MenuPriority;
 
 namespace Assets.Scripts.GameEditor.ItemView
 {
@@ -17,7 +18,7 @@ namespace Assets.Scripts.GameEditor.ItemView
 
         public ItemData ActualSelectedItem { get; private set; }
         public Dictionary<string, ItemGroupViewController> GroupViews {  get; private set; }
-        public List<ItemData> Items { get; private set; }
+        public Dictionary<int, ItemData> Items { get; private set; }
         public Dictionary<string, int> ItemsNameIdPair { get; private set; }
 
         private ItemGroupViewController activeGroup;
@@ -27,7 +28,7 @@ namespace Assets.Scripts.GameEditor.ItemView
             GroupViewSelector.onValueChanged.AddListener( delegate { OnSelectorValueChanged(); });
             ActualSelectedItem = DefaultItems[0];
             GroupViews = new Dictionary<string, ItemGroupViewController>();
-            Items = new List<ItemData>();
+            Items = new Dictionary<int,ItemData>();
             ItemsNameIdPair = new Dictionary<string, int>();
 
             foreach (var item in DefaultItems) 
@@ -42,8 +43,8 @@ namespace Assets.Scripts.GameEditor.ItemView
         public void AddItem(ItemData item)
         {
             AddToGroup(item);
-            item.Id = Items.Count;
-            Items.Add(item);
+            item.Id = item.GetInstanceID();
+            Items.Add(item.Id, item);
             ItemsNameIdPair.Add(item.ShownName, item.Id);
         }
 
@@ -73,6 +74,20 @@ namespace Assets.Scripts.GameEditor.ItemView
                 {
                     MapCanvas.Instance.ReplaceItem(newItem, itemPosition);
                 }
+            }
+        }
+
+        public void RemoveItem(ItemData item)
+        {
+            if (ItemsNameIdPair.ContainsKey(item.ShownName))
+            {
+                var id = ItemsNameIdPair[item.ShownName];
+                ItemsNameIdPair.Remove(item.ShownName);
+                GroupViews[item.GroupName].RemoveItemButton(item);
+                Destroy(Items[id].Prefab);
+                Items.Remove(id);
+
+                MapCanvas.Instance.RemoveGroupFromData(id);
             }
         }
 

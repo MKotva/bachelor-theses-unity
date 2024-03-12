@@ -23,6 +23,20 @@ namespace Assets.Scripts.GameEditor.GameObjects.Elements
             TryGetComponent(out SpriteRenderer);
             TryGetComponent(out Rigidbody);
             TryGetComponent(out BoxCollider);
+
+            EditorController.Instance.PlayModeEnter += ActivateObject;
+            EditorController.Instance.PlayModePause += DeactiveObject;
+            EditorController.Instance.PlayModeExit += DeactiveObject;
+        }
+
+        public void ActivateObject()
+        {
+
+        }
+
+        public void DeactiveObject()
+        {
+
         }
 
         public virtual void Destroy()

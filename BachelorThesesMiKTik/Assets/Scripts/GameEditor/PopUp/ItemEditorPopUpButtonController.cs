@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.GameEditor.ItemView;
+using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.PopUp
 {
@@ -16,6 +17,15 @@ namespace Assets.Scripts.GameEditor.PopUp
         {
             var itemEditor = Instantiate(ItemEditorPrefab, PopUpCanvas.transform).GetComponent<ObjectCreatorController>();
             itemEditor.EditActualObject();
+        }
+
+        public void OnDelete()
+        {
+            var instace = GameItemController.Instance;
+            if (instace != null) 
+            {
+                instace.RemoveItem(instace.ActualSelectedItem);
+            }
         }
     }
 }

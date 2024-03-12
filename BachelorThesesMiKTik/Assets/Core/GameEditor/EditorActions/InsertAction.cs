@@ -111,8 +111,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private void Insert(Vector3 position)
         {
             position = map.GetCellCenterPosition(position);
-            GameObject objectAtPos = map.GetObjectAtPosition(position);
-            if (objectAtPos == null)
+            if (!map.ContainsObjectAtPosition(position))
             {
                 map.Paint(map.ActualPrefab, position);
             }

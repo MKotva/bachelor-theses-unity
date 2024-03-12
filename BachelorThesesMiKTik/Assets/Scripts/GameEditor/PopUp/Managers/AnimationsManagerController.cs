@@ -1,16 +1,13 @@
 ﻿using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.SourcePanels;
-using DG.Tweening;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Assets.Scripts.GameEditor.PopUp.Managers
 {
     public class AnimationsManagerController : MonoBehaviour
     {
-        [SerializeField] TMP_InputField NameField;
         [SerializeField] TMP_Text OutputConsole;
         [SerializeField] GameObject AnimationsView;
         [SerializeField] GameObject NameButton;

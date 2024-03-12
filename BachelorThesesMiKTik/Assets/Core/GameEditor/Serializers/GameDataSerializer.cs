@@ -41,7 +41,7 @@ namespace Assets.Core.GameEditor.Serializers
         private static List<ItemDTO> GetItems()
         {
             var dtos = new List<ItemDTO>();
-            foreach (var item in GameItemController.Instance.Items)
+            foreach (var item in GameItemController.Instance.Items.Values)
             {
                 if (item.Components != null)
                     dtos.Add(new ItemDTO(item));

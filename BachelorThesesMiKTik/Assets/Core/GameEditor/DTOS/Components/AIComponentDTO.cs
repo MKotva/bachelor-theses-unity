@@ -27,7 +27,6 @@ namespace Assets.Core.GameEditor.DTOS.Components
         public override async Task Set(ItemData item) {}
 
         public override void SetInstance(ItemData item, GameObject instance)
-
         {
             var agent = GetOrAddComponent<AIAgent>(instance);
             agent.Initialize(this);

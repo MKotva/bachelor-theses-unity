@@ -164,6 +164,10 @@ public class MapCanvas : Singleton<MapCanvas>
     {
         if (Data.ContainsKey(id))
         {
+            foreach(var ob in Data[id].Values)
+            {
+                Destroy(ob);
+            }
             Data.Remove(id);
         }
     }
@@ -186,9 +190,12 @@ public class MapCanvas : Singleton<MapCanvas>
     public GameObject Paint(ItemData item, Vector3 position)
     {
         GameObject newInstance = TileBase.Instantiate(item.Prefab, position, Quaternion.identity, GridLayout.transform);
-        foreach(var comp in item.Components)
+        if (item.Components != null)
         {
-            comp.SetInstance(item, newInstance);
+            foreach (var comp in item.Components)
+            {
+                comp.SetInstance(item, newInstance);
+            }
         }
         InsertToData(item, newInstance, position);
         return newInstance;

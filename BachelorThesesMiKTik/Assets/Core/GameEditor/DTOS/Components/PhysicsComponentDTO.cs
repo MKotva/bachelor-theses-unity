@@ -32,14 +32,13 @@ namespace Assets.Core.GameEditor.DTOS.Components
 
         public override async Task Set(ItemData item)
         {
-            var rigid = GetOrAddComponent<Rigidbody2D>(item.Prefab);
-            SetRigid(rigid);
+            GetOrAddComponent<Rigidbody2D>(item.Prefab); 
         }
 
         public override void SetInstance(ItemData item, GameObject instance)
         {
-            //var rigid = GetOrAddComponent<Rigidbody2D>(instance);
-            //SetRigid(rigid);
+            var rigid = GetOrAddComponent<Rigidbody2D>(instance);
+            SetRigid(rigid);
         }
 
         private void SetRigid(Rigidbody2D rigidbody)
@@ -57,6 +56,9 @@ namespace Assets.Core.GameEditor.DTOS.Components
 
             if (IsXPositionFreeze)
                 rigidbody.constraints = RigidbodyConstraints2D.FreezePositionX;
+
+            rigidbody.isKinematic = true;
+            rigidbody.Sleep();
         }
     }
 }

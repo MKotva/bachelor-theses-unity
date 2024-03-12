@@ -1,5 +1,4 @@
 ﻿using Assets.Core.GameEditor.Animation;
-using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Controllers;
@@ -57,8 +56,8 @@ namespace Assets.Core.GameEditor.DTOS.Components
             {
                 var prefabController = item.Prefab.GetComponent<AnimationsController>();
                 var controller = instance.GetOrAddComponent<AnimationsController>();
-                var animator = new SpriteAnimator(instance.GetComponent<SpriteRenderer>(), prefabController.Animator.GetAnimation(), true); 
-                controller.SetCustomAnimation(animator, prefabController.ShouldLoop);
+
+                controller.SetCustomAnimation(prefabController.Animator.GetAnimation(), prefabController.ShouldLoop, prefabController.Animator.Animating());
                 controller.Play();            
             }
         }
