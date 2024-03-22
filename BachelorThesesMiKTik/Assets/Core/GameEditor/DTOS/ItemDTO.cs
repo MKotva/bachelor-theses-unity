@@ -1,4 +1,4 @@
-﻿using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +10,11 @@ namespace Assets.Core.GameEditor.DTOS
     {
         public string Name;
         public int ID;
-        [SerializeReference] public List<ComponentDTO> Components;
+        [SerializeReference] public List<CustomComponent> Components;
 
         public ItemDTO() 
         {
-            Components = new List<ComponentDTO>();
+            Components = new List<CustomComponent>();
         }
 
         public ItemDTO(ItemData item) 

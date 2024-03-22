@@ -2,9 +2,8 @@
 
 namespace Assets.Core.GameEditor.DTOS.Assets
 {
-    public class AudioSourceDTO : SourceDTO
+    public class AudioSourceDTO : AssetSourceDTO
     {
-        public string Name { get; set; }
         public int Priority { get; set; }
         public float StereoPan { get; set; }
         public float Pitch { get; set; }

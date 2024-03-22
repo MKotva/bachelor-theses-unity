@@ -1,45 +1,67 @@
-﻿using Assets.Core.GameEditor;
-using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components;
+using Assets.Core.GameEditor.Components.Colliders;
 using Assets.Core.GameEditor.DTOS.SourcePanels;
 using Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings;
+using Assets.Scripts.GameEditor.SourcePanels.Components.Colliders;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+
+using BoxCollider = Assets.Scripts.GameEditor.SourcePanels.Components.Colliders.BoxCollider;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
 {
     public class BoxColliderComponentController : ObjectComponent
     {
-        [SerializeField] TMP_InputField XInputField;
-        [SerializeField] TMP_InputField YInputField;
+        [SerializeField] TMP_Dropdown ColliderType;
+        [SerializeField] BoxCollider BoxColliderMenu;
+        [SerializeField] CircularCollider CircularMenu;
+        [SerializeField] PolygonCollider PolygonMenu;
+
         [SerializeField] GameObject ContentView;
         [SerializeField] GameObject CollisionSourcePanel;
 
+
+        private GameObject actualActriveMenu;
         private List<CollisionSourcePanelController> instances;
 
-        public override void SetComponent(ComponentDTO component)
+        public override void SetComponent(CustomComponent component)
         {
-            if (component is BoxColliderDTO)
+            if (component is ColliderComponent)
             {
-                var boxCollider = (BoxColliderDTO) component;
+                var boxCollider = (ColliderComponent) component;
                 foreach (var collider in boxCollider.Colliders)
                 {
                     var panel = AddSourcePanel();
                     panel.Set(collider);
                     instances.Add(panel);
                 }
-                XInputField.text = boxCollider.XSize.ToString();
-                YInputField.text = boxCollider.YSize.ToString();
+                
+                if(component is BoxColliderComponent)
+                {
+                    BoxColliderMenu.SetComponent(boxCollider);
+                    actualActriveMenu = BoxColliderMenu.gameObject;
+                }
+                else if (component is PolygonColliderComponent)
+                {
+                    PolygonMenu.SetComponent(boxCollider);
+                    actualActriveMenu = PolygonMenu.gameObject;
+                }
+                else
+                {
+                    CircularMenu.SetComponent(boxCollider);
+                    actualActriveMenu = CircularMenu.gameObject;
+                }
+                actualActriveMenu.SetActive(true);
             }
             else
             {
-                InfoPanelController.Instance.ShowMessage("General component parsing error!");
+                ErrorOutputManager.Instance.ShowMessage("General component parsing error!", "ObjectCreate");
             }
         }
-        public override async Task<ComponentDTO> GetComponent()
+        public override CustomComponent GetComponent()
         {
-            return await Task.Run(() => CreateComponent());
+            return CreateComponent();
         }
 
         public void OnAdd()
@@ -50,13 +72,33 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         #region PRIVATE
         private void Awake()
         {
+            actualActriveMenu = BoxColliderMenu.gameObject;
             instances = new List<CollisionSourcePanelController>();
+            ColliderType.onValueChanged.AddListener(ChangeMenu);
+            
         }
 
-        private BoxColliderDTO CreateComponent()
+        private void ChangeMenu(int id)
         {
-            var xSize = MathHelper.GetPositiveFloat(XInputField.text, "X size", "Object creator");
-            var ySize = MathHelper.GetPositiveFloat(YInputField.text, "Y size", "Object creator");
+            actualActriveMenu.SetActive(false);
+            if (id == 0)
+            {
+                actualActriveMenu = BoxColliderMenu.gameObject;
+            }
+            else if(id == 1)
+            {
+                actualActriveMenu = CircularMenu.gameObject;
+            }
+            else
+            {
+                actualActriveMenu = PolygonMenu.gameObject;
+            }
+            actualActriveMenu.SetActive(true);
+        }
+
+        private ColliderComponent CreateComponent()
+        {
+            var component = actualActriveMenu.GetComponent<ColliderController>().GetComponent();
 
             var colliders = new List<CollisionDTO>();
             foreach (var instance in instances)
@@ -64,13 +106,15 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
                 colliders.Add(instance.Get());
             }
 
-            return new BoxColliderDTO(xSize, ySize, colliders);
+            component.Colliders = colliders;
+
+            return component;
         }
 
         private CollisionSourcePanelController AddSourcePanel()
         {
             var panel = Instantiate(CollisionSourcePanel, ContentView.transform);
-            panel.GetComponent<SourcePanelController>().onDestroy += PanelDestroyHandler;
+            panel.GetComponent<SourcePanelController>().onDestroyClick += PanelDestroyHandler;
             return panel.GetComponent<CollisionSourcePanelController>();
         }
 
@@ -80,6 +124,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             {
                 if (instances[i].GetInstanceID() == id)
                 {
+                    Destroy(instances[i]);
                     instances.RemoveAt(i);
                 }
             }

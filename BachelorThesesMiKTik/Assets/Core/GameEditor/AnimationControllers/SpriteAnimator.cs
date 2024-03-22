@@ -11,21 +11,33 @@ namespace Assets.Core.GameEditor.AnimationControllers
         public float XScaling { get; private set; }
         public float YScaling { get; private set; }
 
-        public SpriteAnimator(SpriteRenderer renderer, CustomAnimation newAnimation, bool isAnimating, float xSize = 30, float ySize = 30) 
+        public SpriteAnimator(SpriteRenderer renderer, CustomAnimation newAnimation, bool isAnimating, float xSize = 30, float ySize = 30)
         {
             IsAnimating = isAnimating;
             spriteRenderer = renderer;
             Animation = newAnimation;
-            
-            XScaling = xSize; 
+
+            XScaling = xSize;
             YScaling = ySize;
 
-            if(newAnimation.Frames.Count != 0)
+            if (newAnimation.Frames.Count != 0)
                 SetAnimationFrame(newAnimation.Frames[0]);
 
             timeSinceLastFrame = 0;
             index = 0;
             Scale(renderer, xSize, ySize);
+        }
+
+        public void EditAnimation(CustomAnimation newAnimation)
+        {
+            if (newAnimation.Frames.Count != 0)
+            {
+                Animation = newAnimation;
+                SetAnimationFrame(newAnimation.Frames[0]);
+            }
+
+            timeSinceLastFrame = 0;
+            index = 0;
         }
 
         public void Animate(float timeDelta)
@@ -56,6 +68,20 @@ namespace Assets.Core.GameEditor.AnimationControllers
             actualFrame = Animation.Frames[0];
             index = 0;
             IsAnimating = true;
+        }
+
+        public void RemoveAnimation()
+        {
+            IsAnimating = false;
+            spriteRenderer.sprite = null;
+        }
+
+        public void Stop()
+        {
+            timeSinceLastFrame = 0;
+            actualFrame = Animation.Frames[0];
+            index = 0;
+            IsAnimating = false;
         }
 
         public bool HasFinished()
@@ -95,6 +121,7 @@ namespace Assets.Core.GameEditor.AnimationControllers
         {
             actualFrame = newFrame;
             spriteRenderer.sprite = newFrame.Sprite;
+            Scale(spriteRenderer, XScaling, YScaling);
             timeSinceLastFrame = 0;
         }
 

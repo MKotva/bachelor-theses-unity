@@ -3,12 +3,19 @@ using UnityEngine;
 public class PopUpController : MonoBehaviour
 {
     public delegate void ExitHandler();
-    public event ExitHandler exitHandler;
+    public event ExitHandler onExit;
+
+    private void Start()
+    {
+        MapCanvas.Instance.OnDisable();
+    }
 
     public virtual void OnExitClick()
     {
-        if(exitHandler != null)
-            exitHandler.Invoke();
+        MapCanvas.Instance.OnEnable();
+
+        if(onExit != null)
+            onExit.Invoke();
         Destroy(gameObject);
     }
 

@@ -1,6 +1,5 @@
-﻿using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components;
 using Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
@@ -11,30 +10,30 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] RuntimeActionSettingPanelController CreateController;
         [SerializeField] RuntimeActionSettingPanelController UpdateController;
 
-        public override void SetComponent(ComponentDTO component)
+        public override void SetComponent(CustomComponent component)
         {
-            if (component is AIComponentDTO)
+            if (component is AIComponent)
             {
-                var aiComponent = (AIComponentDTO) component;
+                var aiComponent = (AIComponent) component;
                 ActionPanel.SetAction(aiComponent.Action);
                 CreateController.SetPanel(aiComponent.OnCreateAction);
                 UpdateController.SetPanel(aiComponent.OnUpdateAction);
             }
             else
             {
-                InfoPanelController.Instance.ShowMessage("ObjectCreate", "AI component parsing error!");
+                ErrorOutputManager.Instance.ShowMessage("AI component parsing error!", "ObjectCreate");
             }
         }
 
-        public override async Task<ComponentDTO> GetComponent()
+        public override CustomComponent GetComponent()
         {
-            return await Task.Run(() => CreateComponent());
+            return CreateComponent();
         }
 
-        private AIComponentDTO CreateComponent()
+        private AIComponent CreateComponent()
         {
             var action = ActionPanel.GetAction();
-            return new AIComponentDTO(action, CreateController.ActionCode, UpdateController.ActionCode);
+            return new AIComponent(action, CreateController.ActionCode, UpdateController.ActionCode);
         }
     }
 }

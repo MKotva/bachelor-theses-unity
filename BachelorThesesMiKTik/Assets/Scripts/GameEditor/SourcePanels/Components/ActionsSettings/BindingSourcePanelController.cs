@@ -46,7 +46,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         }
 
         /// <summary>
-        /// Sets given binding for action.
+        /// Sets given binding for action based on given DTO.
         /// </summary>
         /// <param name="binding"></param>
         /// <param name="option"></param>

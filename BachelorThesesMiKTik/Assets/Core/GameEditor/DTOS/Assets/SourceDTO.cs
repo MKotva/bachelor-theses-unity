@@ -1,18 +1,22 @@
 ﻿using Assets.Core.GameEditor.Enums;
 using System;
 
-namespace Assets.Core.GameEditor.DTOS
+namespace Assets.Core.GameEditor.DTOS.Assets
 {
-    [Serializable]
+    [Serializable] 
     public class SourceDTO
     {
-        public SourceType Type { get; set; }
-        public string URL { get; set; }
+        public string Name;
+        public SourceType Type;
+        public float XSize;
+        public float YSize;
 
-        public SourceDTO(SourceType type, string url)
+        public SourceDTO(string name, SourceType type, float xSize = 30, float ySize = 30) 
         {
+            Name = name;
             Type = type;
-            URL = url;
+            XSize = xSize;
+            YSize = ySize;
         }
     }
 }

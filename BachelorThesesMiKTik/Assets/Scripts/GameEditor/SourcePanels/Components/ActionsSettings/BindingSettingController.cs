@@ -116,7 +116,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         private BindingSourcePanelController CreatePanel()
         {
             var newRow = Instantiate(SourcePanel, Parent.transform);
-            newRow.GetComponent<SourcePanelController>().onDestroy += DestroyPanel;
+            newRow.GetComponent<SourcePanelController>().onDestroyClick += DestroyPanel;
 
             var rowController = newRow.GetComponent<BindingSourcePanelController>();
             rowController.SetActions(actualActions);
@@ -132,6 +132,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             {
                 if (instances[i].GetInstanceID() == id) 
                 {
+                    Destroy(instances[i]);
                     instances.RemoveAt(i);
                 }
             }

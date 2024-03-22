@@ -13,7 +13,7 @@ namespace Assets.Scripts.GameEditor.PopUp
                             .GetComponent<PopUpController>();
 
             EditorController.Instance.PausePlayMode();
-            controller.exitHandler += ExitHandler;
+            controller.onExit += ExitHandler;
         }
 
         public void ExitHandler()

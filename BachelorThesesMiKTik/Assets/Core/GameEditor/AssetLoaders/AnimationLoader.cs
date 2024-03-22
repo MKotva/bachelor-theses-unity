@@ -35,7 +35,7 @@ namespace Assets.Core.GameEditor.Animation
                     }
                     else
                     {
-                        InfoPanelController.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
+                        ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
                         return;
                     }
                 }

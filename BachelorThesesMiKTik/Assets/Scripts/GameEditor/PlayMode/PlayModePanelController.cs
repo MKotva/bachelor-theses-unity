@@ -27,6 +27,18 @@ public class PlayModePanelController : MonoBehaviour
         EditorController.Instance.ExitPlayMode();
     }
 
+    private void Awake()
+    {
+        var instance = ErrorOutputManager.Instance;
+        if(instance != null )
+            instance.AddOnShowListener("Debug panel", ErrorHandler);
+    }
+
+    private void ErrorHandler(string message)
+    {
+        OutputConsole.text = message;
+    }
+
     private void SwitchPlayPauseButton(bool isPlaying)
     {
         if (isPlaying)
@@ -42,5 +54,12 @@ public class PlayModePanelController : MonoBehaviour
             IsPlaying = true;
         }
 
+    }
+
+    private void OnDestroy()
+    {
+        var instance = ErrorOutputManager.Instance;
+        if (instance != null)
+            instance.RemoveListener("Debug panel");
     }
 }

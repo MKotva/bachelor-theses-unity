@@ -96,7 +96,7 @@ namespace Assets.Core.GameEditor.AIActions
             {
                 if (IsWalkable(item.Position))
                 {
-                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformActionAsync, PrintActionAsync);
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAgentActionAsync, PrintAgentActionAsync);
                     reacheablePositions.Add(action);
                 }
             }
@@ -105,7 +105,7 @@ namespace Assets.Core.GameEditor.AIActions
             {
                 if (IsWalkable(item.Position))
                 {
-                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformActionAsync, PrintActionAsync);
+                    var action = new AgentActionDTO(position, item.Position, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAgentActionAsync, PrintAgentActionAsync);
                     reacheablePositions.Add(action);
                 }
             }
@@ -113,7 +113,7 @@ namespace Assets.Core.GameEditor.AIActions
             return reacheablePositions;
         }
 
-        public override async Task PerformActionAsync(AgentActionDTO action)
+        public override async Task PerformAgentActionAsync(AgentActionDTO action)
         {
             var jumpDirection = MathHelper.GetVector3FromString(action.PositionActionParameter);
             _rigid.AddForce(jumpDirection * 50);
@@ -128,7 +128,7 @@ namespace Assets.Core.GameEditor.AIActions
             await Task.Delay(1000);
         }
 
-        public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
+        public override async Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
         {
             var trajectory = GetTrajectory(action.StartPosition, MathHelper.GetVector3FromString(action.PositionActionParameter));
             var result = map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, trajectory);

@@ -5,11 +5,9 @@ using System.Collections.Generic;
 namespace Assets.Core.GameEditor.DTOS
 {
     [Serializable]
-    public class AnimationSourceDTO : SourceDTO
+    public class AnimationSourceDTO : AssetSourceDTO
     {
         public List<AnimationFrameDTO> AnimationData {get; set;}
-        public string Name { get; set; }
-
         public bool Loop { get; set; }
 
         public bool OnAwake { get; set; }

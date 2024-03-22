@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.GameEditor.ObjectInstancesController;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Scripts.GameEditor
 {
@@ -8,22 +10,32 @@ namespace Assets.Scripts.GameEditor
         [SerializeField] public Canvas PopUpCanvas;
         [SerializeField] public Canvas PlayModeCanvas;
 
-        public delegate void PlayModeChangeHandler();
-        public event PlayModeChangeHandler PlayModeEnter;
-        public event PlayModeChangeHandler PlayModePause;
-        public event PlayModeChangeHandler PlayModeExit;
-        public bool IsInPlayMode { get; private set; } 
+        public bool IsInPlayMode { get; private set; }
+        private Dictionary<int, IObjectController> activeObjects;
+        
+        public void AddActiveObject(int id, IObjectController obj) 
+        {
+            if(!activeObjects.ContainsKey(id))
+                activeObjects.Add(id, obj);
+        }
+
+        public void RemoveActiveObject(int id) 
+        {
+            if (activeObjects.ContainsKey(id))
+                activeObjects.Remove(id);
+        }
 
         public void EnableEditor()
         {
+            PopUpCanvas.gameObject.SetActive(false);
             ToolkitCanvas.gameObject.SetActive(true);
+            PopUpCanvas.gameObject.SetActive(true);
         }
 
         public void DisableEditor()
         {
             ToolkitCanvas.gameObject.SetActive(false);
         }    
-
 
         public void DisplayPlayMode() 
         {
@@ -36,6 +48,8 @@ namespace Assets.Scripts.GameEditor
             PlayModeCanvas.gameObject.SetActive(true);
             IsInPlayMode = true;
 
+            foreach (var obj in activeObjects.Values)
+                obj.Enter();
         }
 
         public void StartPlayMode() 
@@ -44,7 +58,9 @@ namespace Assets.Scripts.GameEditor
             {
                 return;
             }
-            PlayModeEnter?.Invoke();
+
+            foreach (var obj in activeObjects.Values)
+                obj.Play();
         }
 
         public void PausePlayMode() 
@@ -53,10 +69,10 @@ namespace Assets.Scripts.GameEditor
             {
                 return;
             }
-            PlayModePause?.Invoke();
+
+            foreach (var obj in activeObjects.Values)
+                obj.Pause();
         }
-
-
 
         public void ExitPlayMode()
         {
@@ -65,9 +81,16 @@ namespace Assets.Scripts.GameEditor
                 return;
             }
             EnableEditor();
-            PlayModeExit?.Invoke();
             PlayModeCanvas.gameObject.SetActive(false);
             IsInPlayMode = false;
+
+            foreach (var obj in activeObjects.Values)
+                obj.Exit();
+        }
+
+        protected override void Awake()
+        {
+            activeObjects = new Dictionary<int, IObjectController>();
         }
     }
 }

@@ -29,12 +29,13 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
                     continue;
                 if(i >= SettingPanels.Count)
                 {
-                    InfoPanelController.Instance.ShowMessage("Action setting parsing error!", "ObjectCreate");
+                    ErrorOutputManager.Instance.ShowMessage("Action setting parsing error!", "ObjectCreate");
                     return;
                 }
-                
-                ActualPanel = SettingPanels[i];
-                ActualPanel.SetAction(action);
+
+                ActionType.value = i;
+                SettingPanels[i].SetAction(action);
+                ChangeAction(i);
                 return;
             }
         }
@@ -53,7 +54,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         private void Awake()
         {
             ActualPanel = SettingPanels.First();
-            ActionType.onValueChanged.AddListener(delegate { ChangeAction(); });
+            ActionType.onValueChanged.AddListener(ChangeAction);
         }
 
         /// <summary>
@@ -63,10 +64,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         /// and calls calback method (if callback has been set)
         /// 
         /// </summary>
-        private void ChangeAction()
+        private void ChangeAction(int id)
         {
             ActualPanel.gameObject.SetActive(false);
-            ActualPanel = SettingPanels[ActionType.value];
+            ActualPanel = SettingPanels[id];
             if(OnActionChange != null)
                 OnActionChange.Invoke(ActualPanel.GetActionTypes());
             ActualPanel.gameObject.SetActive(true);

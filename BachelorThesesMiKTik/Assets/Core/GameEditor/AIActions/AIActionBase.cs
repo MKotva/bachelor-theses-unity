@@ -1,10 +1,7 @@
 ﻿using Assets.Core.GameEditor.DTOS;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Assets.Scenes.GameEditor.Core.AIActions
 {
@@ -20,8 +17,8 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
         }
 
         public abstract void PerformAction(string action);
-        public abstract Task PerformActionAsync(AgentActionDTO action);
-        public abstract Task<List<GameObject>> PrintActionAsync(AgentActionDTO action);
+        public abstract Task PerformAgentActionAsync(AgentActionDTO action);
+        public abstract Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action);
         public abstract List<AgentActionDTO> GetPossibleActions(Vector3 position);
         public abstract bool IsPerforming();
 

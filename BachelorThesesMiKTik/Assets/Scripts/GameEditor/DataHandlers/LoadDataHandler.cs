@@ -23,7 +23,7 @@ public class LoadDataHandler : MonoBehaviour
     {
         if (JSONSerializer.Deserialize(path, out var gameData))
         {
-            await GameDataSerializer.SetGame(gameData);
+            await GameDataSerializer.Deserialize(gameData);
         }
     }
 
@@ -33,10 +33,10 @@ public class LoadDataHandler : MonoBehaviour
         map = MapCanvas.Instance;
     }
 
-    private void OnSucces(string path)
+    private async void OnSucces(string path)
     {
         map.OnEnable();
-        var task = LoadMap(path);
+        await LoadMap(path);
     }
 
     private void OnFail()

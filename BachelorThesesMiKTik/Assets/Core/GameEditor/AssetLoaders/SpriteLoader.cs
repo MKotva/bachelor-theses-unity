@@ -22,7 +22,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
         {
             if (ob == null || url == string.Empty)
             {
-                InfoPanelController.Instance.ShowMessage($"Unable to set sprite to an object! Object or url {url} is empty!");
+                ErrorOutputManager.Instance.ShowMessage($"Unable to set sprite to an object! Object or url {url} is empty!");
                 return;
             }
 
@@ -35,7 +35,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
                 }
                 else
                 {
-                    InfoPanelController.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
+                    ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
                     return;
                 }
             }
@@ -50,7 +50,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
             }
             else
             {
-                InfoPanelController.Instance.ShowMessage("Unable to set sprite to an object! Object does not contain sprite renderer.");
+                ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Object does not contain sprite renderer.");
             }
         }
 
@@ -93,7 +93,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
                     request.result == UnityWebRequest.Result.ConnectionError ||
                     request.result == UnityWebRequest.Result.DataProcessingError)
                 {
-                    InfoPanelController.Instance.ShowMessage(request.error);
+                    ErrorOutputManager.Instance.ShowMessage(request.error);
                     return null;
                 }
 
@@ -118,7 +118,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
             if (sprite != null)
             {
                 renderer.sprite = sprite;
-                Scale(renderer, xSize, ySize);
+                SetScale(renderer, xSize, ySize);
             }
         }
 
@@ -137,7 +137,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
         /// <param name="spriteRenderer"></param>
         /// <param name="xSize"></param>
         /// <param name="ySize"></param>
-        private static void Scale(SpriteRenderer spriteRenderer, float xSize, float ySize)
+        public static void SetScale(SpriteRenderer spriteRenderer, float xSize, float ySize)
         {
             var rect = spriteRenderer.sprite.rect;
 

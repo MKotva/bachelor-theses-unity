@@ -1,6 +1,7 @@
 ﻿using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -8,20 +9,21 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class MoveAIAction : AIActionBase
     {
-        private static List<string> actionTypes = new List<string>
+        private static Dictionary<string, Vector2> actionTypes = new Dictionary<string, Vector2>
         {
-            "Move left",
-            "Move right",
+            { "Move left", Vector2.left },
+            { "Move right", Vector2.right },
         };
         public static List<string> ActionTypes
         {
             get
             {
-                return new List<string>(actionTypes);
+                return actionTypes.Keys.ToList();
             }
         }
 
         private GameObject performer;
+        private Rigidbody2D performerRigidbody;
         private float speed;
         private float speedCap;
         private bool canFall;
@@ -29,6 +31,8 @@ namespace Assets.Scripts.GameEditor.AI
         public MoveAIAction(GameObject gameObject, float moveSpeed = 1, float moveSpeedCap = 1, bool canFallOf = false)
         {
             performer = gameObject;
+            if (performer.TryGetComponent(out Rigidbody2D rigid))
+                performerRigidbody = rigid;
             speed = moveSpeed;
             speedCap = moveSpeedCap;
             canFall = canFallOf;
@@ -65,41 +69,24 @@ namespace Assets.Scripts.GameEditor.AI
             {
                 if (IsWalkable(newPositions[i]))
                 {
-                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformActionAsync, PrintActionAsync));
+                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformAgentActionAsync, PrintAgentActionAsync));
                 }
             }
 
             return reacheablePositions;
         }
 
-        public override async Task PerformActionAsync(AgentActionDTO action)
+        public override async Task PerformAgentActionAsync(AgentActionDTO action)
         {
             performer.transform.position = GetPositionFromParam(action.StartPosition, action.PositionActionParameter);
             await Task.Delay(1000);
         }
 
-        public override async Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
+        public override async Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
         {
             var result = new List<GameObject>() { map.Marker.CreateMarkAtPosition(action.StartPosition) };
             return await Task.FromResult(result);
         }
-
-        private Vector3 GetPositionFromParam(Vector3 position, string param)
-        {
-            var cellSize = map.GridLayout.cellSize;
-
-            switch (param)
-            {
-                case "M;1:0" : return new Vector3(position.x + cellSize.x, position.y); //Right
-                case "M;1:-1": return new Vector3(position.x + cellSize.x, position.y - cellSize.y); //LowerRight
-                case "M;1:1" : return new Vector3(position.x + cellSize.x, position.y + cellSize.y); //UpperRight
-
-                case "M;-1:0": return new Vector3(position.x - cellSize.x, position.y); //Left
-                case "M;-1:-1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //LowerLeft;
-                case "M;-1:1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //UpperLeft;
-            }
-            return map.GetCellCenterPosition(position);
-    }
 
         public override bool IsPerforming()
         {
@@ -108,7 +95,50 @@ namespace Assets.Scripts.GameEditor.AI
 
         public override void PerformAction(string action)
         {
-            throw new System.NotImplementedException();
+            if (actionTypes.ContainsKey(action))
+            {
+                if (!CheckRigidBody())
+                    return;
+                var direction = actionTypes[action];
+                performerRigidbody.AddForce(direction * speed);
+                var clampedVelocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
+                performerRigidbody.velocity = clampedVelocity;
+            }
+        }
+        private bool CheckRigidBody()
+        {
+
+            if (performerRigidbody == null)
+            {
+                if (performer.TryGetComponent(out Rigidbody2D rigidbody))
+                {
+                    performerRigidbody = rigidbody;
+                }
+                else
+                {
+                    ErrorOutputManager.Instance.ShowMessage("Action can not be done, missing Physics component.", "Debug");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+        private Vector3 GetPositionFromParam(Vector3 position, string param)
+        {
+            var cellSize = map.GridLayout.cellSize;
+
+            switch (param)
+            {
+                case "M;1:0": return new Vector3(position.x + cellSize.x, position.y); //Right
+                case "M;1:-1": return new Vector3(position.x + cellSize.x, position.y - cellSize.y); //LowerRight
+                case "M;1:1": return new Vector3(position.x + cellSize.x, position.y + cellSize.y); //UpperRight
+
+                case "M;-1:0": return new Vector3(position.x - cellSize.x, position.y); //Left
+                case "M;-1:-1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //LowerLeft;
+                case "M;-1:1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //UpperLeft;
+            }
+            return map.GetCellCenterPosition(position);
         }
     }
 }

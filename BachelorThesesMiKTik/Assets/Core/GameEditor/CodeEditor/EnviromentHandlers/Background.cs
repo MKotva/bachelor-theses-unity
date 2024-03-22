@@ -1,7 +1,8 @@
 ﻿using Assets.Core.GameEditor.Attributes;
-using Assets.Core.GameEditor.DTOS;
+using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Core.GameEditor.Enums;
 using Assets.Core.SimpleCompiler.Exceptions;
+using Assets.Scripts.GameEditor.Managers;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +13,6 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         public BackgroundController BackgroundController { get; set; }
         
         private List<SourceDTO> newBackground;
-        private List<AnimationFrameDTO> animationData;
 
         public Background() 
         {
@@ -20,6 +20,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         }
         public override void SetInstance(GameObject instance) { }
 
+        #region NewBackgroundCreate
 
         [CodeEditorAttribute("Creates new background concept. You have to create new concept so" +
             "you can append new image/animation layers. For applying concept use SetBackground().")]
@@ -28,87 +29,122 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             newBackground = new List<SourceDTO>();
         }
 
-        [CodeEditorAttribute("Creates new animation concept. You have to create new concept so" +
-            "you can append new animation frames. For appending animation concept to background layers" +
-            " use AppendAnimationLayer().")]
-        public void CreateNewAnimationConcept()
+        [CodeEditorAttribute("Appends animation with given name (if exists) as layer to background concept, created by CreateBackgroundConcept()," +
+            "with default scaling 1920x1080", "(string imageName)")]
+        public void AppendAnimationLayer(string animationName)
         {
-            animationData = new List<AnimationFrameDTO>();
+            AppendImageLayer(animationName, 1920, 1080);
         }
 
-        [CodeEditorAttribute("Appends new animation frame to animation concept, created by CreateNewAnimationConcept()" +
-            "Num displayTime sets for how long should be frame displayed." + 
-            "String url is taken as path to image(.jpg//png). If you want to download image, just use the URL " +
-            "ending with .jpg/.png. If you want to use image on your disk, it must be stored in " +
-            "./Assest/StreamingAssets folder. In this case, set url as name of image with type (name(.jpg/.png))", "(num displayTime, string url)")]
-        public void AppendAnimationFrame(float displayTime, string url)
+        [CodeEditorAttribute("Appends animation with given name (if exists) as layer to background concept, created by CreateBackgroundConcept()," +
+            "with scaling X and Y.", "(string animationName, num xSize, num ySize)")]
+        public void AppendAnimationLayer(string name, float xSize, float ySize)
         {
-            if (animationData == null)
-                throw new RuntimeException("Exception in method \"AppendAnimationFrame\"! You must create new animation by calling \"CreateNewAnimationConcept\"");
-            animationData.Add(new AnimationFrameDTO(displayTime, url));
+            if(newBackground == null)
+                throw new RuntimeException("Exception in method \"SetBackGround\"! You must create new background by calling \"CreateBackgroundConcept\"");
+
+            if (!AnimationsManager.Instance.ContainsName(name))
+                throw new RuntimeException($"Exception in method \"AppendAnimationLayer\"! There is no animation with name: {name}");
+
+            newBackground.Add(new SourceDTO(name, SourceType.Animation, xSize, ySize));
         }
 
-        [CodeEditorAttribute("Appends new animation layer to background concept created by CreateBackgroundConcept()")]
-        public void AppendAnimationLayer()
+        [CodeEditorAttribute("Appends image with given name (if exists) as layer to background concept, created by CreateBackgroundConcept()," +
+            "with default scaling 1920x1080", "(string imageName)")]
+        public void AppendImageLayer(string imageName)
         {
-            if (animationData == null)
-                throw new RuntimeException("Exception in method \"AppendAnimationLayer\"! You must create new animation by calling \"CreateNewAnimationConcept\"");
-
-            newBackground.Add((SourceDTO) new AnimationSourceDTO(animationData, "", SourceType.Animation));
+            AppendImageLayer(imageName, 1920, 1080);
         }
 
-        [CodeEditorAttribute("Sets animation concept to existing background layer on index (num layer). " +
-            "Indexes goes from back to front", "(num layer)")]
-        public void SetAnimationLayer(int layer)
-        {
-            if (animationData == null)
-                throw new RuntimeException("Exception in method \"SetAnimationLayer\"! You must create new animation by calling \"CreateNewAnimationConcept\"");
-            if (animationData.Count == 0)
-                throw new RuntimeException("Exception in method \"SetAnimationLayer\"! You must add some animation frames by calling \"AppendAnimationLayer\"");
-
-            if (BackgroundController.BackgroundLayers.Count <= layer || layer < 0)
-                throw new RuntimeException($"Ivalid layer id {layer}! Index out of range.");
-
-            BackgroundController.SetLayer((SourceDTO) new AnimationSourceDTO(animationData, "", SourceType.Animation), layer);
-        }
-
-        [CodeEditorAttribute("Appends image layer to bacground concept, created by CreateBackgroundConcept()." +
-            "String url is taken as path to image(.jpg//png). If you want to download image, just use the URL " +
-            "ending with .jpg/.png. If you want to use image on your disk, it must be stored in " +
-            "./Assest/StreamingAssets folder. In this case, set url as name of image with type (name(.jpg/.png))", "(string url)")]
-        public void AppendLayerImage(string url)
+        [CodeEditorAttribute("Appends image with given name (if exists) as layer to background concept, created by CreateBackgroundConcept()," +
+            "with given scaling X and Y.", "(string imageName, num xSize, num ySize)")]
+        public void AppendImageLayer(string name, float xSize, float ySize)
         {
             if (newBackground == null)
-                throw new RuntimeException("Exception in method \"AppendLayerImage\"! You must create new background by calling \"CreateBackgroundConcept\"");
-            
-            newBackground.Add(new SourceDTO(SourceType.Image, url));
+                throw new RuntimeException("Exception in method \"SetBackGround\"! You must create new background by calling \"CreateBackgroundConcept\"");
+
+            if (!SpriteManager.Instance.ContainsName(name))
+                throw new RuntimeException($"Exception in method \"AppendLayerImage\"! There is no sprite with name: {name}");
+
+            newBackground.Add(new SourceDTO(name, SourceType.Image, xSize, ySize));
         }
 
-        [CodeEditorAttribute("Sets image to existing background layer on index (num layer). " +
-            "Indexes goes from back to front", "(string url, num layer)")]
-        public void SetImageLayer(string url, int layer)
-        {
-            if (BackgroundController.BackgroundLayers.Count <= layer || layer < 0)
-                throw new RuntimeException($"Ivalid layer id {layer}! Index out of range.");
-
-            BackgroundController.SetLayer(new SourceDTO(SourceType.Image, url), layer);
-        }
-
-        [CodeEditorAttribute("Sets created background concept as new background with default scale (1920x1080).")]
+        [CodeEditorAttribute("Sets created background concept as new background.")]
         public void SetBackground()
-        {
-            SetBackground(1920, 1080);
-        }
-
-        [CodeEditorAttribute("Sets created background concept as new background with give scale (num X, num Y).", "(num xSize, num ySize)")]
-        public void SetBackground(float xSize, float ySize)
         {
             if (newBackground == null)
                 throw new RuntimeException("Exception in method \"SetBackGround\"! You must create new background by calling \"CreateBackgroundConcept\"");
             if (newBackground.Count == 0)
                 throw new RuntimeException("Exception in method \"SetBackGround\"! You must add some frames by calling \"AppendLayerImage\" or \"AppendAnimationLayer\"");
 
-            var task = BackgroundController.SetBackground(newBackground, xSize, ySize);
+            BackgroundController.SetBackground(newBackground);
+        }
+        #endregion
+
+        #region ActualBackgroundEdit
+
+        [CodeEditorAttribute("Appends animation with given name as layer to actual background with default scaling 1920x1080.", "(string animationName)")]
+        public void AppendAnimationLayerToActual(string animationName)
+        {
+            AppendAnimationLayerToActual(animationName, 1920, 1080);
+        }
+
+        [CodeEditorAttribute("Appends animation with given name as layer to actual background with scaling X and Y.", "(string animationName, num xSize, num ySize)")]
+        public void AppendAnimationLayerToActual(string animationName, float xSize, float ySize)
+        {
+            if (!AnimationsManager.Instance.ContainsName(animationName))
+                throw new RuntimeException($"Exception in method \"AppendAnimationLayer\"! There is no animation with name: {animationName}");
+
+            BackgroundController.AppendLayer(new SourceDTO(animationName, SourceType.Animation, xSize, ySize));
+        }
+
+
+        [CodeEditorAttribute("Sets animation with name to existing background layer on index (num layer), with scaling X and Y. " +
+            "Indexes goes from back to front", "(num layer, string animationName, num xSize, num ySize)")]
+        public void SetAnimationLayer(int layer, string name, float xSize, float ySize)
+        {
+            if (!AnimationsManager.Instance.ContainsName(name))
+                throw new RuntimeException($"Exception in method \"AppendAnimationLayer\"! There is no animation with name: {name}");
+
+            if (BackgroundController.BackgroundLayers.Count <= layer || layer < 0)
+                throw new RuntimeException($"Ivalid layer id {layer}! Index out of range.");
+
+            BackgroundController.SetLayer(new SourceDTO(name, SourceType.Animation, xSize, ySize), layer);
+        }
+
+
+        [CodeEditorAttribute("Appends image with given name as layer to actual background with default scaling 1920x1080.", "(string imageName)")]
+        public void AppendImageLayerToActual(string name)
+        {
+            AppendImageLayerToActual(name, 1920, 1080);
+        }
+
+        [CodeEditorAttribute("Appends image with given name as layer to actual background with scaling X and Y.", "(string imageName, num xSize, num ySize)")]
+        public void AppendImageLayerToActual(string name, float xSize, float ySize)
+        {
+            if (!SpriteManager.Instance.ContainsName(name))
+                throw new RuntimeException($"Exception in method \"AppendLayerImage\"! There is no sprite with name: {name}");
+
+            BackgroundController.AppendLayer(new SourceDTO(name, SourceType.Image, xSize, ySize));
+        }
+
+        [CodeEditorAttribute("Sets image with given name to existing background layer on index (num layer), with scaling X and Y. " +
+            "Indexes goes from back to front", "(string imageName, num layer, num xSize, num ySize)")]
+        public void SetImageLayer(string name, int layer, float xSize, float ySize)
+        {
+            if (!AnimationsManager.Instance.ContainsName(name))
+                throw new RuntimeException($"Exception in method \"AppendAnimationLayer\"! There is no animation with name: {name}");
+
+            if (BackgroundController.BackgroundLayers.Count <= layer || layer < 0)
+                throw new RuntimeException($"Ivalid layer id {layer}! Index out of range.");
+
+            BackgroundController.SetLayer(new SourceDTO(name, SourceType.Image, xSize, ySize), layer);
+        }
+
+        [CodeEditorAttribute("Gets actual background layer count.", "returns num")]
+        public int GetBackgroundLayerCount()
+        {
+            return BackgroundController.BackgroundLayers.Count;
         }
 
         [CodeEditorAttribute("Removes actual background.")]
@@ -125,53 +161,6 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 
             BackgroundController.RemoveLayer(layer);
         }
-
-        [CodeEditorAttribute("Appends animation concept (created via CreateNewAnimationConcept())" +
-    " layer to actual background with default scaling 1920x1080.")]
-        public void AppendAnimationLayerToActual()
-        {
-            AppendAnimationLayerToActual(1920, 1080);
-        }
-
-        [CodeEditorAttribute("Appends animation concept (created via CreateNewAnimationConcept())" +
-            " layer to actual background with given scaling xSize, ySize.", "( num xSize, num ySize)")]
-        public void AppendAnimationLayerToActual(float xSize, float ySize)
-        {
-            if (animationData == null)
-                throw new RuntimeException("Exception in method \"SetAnimationLayer\"! You must create new animation by calling \"CreateNewAnimationConcept\"");
-            if (animationData.Count == 0)
-                throw new RuntimeException("Exception in method \"SetAnimationLayer\"! You must add some animation frames by calling \"AppendAnimationLayer\"");
-
-            BackgroundController.AppendLayer(new AnimationSourceDTO(animationData, "", SourceType.Animation), xSize, ySize);
-        }
-
-        [CodeEditorAttribute("Appends image layer to actual background with default scaling 1920x1080" +
-           "String url is taken as path to image(.jpg//png). If you want to download image, just use the URL " +
-           "ending with .jpg/.png. If you want to use image on your disk, it must be stored in " +
-           "./Assest/StreamingAssets folder. In this case, set url as name of image with type (name(.jpg/.png))", "(string url)")]
-        public void AppendImageLayerToActual(string source)
-        {
-            AppendImageLayerToActual(source, 1920, 1080);
-        }
-
-        [CodeEditorAttribute("Appends image layer to actual background with given scaling xSize, ySize" +
-            "String url is taken as path to image(.jpg//png). If you want to download image, just use the URL " +
-            "ending with .jpg/.png. If you want to use image on your disk, it must be stored in " +
-            "./Assest/StreamingAssets folder. In this case, set url as name of image with type (name(.jpg/.png))", "(string url, num xSize, num ySize)")]
-        public void AppendImageLayerToActual(string source, float xSize, float ySize)
-        {
-            if (animationData == null)
-                throw new RuntimeException("Exception in method \"SetAnimationLayer\"! You must create new animation by calling \"CreateNewAnimationConcept\"");
-            if (animationData.Count == 0)
-                throw new RuntimeException("Exception in method \"SetAnimationLayer\"! You must add some animation frames by calling \"AppendAnimationLayer\"");
-
-            BackgroundController.AppendLayer(new SourceDTO(SourceType.Image, source), xSize, ySize);
-        }
-
-        [CodeEditorAttribute("Gets actual background layer count.", "returns num")]
-        public int GetBackgroundLayerCount()
-        {
-            return BackgroundController.BackgroundLayers.Count;
-        }
+        #endregion
     }
 }

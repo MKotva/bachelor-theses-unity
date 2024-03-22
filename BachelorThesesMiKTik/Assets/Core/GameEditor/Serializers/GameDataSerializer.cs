@@ -1,9 +1,10 @@
 ﻿using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.DTOS.Components;
+using Assets.Core.GameEditor.Components;
+using Assets.Core.GameEditor.DTOS.Managers;
 using Assets.Scenes.GameEditor.Core.DTOS;
 using Assets.Scripts.GameEditor.ItemView;
+using Assets.Scripts.GameEditor.Managers;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Assets.Core.GameEditor.Serializers
@@ -14,9 +15,10 @@ namespace Assets.Core.GameEditor.Serializers
         /// Creates new GameDataDTO objects and sets it based on actual game state.
         /// </summary>
         /// <returns></returns>
-        public static GameDataDTO GetGameDTO()
+        public static GameDataDTO Serialize()
         {
             var gameData = new GameDataDTO();
+            gameData.Managers = GetManagers();
             gameData.Items = GetItems();
             gameData.MapObjects = GetMapObjects();
             gameData.BackgroundDTO = GetBackgroundSetting();
@@ -28,11 +30,33 @@ namespace Assets.Core.GameEditor.Serializers
         /// </summary>
         /// <param name="gameData">Stored game status</param>
         /// <returns></returns>
-        public static async Task SetGame(GameDataDTO gameData)
+        public static async Task Deserialize(GameDataDTO gameData)
         {
-            await SetItems(gameData.Items);
+            await SetManagers(gameData.Managers);
+            SetItems(gameData.Items);
             SetObjectToMap(gameData.MapObjects);
-            await SetBackground(gameData.BackgroundDTO);
+            SetBackground(gameData.BackgroundDTO);
+        }
+
+        public static ManagersDTO GetManagers()
+        {
+            var spriteData = SpriteManager.Instance.Get();
+            var animationData = AnimationsManager.Instance.Get();
+            var audioData = AudioManager.Instance.Get();
+
+            return new ManagersDTO(spriteData, animationData, audioData);
+        }
+
+        public static async Task SetManagers(ManagersDTO managers)
+        {
+            var tasks = new List<Task>
+            {
+                SpriteManager.Instance.Set(managers.SpritesManager),
+                AnimationsManager.Instance.Set(managers.AnimationManager),
+                AudioManager.Instance.Set(managers.AudioManager)
+            };
+
+            await Task.WhenAll(tasks);
         }
 
         /// <summary>
@@ -54,19 +78,18 @@ namespace Assets.Core.GameEditor.Serializers
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        private static async Task SetItems(List<ItemDTO> items)
+        private static void SetItems(List<ItemDTO> items)
         {
-            var orderedItems = items.OrderBy(x => x.ID);
-            foreach (var item in orderedItems)
+            GameItemController.Instance.ClearItems();
+            foreach (var item in items)
             {
-                var newItem = ItemData.CreateInstance();
+                var newItem = new ItemData();
 
-                var tasks = new List<Task>();
                 foreach (var component in item.Components)
                 {
-                    tasks.Add(SetComponent(component, newItem));
+                    SetComponent(component, newItem);
                 }
-                await Task.WhenAll(tasks);
+
                 GameItemController.Instance.AddItem(newItem);
             }
         }
@@ -77,9 +100,9 @@ namespace Assets.Core.GameEditor.Serializers
         /// <param name="component"></param>
         /// <param name="newItem"></param>
         /// <returns></returns>
-        private static async Task SetComponent(ComponentDTO component, ItemData newItem)
+        private static void SetComponent(CustomComponent component, ItemData newItem)
         {
-            await component.Set(newItem);
+            component.Set(newItem);
             newItem.Components.Add(component);
         }
 
@@ -122,16 +145,11 @@ namespace Assets.Core.GameEditor.Serializers
         /// <returns>BackgroundDTO representing actual bacground state.</returns>
         private static BackgroundDTO GetBackgroundSetting()
         {
-            var bg = new BackgroundDTO();
-            foreach (var layer in BackgroundController.Instance.BackgroundLayers)
-            {
-                //There is default background setted or error so no save!
-                if (layer.Info == null)
-                    return new BackgroundDTO();
+            var instance = BackgroundController.Instance;
+            if(instance != null)
+                return new BackgroundDTO(instance.Sources);
 
-                bg.LayersSources.Add(layer.Info);
-            }
-            return bg;
+            return new BackgroundDTO();
         }
 
         /// <summary>
@@ -139,9 +157,11 @@ namespace Assets.Core.GameEditor.Serializers
         /// </summary>
         /// <param name="background"></param>
         /// <returns></returns>
-        private static async Task SetBackground(BackgroundDTO background)
+        private static void SetBackground(BackgroundDTO background)
         {
-            await BackgroundController.Instance.SetBackground(background.LayersSources);
+            var instance = BackgroundController.Instance;
+            if (instance != null)
+                instance.SetBackground(background.LayersSources);
         }
     }
 }

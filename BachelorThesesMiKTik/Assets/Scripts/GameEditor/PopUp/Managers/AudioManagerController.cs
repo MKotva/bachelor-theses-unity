@@ -1,53 +1,47 @@
 ﻿using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Scripts.GameEditor.Audio;
 using Assets.Scripts.GameEditor.Managers;
+using Assets.Scripts.GameEditor.OutputControllers;
 using Assets.Scripts.GameEditor.SourcePanels;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 namespace Assets.Scripts.GameEditor.PopUp.Managers
 {
     public class AudioManagerController : MonoBehaviour
     {
-        [SerializeField] TMP_Text OutputConsole;
         [SerializeField] GameObject AnimationsView;
         [SerializeField] GameObject NameButton;
-        [SerializeField] GameObject AudioSettingPrefab;
+        [SerializeField] GameObject AudioCreatorPrefab;
+        [SerializeField] GameObject AudioEditPrefab;
+        [SerializeField] OutputController OutputConsole;
 
         private List<NamePanelController> lines;
         private List<string> selected;
 
-        private void Awake()
-        {
-            lines = new List<NamePanelController>();
-
-            foreach (var name in AudioManager.Instance.AudioControllers.Keys)
-            {
-                var buttonPrefab = Instantiate(NameButton, AnimationsView.transform)
-                                    .GetComponent<NamePanelController>();
-                buttonPrefab.PanelName = name;
-                lines.Add(buttonPrefab);
-            }
-        }
         public void OnPlay()
         {
             if (!AudioManager.Instance.OnPlay(GetSelectedNames()))
             {
-                OutputConsole.text = "Invalid clip name!";
+                OutputConsole.ShowMessage("Invalid clip name!");
             }
-            OutputConsole.text = "";
+            else
+            {
+                OutputConsole.DisposeMessage();
+            }
         }
 
         public void OnPause()
         {
             if (!AudioManager.Instance.OnPause(GetSelectedNames()))
             {
-                OutputConsole.text = "Invalid clip name!";
+                OutputConsole.ShowMessage("Invalid clip name!");
             }
             else
             {
-                OutputConsole.text = "";
+                OutputConsole.DisposeMessage();
             }
         }
 
@@ -55,11 +49,11 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (!AudioManager.Instance.OnResume(GetSelectedNames()))
             {
-                OutputConsole.text = "Invalid clip name!";
+                OutputConsole.ShowMessage("Invalid clip name!");
             }
             else
             {
-                OutputConsole.text = "";
+                OutputConsole.DisposeMessage();
             }
         }
 
@@ -67,12 +61,18 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (!AudioManager.Instance.OnRestart(GetSelectedNames()))
             {
-                OutputConsole.text = "Invalid clip name!";
+                OutputConsole.ShowMessage("Invalid clip name!");
             }
             else
             {
-                OutputConsole.text = "";
+                OutputConsole.DisposeMessage();
             }
+        }
+
+        public void OnCreate()
+        {
+            var controller = Instantiate(AudioCreatorPrefab, gameObject.transform).GetComponent<AudioLoaderController>();
+            controller.onExit += LoadTable;
         }
 
         public void OnEdit()
@@ -80,21 +80,65 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
             selected = GetSelectedNames();
             if (selected.Count == 1 && AudioManager.Instance.ContainsName(selected[0]))
             {
-                var controller = Instantiate(AudioSettingPrefab, gameObject.transform).GetComponent<AudioEditorController>();
-                controller.Initialize(AudioManager.Instance.AudioControllers[selected[0]].AudioSourceDTO);
+                var controller = Instantiate(AudioEditPrefab, gameObject.transform).GetComponent<AudioEditorController>();
+                controller.Initialize(AudioManager.Instance.AudioData[selected[0]]);
                 controller.OnSave += Edit;
             }
             else if (selected.Count != 1)
             {
-                var controller = Instantiate(AudioSettingPrefab, gameObject.transform).GetComponent<AudioEditorController>();
+                var controller = Instantiate(AudioEditPrefab, gameObject.transform).GetComponent<AudioEditorController>();
                 controller.OnSave += EditAll;
             }
             else
             {
-                OutputConsole.text = "Invalid name!";
+                OutputConsole.ShowMessage("Invalid clip name!");
                 return;
             }
-            OutputConsole.text = "";
+            OutputConsole.DisposeMessage();
+        }
+
+        public void OnDelete()
+        {
+            var names = GetSelectedNames();
+            foreach (var name in names)
+            {
+                var instance = AudioManager.Instance;
+                if(instance != null) 
+                {
+                    instance.RemoveClip(name);
+                }
+            }
+            LoadTable();
+        }
+
+        #region PRIVATE
+        private void Awake()
+        {
+            lines = new List<NamePanelController>();
+            LoadTable();
+        }
+
+        private void LoadTable()
+        {
+            ClearTable();
+
+            foreach (var name in AudioManager.Instance.AudioData.Keys)
+            {
+                var buttonPrefab = Instantiate(NameButton, AnimationsView.transform)
+                                    .GetComponent<NamePanelController>();
+                buttonPrefab.PanelName = name;
+                lines.Add(buttonPrefab);
+            }
+        }
+
+        private void ClearTable()
+        {
+            foreach (var line in lines)
+            {
+                Destroy(line.gameObject);
+            }
+
+            lines.Clear();
         }
 
         private List<string> GetSelectedNames()
@@ -114,9 +158,10 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (selected.Count == 0)
             {
-                foreach (var controller in AudioManager.Instance.AudioControllers.Values)
+                foreach (var controllerGroup in AudioManager.Instance.AudioControllers.Values)
                 {
-                    controller.EditAudio(source);
+                    foreach(var controller in controllerGroup)
+                        controller.EditAudio(source);
                 }
             }
             else
@@ -125,8 +170,8 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
                 {
                     if (AudioManager.Instance.AudioControllers.ContainsKey(name))
                     {
-                        var controller = AudioManager.Instance.AudioControllers[name];
-                        controller.EditAudio(source);
+                        foreach(var controller in AudioManager.Instance.AudioControllers[name])
+                            controller.EditAudio(source);
                     }
                 }
             }
@@ -136,9 +181,10 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (AudioManager.Instance.AudioControllers.ContainsKey(selected[0])) 
             {
-                var controller = AudioManager.Instance.AudioControllers[selected[0]];
-                controller.EditAudio(source);
+                foreach(var controller in AudioManager.Instance.AudioControllers[selected[0]])
+                    controller.EditAudio(source);
             }
         }
+        #endregion
     }
 }

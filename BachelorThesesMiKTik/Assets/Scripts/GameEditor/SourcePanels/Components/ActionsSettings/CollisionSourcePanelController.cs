@@ -28,7 +28,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             var name = ObjectSelection.options[ObjectSelection.value].text;
             if (handler == null)
             {
-                InfoPanelController.Instance.ShowMessage($"There is no assigned code (action) for collision with {name}");
+                ErrorOutputManager.Instance.ShowMessage($"There is no assigned code (action) for collision with {name}");
                 return new CollisionDTO(name, new SimpleCode("", null, null));
             }
             return new CollisionDTO(name, handler);

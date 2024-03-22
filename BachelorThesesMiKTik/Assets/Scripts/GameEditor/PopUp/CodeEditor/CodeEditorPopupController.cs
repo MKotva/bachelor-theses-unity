@@ -21,8 +21,8 @@ namespace Assets.Scripts.GameEditor.CodeEditor
 
         public SimpleCode CompilationCode { get; private set; }
 
-        public delegate void ExitHandler();
-        public event ExitHandler onExit;
+        //public delegate void ExitHandler();
+        //public event ExitHandler onExit;
 
         private List<EnviromentObjectDTO> enviromentObjects;
         private List<GlobalVariableDTO> globalVariables;
@@ -85,14 +85,6 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             }
             code = null;
             return true;
-        }
-
-        public override void OnExitClick()
-        {
-            if(onExit != null)
-                onExit.Invoke();
-
-            Destroy(gameObject);
         }
 
         #region PRIVATE

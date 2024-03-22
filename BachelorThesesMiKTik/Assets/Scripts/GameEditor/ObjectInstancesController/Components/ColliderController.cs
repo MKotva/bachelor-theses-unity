@@ -1,4 +1,4 @@
-﻿using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components.Colliders;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using UnityEngine;
 
@@ -7,24 +7,31 @@ namespace Assets.Scripts.GameEditor.Entiti
     public class ColliderController : MonoBehaviour, IObjectController
     {
         public string Name;
-        private BoxCollider2D collider;
-        private BoxColliderDTO colliderSettings;
+        private BoxCollider2D boxCollider;
+        private ColliderComponent colliderSettings;
+        private PolygonCollider2D polygonCollider;
 
-        public void Initialize(string name, BoxColliderDTO colliderSetting)
+        public void Initialize(string name, ColliderComponent colliderSetting)
         {
             Name = name;
             colliderSettings = colliderSetting;
-            collider.size = new Vector2 (colliderSettings.XSize, colliderSettings.YSize);
         }
 
         public void Play()
         {
-            collider.enabled = true;
+            boxCollider.enabled = true;
         }
 
         public void Pause()
         {
-            collider.enabled = false;
+            boxCollider.enabled = false;
+        }
+
+        public void Enter() {}
+
+        public void Exit() 
+        {
+            boxCollider.enabled = false;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -43,9 +50,13 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         private void Awake()
         {
-            if(!TryGetComponent(out collider))
-                collider = gameObject.AddComponent<BoxCollider2D>();
-            collider.enabled = false;
+            if (TryGetComponent<ObjectController>(out var controller))
+            {
+                controller.Components.Add(typeof(ColliderController), this);
+                if (!TryGetComponent(out boxCollider))
+                    boxCollider = gameObject.AddComponent<BoxCollider2D>();
+                boxCollider.enabled = false;
+            }
         }
     }
 }

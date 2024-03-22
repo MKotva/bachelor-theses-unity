@@ -23,10 +23,6 @@ namespace Assets.Scripts.GameEditor.GameObjects.Elements
             TryGetComponent(out SpriteRenderer);
             TryGetComponent(out Rigidbody);
             TryGetComponent(out BoxCollider);
-
-            EditorController.Instance.PlayModeEnter += ActivateObject;
-            EditorController.Instance.PlayModePause += DeactiveObject;
-            EditorController.Instance.PlayModeExit += DeactiveObject;
         }
 
         public void ActivateObject()
@@ -44,7 +40,7 @@ namespace Assets.Scripts.GameEditor.GameObjects.Elements
             Destroy(this);
         }
 
-        public virtual void SetSource(SourceDTO source, float xSize = 0, float ySize = 0, bool shouldLoop = true)
+        public virtual void SetSource(AssetSourceDTO source, float xSize = 0, float ySize = 0, bool shouldLoop = true)
         {
             if (rectTransform == null)
                 return;

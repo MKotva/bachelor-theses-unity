@@ -46,7 +46,7 @@ namespace Assets.Scripts.GameEditor.AI
                 _activeNodes = _activeNodes.OrderBy(node => node.CostDistance).ToList();
             }
 
-            InfoPanelController.Instance.ShowMessage("No path found!");
+            ErrorOutputManager.Instance.ShowMessage("No path found!");
             return null;
         }
 

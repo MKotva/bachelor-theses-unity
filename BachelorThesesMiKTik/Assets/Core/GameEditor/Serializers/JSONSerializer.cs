@@ -14,7 +14,7 @@ namespace Assets.Core.GameEditor.Serializers
         public static bool Deserialize(string path, out GameDataDTO result)
         {
             var data = ReadData(path);
-            if (data == String.Empty)
+            if (data != "")
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings
                 {
@@ -29,7 +29,7 @@ namespace Assets.Core.GameEditor.Serializers
                 }
                 catch (Exception ex)
                 {
-                    InfoPanelController.Instance.ShowMessage($"JSON parsing error! Description: {ex.Message}");
+                    ErrorOutputManager.Instance.ShowMessage($"JSON parsing error! Description: {ex.Message}");
                 }
             }
             result = null;
@@ -53,14 +53,14 @@ namespace Assets.Core.GameEditor.Serializers
             }
             catch (Exception ex) 
             {
-                InfoPanelController.Instance.ShowMessage($"Error during saving procces! Description: {ex.Message}");
+                ErrorOutputManager.Instance.ShowMessage($"Error during saving procces! Description: {ex.Message}");
                 return false;
             }
         }
 
         private static string ReadData(string path)
         {
-            if (!File.Exists(path))
+            if (File.Exists(path))
             {
                 try
                 {
@@ -68,11 +68,11 @@ namespace Assets.Core.GameEditor.Serializers
                 }
                 catch (IOException ex)
                 {
-                    InfoPanelController.Instance.ShowMessage($"File loading error! Description: {ex}");
+                    ErrorOutputManager.Instance.ShowMessage($"File loading error! Description: {ex}");
                 }
             }
-            InfoPanelController.Instance.ShowMessage($"File loading error! Path does not exists!");
-            return String.Empty;
+            ErrorOutputManager.Instance.ShowMessage($"File loading error! Path does not exists!");
+            return "";
         }
     }
 

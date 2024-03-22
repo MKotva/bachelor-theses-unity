@@ -1,9 +1,7 @@
-﻿using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components;
 using Assets.Scripts.GameEditor.ItemView;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
@@ -14,23 +12,23 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] TMP_InputField GroupField;
         [SerializeField] TMP_Dropdown GroupDropDown;
 
-        public override void SetComponent(ComponentDTO component)
+        public override void SetComponent(CustomComponent component)
         {
-            if (component is GeneralSettingComponentDTO)
+            if (component is GeneralSettingComponent)
             {
-                var general = (GeneralSettingComponentDTO) component;
+                var general = (GeneralSettingComponent) component;
                 NameField.text = general.Name;
                 SetGroup(general.Group);
             }
             else
             {
-                InfoPanelController.Instance.ShowMessage("General component parsing error!");
+                ErrorOutputManager.Instance.ShowMessage("General component parsing error!","ObjectCreate");
             }
         }
 
-        public override async Task<ComponentDTO> GetComponent()
+        public override CustomComponent GetComponent()
         {
-            return await Task.Run(() => CreateComponent());
+            return CreateComponent();
         }
 
         #region PRIVATE
@@ -58,12 +56,12 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             GroupField.text = groupName;
         }
 
-        private ComponentDTO CreateComponent()
+        private CustomComponent CreateComponent()
         {
             var name = NameField.text;
             if (name == "")
             {
-                InfoPanelController.Instance.ShowMessage($"Invalid item name, name is empty!");
+                ErrorOutputManager.Instance.ShowMessage($"Invalid item name, name is empty!", "ObjectCreate");
                 return null;
             }
 
@@ -76,12 +74,12 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             {
                 if (GroupField.text == "")
                 {
-                    InfoPanelController.Instance.ShowMessage($"Invalid group name, name is empty or Group! Please select or create group!");
+                    ErrorOutputManager.Instance.ShowMessage($"Invalid group name, name is empty or Group! Please select or create group!", "ObjectCreate");
                     return null;
                 }
                 groupName = GroupField.text;
             }
-            return new GeneralSettingComponentDTO(name, groupName);
+            return new GeneralSettingComponent(name, groupName);
         }
         #endregion
     }

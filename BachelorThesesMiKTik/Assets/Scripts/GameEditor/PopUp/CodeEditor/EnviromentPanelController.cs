@@ -48,7 +48,7 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         private EnviromentSourcePanelController AddLine()
         {
             var line = Instantiate(SourceLinePrefab, ContentView.transform);
-            line.GetComponent<SourcePanelController>().onDestroy += DestroyPanel;
+            line.GetComponent<SourcePanelController>().onDestroyClick += DestroyPanel;
             return line.GetComponent<EnviromentSourcePanelController>();
         }
 
@@ -58,6 +58,7 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             {
                 if (lines[i].GetInstanceID() == id)
                 {
+                    Destroy(lines[i].gameObject);
                     lines.RemoveAt(i);
                 }
             }

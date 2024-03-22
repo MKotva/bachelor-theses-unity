@@ -79,7 +79,7 @@ namespace Assets.Core.SimpleCompiler
             catch (CompilerException e)
             {
                 ErrorOutput = $"Error in section Main:\n {e.Message}!";
-                InfoPanelController.Instance.ShowMessage(Output);
+                ErrorOutputManager.Instance.ShowMessage(Output);
             }
         }
 
@@ -89,7 +89,7 @@ namespace Assets.Core.SimpleCompiler
         /// </summary>
         public void Execute(GameObject instance)
         {
-            InfoPanelController.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
+            ErrorOutputManager.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
             if (Main == null)
             {
                 Compile();
@@ -105,16 +105,16 @@ namespace Assets.Core.SimpleCompiler
                 catch (CompilerException e)
                 {
                     ErrorOutput += $"Error in section Main:\n {e.Message}!";
-                    InfoPanelController.Instance.ShowMessage(Output);
+                    ErrorOutputManager.Instance.ShowMessage(Output);
                 }
             }
-            InfoPanelController.Instance.RemoveListener("Compiler");
+            ErrorOutputManager.Instance.RemoveListener("Compiler");
         }
 
         //TODO: Remove after finished
         public void TestExecute()
         {
-            InfoPanelController.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
+            ErrorOutputManager.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
             if (Main == null)
             {
                 ErrorOutput += "Code cant be executed because was not compiled!";
@@ -129,10 +129,10 @@ namespace Assets.Core.SimpleCompiler
                 catch (CompilerException e)
                 {
                     ErrorOutput += $"Error in section Main:\n {e.Message}!";
-                    InfoPanelController.Instance.ShowMessage(Output);
+                    ErrorOutputManager.Instance.ShowMessage(Output);
                 }
             }
-            InfoPanelController.Instance.RemoveListener("Compiler");
+            ErrorOutputManager.Instance.RemoveListener("Compiler");
         }
 
         /// <summary>

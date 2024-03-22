@@ -20,24 +20,6 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 
 
         #region Sprite
-        public void ChangeColor(float r , float g, float b)
-        {
-            CheckImageConditions();
-            CustomController.SpriteRenderer.color = new Color(r, g, b);
-        }
-
-        public void SetImage(string source)
-        {
-            SetImage(source, 0, 0);
-        }
-
-        public void SetImage(string source, float xSize, float ySize)
-        {
-            CheckImageConditions();
-
-            var imageSource = new SourceDTO(SourceType.Image, source);
-            CustomController.SetSource(imageSource, xSize, ySize);
-        }
         #endregion
 
         #region Animation

@@ -48,12 +48,12 @@ namespace Assets.Core.GameEditor.AIActions
             throw new NotImplementedException();
         }
 
-        public override Task PerformActionAsync(AgentActionDTO action)
+        public override Task PerformAgentActionAsync(AgentActionDTO action)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<List<GameObject>> PrintActionAsync(AgentActionDTO action)
+        public override Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
         {
             throw new NotImplementedException();
         }

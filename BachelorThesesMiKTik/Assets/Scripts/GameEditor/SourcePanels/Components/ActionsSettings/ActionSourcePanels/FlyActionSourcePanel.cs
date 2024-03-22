@@ -24,13 +24,13 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             if(TryParse(Speed.text, out var sp))
                 speed = sp;
             else
-                InfoPanelController.Instance.ShowMessage("Move action parsing error! Speed was setted to 1");
+                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Speed was setted to 1");
 
             var speedCap = 1f;
             if(TryParse(SpeedCap.text, out var spCap))
                 speedCap = spCap;
             else
-                InfoPanelController.Instance.ShowMessage("Fly action parsing error! Speed cap was setted to 1");
+                ErrorOutputManager.Instance.ShowMessage("Fly action parsing error! Speed cap was setted to 1");
 
             return new FlyActionDTO(speed, speedCap);
         }
@@ -48,7 +48,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 Speed.text = flyAction.Speed.ToString();
                 SpeedCap.text = flyAction.SpeedCap.ToString();
             }
-            InfoPanelController.Instance.ShowMessage("Fly action panel faield to set stored action setting! Parsing error", "ObjectCreate");
+            ErrorOutputManager.Instance.ShowMessage("Fly action panel faield to set stored action setting! Parsing error", "ObjectCreate");
         }
 
         /// <summary>

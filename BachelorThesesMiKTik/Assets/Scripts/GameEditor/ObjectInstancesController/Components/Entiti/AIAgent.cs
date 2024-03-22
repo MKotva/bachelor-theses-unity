@@ -1,7 +1,8 @@
-﻿using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components;
+using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using Assets.Scripts.GameEditor.AI.PathFind;
+using Assets.Scripts.GameEditor.Entiti;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,12 +15,13 @@ namespace Assets.Scripts.GameEditor.AI
         public AIObject AI;
         public IAIPathFinder pathFinder;
 
-        private AIComponentDTO aiSetting;
+        private AIComponent aiSetting;
         private bool wasPlayed;
         private bool isPlaying;
 
-        public void Initialize(AIComponentDTO component)
+        public void Initialize(AIComponent component)
         {
+            aiSetting = component;
             AI = new AIObject(gameObject, component.Action.GetAction(gameObject));
         }
 
@@ -34,6 +36,13 @@ namespace Assets.Scripts.GameEditor.AI
         }
 
         public void Pause()
+        {
+            isPlaying = false;
+        }
+
+        public void Enter() {}
+
+        public void Exit()
         {
             isPlaying = false;
         }
@@ -87,6 +96,11 @@ namespace Assets.Scripts.GameEditor.AI
         #region PRIVATE
         private void Awake()
         {
+            if (TryGetComponent<ObjectController>(out var controller))
+            {
+                controller.Components.Add(typeof(ColliderController), this);
+            }
+
             map = MapCanvas.Instance;
             pathFinder = new AStar();
         }

@@ -8,21 +8,21 @@ using UnityEngine;
 public class ObjectCreatorSourcePanelController : MonoBehaviour
 {
     private bool hasPassed;
-    public async Task CreateItem(List<ObjectComponent> components)
+    public void CreateItem(List<ObjectComponent> components)
     {
-        InfoPanelController.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
-        var newItem = await CreateNewPrefab (components);
+        ErrorOutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
+        var newItem = CreateNewPrefab (components);
         if (hasPassed)
         {
             GameItemController.Instance.AddItem(newItem);
         }
-        InfoPanelController.Instance.RemoveListener("ObjectCreate");
+        ErrorOutputManager.Instance.RemoveListener("ObjectCreate");
     }
 
-    public async Task EditItem(List<ObjectComponent> components)
+    public void EditItem(List<ObjectComponent> components)
     {
-        InfoPanelController.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
-        var newItem = await CreateEditingPrefab(components);
+        ErrorOutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
+        var newItem = CreateEditingPrefab(components);
         if (hasPassed)
         {
             GameItemController.Instance.EditActualSelectedItem(GameItemController.Instance.ActualSelectedItem, newItem);
@@ -31,7 +31,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
         {
 
         }    
-        InfoPanelController.Instance.RemoveListener("ObjectCreate");
+        ErrorOutputManager.Instance.RemoveListener("ObjectCreate");
     }
 
     #region PRIVATE
@@ -43,18 +43,18 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// </summary>
     /// <param name="components"></param>
     /// <returns></returns>
-    private async Task<ItemData> CreateNewPrefab(List<ObjectComponent> components) 
+    private ItemData CreateNewPrefab(List<ObjectComponent> components) 
     {
         hasPassed = true;
-        var item = ItemData.CreateInstance("Test", "Boxes", 0);
-        await ApplyComponents(item, components);
+        var item = new ItemData("Test", "Boxes", 0);
+        ApplyComponents(item, components);
         if (CheckName(item) && hasPassed)
         {
             var objectController = item.Prefab.AddComponent<ObjectController>();
-            objectController.Set(item.ShownName, components);
+            objectController.Set(item.ShownName);
             return item;
         }
-        ItemData.DestroyInstance(item);
+        item.Destroy();
         return null;
     }
 
@@ -66,18 +66,18 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// </summary>
     /// <param name="components"></param>
     /// <returns></returns>
-    private async Task<ItemData> CreateEditingPrefab(List<ObjectComponent> components)
+    private ItemData CreateEditingPrefab(List<ObjectComponent> components)
     {
         hasPassed = true;
-        var item = ItemData.CreateInstance("Test", "Boxes", 0);
-        await ApplyComponents(item, components);
+        var item = new ItemData("Test", "Boxes", 0);
+        ApplyComponents(item, components);
         if (hasPassed)
         {
             var objectController = item.Prefab.AddComponent<ObjectController>();
-            objectController.Set(item.ShownName, components);
+            objectController.Set(item.ShownName);
             return item;
         }
-        ItemData.DestroyInstance(item);
+        item.Destroy();
         return null;
     }
 
@@ -87,14 +87,10 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// <param name="item"></param>
     /// <param name="components"></param>
     /// <returns></returns>
-    private async Task ApplyComponents(ItemData item, List<ObjectComponent> components)
+    private void ApplyComponents(ItemData item, List<ObjectComponent> components)
     {
-        var tasks = new List<Task>();
         foreach (var component in components)
-            tasks.Add(ApplyComponent(item, component));
-
-        await Task.WhenAll(tasks);
-        
+            ApplyComponent(item, component);     
     }
 
     /// <summary>
@@ -103,12 +99,12 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// <param name="item"></param>
     /// <param name="component"></param>
     /// <returns></returns>
-    private async Task ApplyComponent(ItemData item, ObjectComponent component)
+    private void ApplyComponent(ItemData item, ObjectComponent component)
     {
-        var comp = await component.GetComponent();
+        var comp = component.GetComponent();
         if (comp != null) 
         {
-            await comp.Set(item);
+            comp.Set(item);
             item.Components.Add(comp);
         }
     }
@@ -122,7 +118,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     {
         if (GameItemController.Instance.ItemsNameIdPair.ContainsKey(item.ShownName))
         {
-            InfoPanelController.Instance.ShowMessage($"Invalid item name {item.ShownName}, name is already used!", "ObjectCreate");
+            ErrorOutputManager.Instance.ShowMessage($"Invalid item name {item.ShownName}, name is already used!", "ObjectCreate");
             return false;
         }
         return true;

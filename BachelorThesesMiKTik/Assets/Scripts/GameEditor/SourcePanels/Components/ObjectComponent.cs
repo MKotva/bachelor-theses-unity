@@ -1,5 +1,4 @@
-﻿using Assets.Core.GameEditor.DTOS.Components;
-using System.Threading.Tasks;
+﻿using Assets.Core.GameEditor.Components;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
@@ -9,8 +8,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         internal ExitMethod callback;
 
         public delegate void ExitMethod(string componentName);
-        public abstract void SetComponent(ComponentDTO component);
-        public abstract Task<ComponentDTO> GetComponent();
+        public abstract void SetComponent(CustomComponent component);
+        public abstract CustomComponent GetComponent();
         public virtual void OnExitClick()
         {
             if (callback != null)

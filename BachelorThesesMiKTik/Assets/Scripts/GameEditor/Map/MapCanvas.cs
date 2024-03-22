@@ -189,21 +189,14 @@ public class MapCanvas : Singleton<MapCanvas>
 
     public GameObject Paint(ItemData item, Vector3 position)
     {
-        GameObject newInstance = TileBase.Instantiate(item.Prefab, position, Quaternion.identity, GridLayout.transform);
-        if (item.Components != null)
-        {
-            foreach (var comp in item.Components)
-            {
-                comp.SetInstance(item, newInstance);
-            }
-        }
+        var newInstance = CreateInstance(item, position);
         InsertToData(item, newInstance, position);
         return newInstance;
     }
 
     public void ReplaceItem(ItemData newItem, Vector3 position)
     {
-        GameObject newInstance = TileBase.Instantiate(newItem.Prefab, position, Quaternion.identity, GridLayout.transform);
+        var newInstance = CreateInstance(newItem, position);
         Destroy(Data[newItem.Id][position]);
         Data[newItem.Id][position] = newInstance;
     }
@@ -291,6 +284,19 @@ public class MapCanvas : Singleton<MapCanvas>
             return MouseButton.RightMouse;
 
         return MouseButton.MiddleMouse;
+    }
+
+    private GameObject CreateInstance(ItemData item, Vector3 position)
+    {
+        GameObject newInstance = Instantiate(item.Prefab, position, Quaternion.identity, GridLayout.transform);
+        if (item.Components != null)
+        {
+            foreach (var comp in item.Components)
+            {
+                comp.SetInstance(item, newInstance);
+            }
+        }
+        return newInstance;
     }
 
     private void InsertToData(ItemData item, GameObject gameobject, Vector3 position)

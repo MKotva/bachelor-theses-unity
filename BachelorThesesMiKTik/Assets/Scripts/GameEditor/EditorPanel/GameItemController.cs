@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using static UnityEditor.Timeline.Actions.MenuPriority;
 
 namespace Assets.Scripts.GameEditor.ItemView
 {
@@ -14,7 +13,7 @@ namespace Assets.Scripts.GameEditor.ItemView
         [SerializeField] public GameObject SearchItemField;
         [SerializeField] public GameObject ActualSelectedItemView;
         [SerializeField] public TMP_Dropdown GroupViewSelector;
-        [SerializeField] private List<ItemData> DefaultItems;
+        [SerializeField] private List<ItemDataSource> DefaultItems;
 
         public ItemData ActualSelectedItem { get; private set; }
         public Dictionary<string, ItemGroupViewController> GroupViews {  get; private set; }
@@ -22,30 +21,36 @@ namespace Assets.Scripts.GameEditor.ItemView
         public Dictionary<string, int> ItemsNameIdPair { get; private set; }
 
         private ItemGroupViewController activeGroup;
-
-        private void Start()
-        {
-            GroupViewSelector.onValueChanged.AddListener( delegate { OnSelectorValueChanged(); });
-            ActualSelectedItem = DefaultItems[0];
-            GroupViews = new Dictionary<string, ItemGroupViewController>();
-            Items = new Dictionary<int,ItemData>();
-            ItemsNameIdPair = new Dictionary<string, int>();
-
-            foreach (var item in DefaultItems) 
-            {
-                AddItem(item);
-            }
-
-            activeGroup = GroupViews.Values.First();
-            activeGroup.gameObject.SetActive(true);
-        }
+        private HashSet<string> defaultItems;
 
         public void AddItem(ItemData item)
         {
             AddToGroup(item);
-            item.Id = item.GetInstanceID();
+            item.Id = item.ShownName.GetHashCode();
             Items.Add(item.Id, item);
             ItemsNameIdPair.Add(item.ShownName, item.Id);
+        }
+
+        public void ClearItems()
+        {
+            GroupViewSelector.options.Clear();
+            foreach (var groupView in GroupViews.Values) 
+            {
+                Destroy(groupView.gameObject);
+            }
+
+            foreach(var item in  Items.Values)
+            { 
+            
+                if(!defaultItems.Contains(item.ShownName))
+                    Destroy(item.Prefab);
+            }
+
+            GroupViews.Clear();
+            Items.Clear();
+            ItemsNameIdPair.Clear();
+
+            Initialize();
         }
 
         public void EditActualSelectedItem(ItemData oldData, ItemData newData)
@@ -84,7 +89,8 @@ namespace Assets.Scripts.GameEditor.ItemView
                 var id = ItemsNameIdPair[item.ShownName];
                 ItemsNameIdPair.Remove(item.ShownName);
                 GroupViews[item.GroupName].RemoveItemButton(item);
-                Destroy(Items[id].Prefab);
+                if (!defaultItems.Contains(item.ShownName))
+                    Destroy(item.Prefab);
                 Items.Remove(id);
 
                 MapCanvas.Instance.RemoveGroupFromData(id);
@@ -131,6 +137,36 @@ namespace Assets.Scripts.GameEditor.ItemView
             SetActiveGroupView(GroupViews[selectedGroup]);
         }
 
+        public bool CheckIfItemIsDefault(string name)
+        {
+            return defaultItems.Contains(name);
+        }
+
+        private void Start()
+        {
+            GroupViewSelector.onValueChanged.AddListener(delegate { OnSelectorValueChanged(); });
+
+            GroupViews = new Dictionary<string, ItemGroupViewController>();
+            Items = new Dictionary<int, ItemData>();
+            ItemsNameIdPair = new Dictionary<string, int>();
+            defaultItems = new HashSet<string>();
+
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            foreach (var item in DefaultItems)
+            {
+                AddItem(new ItemData(item));
+                defaultItems.Add(item.Name);
+            }
+
+            ActualSelectedItem = Items[ItemsNameIdPair["Grass"]];
+            ChangeActualItemView(ActualSelectedItem);
+            activeGroup = GroupViews.Values.First();
+            activeGroup.gameObject.SetActive(true);
+        }
         private void AddToGroup(ItemData newItem)
         {
             var groupName = newItem.GroupName;

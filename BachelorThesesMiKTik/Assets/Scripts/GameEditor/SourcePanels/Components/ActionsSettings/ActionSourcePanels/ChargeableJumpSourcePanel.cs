@@ -25,32 +25,32 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             if (TryParse(VerticalForceMin.text, out var vertMin))
                 verticalForceMin = vertMin;
             else
-                InfoPanelController.Instance.ShowMessage("Move action parsing error! Vertical min force was setted to 1");
+                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Vertical min force was setted to 1");
 
             float verticalForceMax = 1;
             if (TryParse(VerticalForceMax.text, out var vertMax))
                 verticalForceMax = vertMax;
             else
-                InfoPanelController.Instance.ShowMessage("Move action parsing error! Vertical max force was setted to 1");
+                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Vertical max force was setted to 1");
 
             float horizontalForceMin = 1;
             if (TryParse(HorizontalForceMin.text, out var horMin))
                 horizontalForceMin = horMin;
             else
-                InfoPanelController.Instance.ShowMessage("Move action parsing error! Horizontal min force was setted to 1");
+                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Horizontal min force was setted to 1");
 
             float horizontalForceMax = 1;
             if (TryParse(HorizontalForceMax.text, out var horMax))
                 horizontalForceMax = horMax;
             else
-                InfoPanelController.Instance.ShowMessage("Move action parsing error! Horizontal max force was setted to 1");
+                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Horizontal max force was setted to 1");
 
             float jumpTimeCap = 1;
             if (TryParse(JumpTimeCap.text, out var jumpTime))
             {
                 if (jumpTime <= 0)
                 {
-                    InfoPanelController.Instance.ShowMessage("Invalid max time setting! Setted to default = 1.");
+                    ErrorOutputManager.Instance.ShowMessage("Invalid max time setting! Setted to default = 1.");
                 }
                 else
                 {
@@ -61,13 +61,13 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             if (verticalForceMin > verticalForceMax)
             {
                 verticalForceMax = verticalForceMin;
-                InfoPanelController.Instance.ShowMessage("Invalid setting of vertical min and max. Min > Max! Setted to default.");
+                ErrorOutputManager.Instance.ShowMessage("Invalid setting of vertical min and max. Min > Max! Setted to default.");
             }
 
             if (horizontalForceMin > horizontalForceMax)
             {
                 horizontalForceMax = horizontalForceMin;
-                InfoPanelController.Instance.ShowMessage("Invalid setting of horizontal min and max. Min > Max! Setted to default.");
+                ErrorOutputManager.Instance.ShowMessage("Invalid setting of horizontal min and max. Min > Max! Setted to default.");
             }
 
             return new ChargeJumpDTO(verticalForceMin, verticalForceMax, horizontalForceMin, horizontalForceMax, jumpTimeCap);
@@ -91,7 +91,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 JumpTimeCap.text = jumpAction.JumpTimeCap.ToString();
                 return;
             }
-            InfoPanelController.Instance.ShowMessage("Chargeable jump action panel faield to set stored action setting! Parsing error", "ObjectCreate");
+            ErrorOutputManager.Instance.ShowMessage("Chargeable jump action panel faield to set stored action setting! Parsing error", "ObjectCreate");
         }
 
         /// <summary>

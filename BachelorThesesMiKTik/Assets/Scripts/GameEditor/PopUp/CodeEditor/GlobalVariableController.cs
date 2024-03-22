@@ -50,7 +50,7 @@ namespace Assets.Scripts.GameEditor.PopUp.CodeEditor
         private GlobalVariableSourcePanelController AddLine()
         {
             var line = Instantiate(SourceLinePrefab, ContentView.transform);
-            line.GetComponent<SourcePanelController>().onDestroy += DestroyPanel;
+            line.GetComponent<SourcePanelController>().onDestroyClick += DestroyPanel;
             return line.GetComponent<GlobalVariableSourcePanelController>();
 
         }
@@ -61,6 +61,7 @@ namespace Assets.Scripts.GameEditor.PopUp.CodeEditor
             {
                 if (lines[i].GetInstanceID() == id)
                 {
+                    Destroy(lines[i]);
                     lines.RemoveAt(i);
                 }
             }

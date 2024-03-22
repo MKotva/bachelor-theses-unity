@@ -1,6 +1,5 @@
 ﻿using Assets.Core.GameEditor;
-using Assets.Core.GameEditor.DTOS.Components;
-using System.Threading.Tasks;
+using Assets.Core.GameEditor.Components;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,11 +17,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] Toggle YToggle;
         [SerializeField] Toggle XToggle;
 
-        public override void SetComponent(ComponentDTO component)
+        public override void SetComponent(CustomComponent component)
         {
-            if (component is PhysicsComponentDTO)
+            if (component is PhysicsComponent)
             {
-                var physics = (PhysicsComponentDTO) component;
+                var physics = (PhysicsComponent) component;
 
                 MassInputField.text = physics.Mass.ToString();
                 GravityScaleInputField.text = physics.Gravity.ToString();
@@ -35,22 +34,22 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             }
             else
             {
-                InfoPanelController.Instance.ShowMessage("Physics component parsing error!", "ObjectCreate");
+                ErrorOutputManager.Instance.ShowMessage("Physics component parsing error!", "ObjectCreate");
             }
         }
 
-        public override async Task<ComponentDTO> GetComponent()
+        public override CustomComponent GetComponent()
         {
-            return await Task.Run(() => CreateComponent());
+            return CreateComponent();
         }
 
-        private PhysicsComponentDTO CreateComponent()
+        private PhysicsComponent CreateComponent()
         {
-            var mass = MathHelper.GetFloat(MassInputField.text, "Mass", "Object creator"); ;
-            var gravityScale = MathHelper.GetFloat(GravityScaleInputField.text, "Gravity", "Object creator");
-            var drag = MathHelper.GetFloat(LinearDragInputField.text, "Linear drag", "Object creator");
-            var angularDrag = MathHelper.GetFloat(AngularDragInputField.text, "Angular drag", "Object creator"); ;
-            return new PhysicsComponentDTO(mass, gravityScale, drag, angularDrag, ZToggle.isOn, YToggle.isOn, ZToggle.isOn);
+            var mass = MathHelper.GetFloat(MassInputField.text, 1, "Mass", "Object creator"); ;
+            var gravityScale = MathHelper.GetFloat(GravityScaleInputField.text, 1, "Gravity", "Object creator");
+            var drag = MathHelper.GetFloat(LinearDragInputField.text, 0, "Linear drag", "Object creator");
+            var angularDrag = MathHelper.GetFloat(AngularDragInputField.text, 0.05f,"Angular drag", "Object creator"); ;
+            return new PhysicsComponent(mass, gravityScale, drag, angularDrag, ZToggle.isOn, YToggle.isOn, ZToggle.isOn);
         }
     }
 }

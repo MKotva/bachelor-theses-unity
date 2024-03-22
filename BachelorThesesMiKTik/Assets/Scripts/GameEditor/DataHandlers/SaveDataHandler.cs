@@ -44,7 +44,7 @@ public class SaveDataHandler : MonoBehaviour
     /// <param name="path"></param>
     public void SaveMap(string path)
     {
-        JSONSerializer.Serialize(GameDataSerializer.GetGameDTO(), path);
+        JSONSerializer.Serialize(GameDataSerializer.Serialize(), path);
     }
 
     #region PRIVATE

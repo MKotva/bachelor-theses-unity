@@ -1,8 +1,7 @@
-﻿using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
 using Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.SourcePanels
@@ -17,11 +16,16 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         //This is needed because Awake func of this script is called sooner than in given scripts.
         private bool isInitialized = false;
 
-        public override void SetComponent(ComponentDTO component)
+        public override void SetComponent(CustomComponent component)
         {
-            if (component is PlayerComponentDTO)
+            if (component is PlayerComponent)
             {
-                var player = (PlayerComponentDTO) component;
+                if (!isInitialized)
+                {
+                    Initialize();
+                }
+
+                var player = (PlayerComponent) component;
                 ActionSettings.SetAction(player.Action);
                 CreateController.SetPanel(player.OnCreateAction);
                 UpdateController.SetPanel(player.OnUpdateAction);
@@ -30,13 +34,13 @@ namespace Assets.Scripts.GameEditor.SourcePanels
             }
             else
             {
-                InfoPanelController.Instance.ShowMessage("Player component parsing error!");
+                ErrorOutputManager.Instance.ShowMessage("Player component parsing error!", "ObjectCreate");
             }
         }
 
-        public override async Task<ComponentDTO> GetComponent()
+        public override CustomComponent GetComponent()
         {
-            return await Task.Run(() => CreateComponent());
+            return CreateComponent();
         }
 
         #region PRIVATE
@@ -47,9 +51,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         {
             if (!isInitialized)
             {
-                OnActionChange(ActionSettings.ActualPanel.GetActionTypes());
-                ActionSettings.OnActionChange += OnActionChange;
-                isInitialized = true;
+                Initialize();
             }
         }
 
@@ -63,11 +65,18 @@ namespace Assets.Scripts.GameEditor.SourcePanels
             BindingSettings.SetActions(actions);
         }
 
-        private PlayerComponentDTO CreateComponent()
+        private void Initialize()
+        {
+            OnActionChange(ActionSettings.ActualPanel.GetActionTypes());
+            ActionSettings.OnActionChange += OnActionChange;
+            isInitialized = true;
+        }
+
+        private PlayerComponent CreateComponent()
         {
             var action = ActionSettings.GetAction();
             var binding = BindingSettings.GetBindings();
-            return new PlayerComponentDTO(action, binding, CreateController.ActionCode, UpdateController.ActionCode);
+            return new PlayerComponent(action, binding, CreateController.ActionCode, UpdateController.ActionCode);
         }
         #endregion
     }

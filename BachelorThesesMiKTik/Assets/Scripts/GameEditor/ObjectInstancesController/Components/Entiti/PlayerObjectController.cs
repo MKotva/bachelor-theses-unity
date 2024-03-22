@@ -1,23 +1,22 @@
-﻿using Assets.Core.GameEditor.DTOS.Components;
+﻿using Assets.Core.GameEditor.Components;
 using Assets.Core.GameEditor.DTOS.SourcePanels;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Assets.Scripts.GameEditor.Entiti
 {
     public class PlayerObjectController : MonoBehaviour, IObjectController
     {
-        private PlayerComponentDTO playerSetting;
+        private PlayerComponent playerSetting;
         private List<AIActionBase> actions;
         private bool IsInitDone;
         
         private bool WasPlayed;
         private bool IsPlaying;
 
-        public void Initialize(PlayerComponentDTO component)
+        public void Initialize(PlayerComponent component)
         {
             playerSetting = component;
             actions = component.Action.GetAction(gameObject);
@@ -28,7 +27,8 @@ namespace Assets.Scripts.GameEditor.Entiti
         { 
             if(!WasPlayed) 
             {
-                playerSetting.OnCreateAction.Execute(gameObject);
+                if(playerSetting.OnCreateAction != null) 
+                    playerSetting.OnCreateAction.Execute(gameObject);
                 WasPlayed = true;
             }
             IsPlaying = true;
@@ -39,8 +39,25 @@ namespace Assets.Scripts.GameEditor.Entiti
             IsPlaying = false;
         }
 
+        public void Enter()
+        {
+
+        }
+
+        public void Exit()
+        {
+            IsPlaying = false;
+        }
 
         #region PRIVATE
+        private void Awake()
+        {
+            if (TryGetComponent<ObjectController>(out var controller))
+            {
+                controller.Components.Add(typeof(PlayerObjectController), this);
+            }
+        }
+
         private void FixedUpdate()
         {
             if(!IsPlaying) 

@@ -23,6 +23,15 @@ namespace Assets.Core.GameEditor.AnimationControllers
             index = 0;
         }
 
+        public void EditAnimation(CustomAnimation newAnimation)
+        {
+            if (newAnimation.Frames.Count != 0)
+                SetAnimationFrame(newAnimation.Frames[0]);
+
+            timeSinceLastFrame = 0;
+            index = 0;
+        }
+
         public void Animate(float timeDelta)
         {
             if (!IsAnimating)
@@ -34,7 +43,6 @@ namespace Assets.Core.GameEditor.AnimationControllers
                 SetAnimationFrame(GetNextCustomFrame());
             }
         }
-
 
         public void PauseAnimation()
         {
@@ -52,6 +60,20 @@ namespace Assets.Core.GameEditor.AnimationControllers
             actualFrame = Animation.Frames[0];
             index = 0;
             IsAnimating = true;
+        }
+
+        public void RemoveAnimation()
+        {
+            IsAnimating = false;
+            imageRenderer.sprite = null;
+        }
+
+        public void Stop()
+        {
+            timeSinceLastFrame = 0;
+            actualFrame = Animation.Frames[0];
+            index = 0;
+            IsAnimating = false;
         }
 
         public bool HasFinished()
