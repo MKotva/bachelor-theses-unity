@@ -8,19 +8,26 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
     public abstract class AIActionBase
     {
         internal MapCanvas map;
+        internal GameObject performer;
+        internal Rigidbody2D performerRigidbody;
         internal float actionCost;
 
-        public AIActionBase(float cost = 1) 
+        public AIActionBase(GameObject performer, float cost = 1) 
         {
             map = MapCanvas.Instance;
+            this.performer = performer;
+            if (!performer.TryGetComponent(out performerRigidbody))
+                performer.AddComponent<Rigidbody2D>();
             actionCost = cost;
         }
 
-        public abstract void PerformAction(string action);
+        public abstract bool IsPerforming();
         public abstract Task PerformAgentActionAsync(AgentActionDTO action);
         public abstract Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action);
         public abstract List<AgentActionDTO> GetPossibleActions(Vector3 position);
-        public abstract bool IsPerforming();
+        public abstract void PerformAction(string action);
+
+        public virtual void FinishAction() { }
 
         public virtual List<Vector3> GetReacheablePositions(Vector3 position)
         {
@@ -36,7 +43,7 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
         {
             List<GameObject> markers = new List<GameObject>();
 
-            var color = UnityEngine.Random.ColorHSV();
+            var color = Random.ColorHSV();
             var reacheables = GetReacheablePositions(startPosition);
             
             foreach (var reacheable in reacheables)

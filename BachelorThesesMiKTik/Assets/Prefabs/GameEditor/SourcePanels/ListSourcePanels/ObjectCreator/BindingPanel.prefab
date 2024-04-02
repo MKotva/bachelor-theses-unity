@@ -1744,6 +1744,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2303559820633803643, guid: 02c49b059ce75284c81a4ebe394162b8, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2004098070751854197}
+    - target: {fileID: 2303559820633803643, guid: 02c49b059ce75284c81a4ebe394162b8, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnDestroyClick
+      objectReference: {fileID: 0}
     - target: {fileID: 2452756663065354612, guid: 02c49b059ce75284c81a4ebe394162b8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1844,7 +1852,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: BindingPanel
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5673929761282875912, guid: 02c49b059ce75284c81a4ebe394162b8, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 02c49b059ce75284c81a4ebe394162b8, type: 3}
 --- !u!224 &3155672112604336372 stripped
 RectTransform:

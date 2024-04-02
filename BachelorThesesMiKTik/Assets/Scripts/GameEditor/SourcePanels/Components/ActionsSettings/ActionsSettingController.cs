@@ -35,7 +35,6 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
 
                 ActionType.value = i;
                 SettingPanels[i].SetAction(action);
-                ChangeAction(i);
                 return;
             }
         }

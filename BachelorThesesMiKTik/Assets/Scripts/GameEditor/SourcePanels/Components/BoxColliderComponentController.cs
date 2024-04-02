@@ -103,7 +103,9 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             var colliders = new List<CollisionDTO>();
             foreach (var instance in instances)
             {
-                colliders.Add(instance.Get());
+                var collider = instance.Get();
+                if(collider != null )
+                    colliders.Add(collider);
             }
 
             component.Colliders = colliders;
@@ -122,9 +124,9 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         {
             for (int i = 0; i < instances.Count; i++)
             {
-                if (instances[i].GetInstanceID() == id)
+                if (instances[i].gameObject.GetInstanceID() == id)
                 {
-                    Destroy(instances[i]);
+                    Destroy(instances[i].gameObject);
                     instances.RemoveAt(i);
                 }
             }

@@ -22,17 +22,12 @@ namespace Assets.Scripts.GameEditor.AI
             }
         }
 
-        private GameObject performer;
-        private Rigidbody2D performerRigidbody;
         private float speed;
         private float speedCap;
         private bool canFall;
 
-        public MoveAIAction(GameObject gameObject, float moveSpeed = 1, float moveSpeedCap = 1, bool canFallOf = false)
+        public MoveAIAction(GameObject gameObject, float moveSpeed = 1, float moveSpeedCap = 1, bool canFallOf = false) : base(gameObject)
         {
-            performer = gameObject;
-            if (performer.TryGetComponent(out Rigidbody2D rigid))
-                performerRigidbody = rigid;
             speed = moveSpeed;
             speedCap = moveSpeedCap;
             canFall = canFallOf;
@@ -78,7 +73,7 @@ namespace Assets.Scripts.GameEditor.AI
 
         public override async Task PerformAgentActionAsync(AgentActionDTO action)
         {
-            performer.transform.position = GetPositionFromParam(action.StartPosition, action.PositionActionParameter);
+            performer.transform.position = GetPositionFromParam(action.StartPosition, action.ActionParameters);
             await Task.Delay(1000);
         }
 
@@ -97,32 +92,11 @@ namespace Assets.Scripts.GameEditor.AI
         {
             if (actionTypes.ContainsKey(action))
             {
-                if (!CheckRigidBody())
-                    return;
                 var direction = actionTypes[action];
                 performerRigidbody.AddForce(direction * speed);
-                var clampedVelocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
-                performerRigidbody.velocity = clampedVelocity;
+                performerRigidbody.velocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
             }
         }
-        private bool CheckRigidBody()
-        {
-
-            if (performerRigidbody == null)
-            {
-                if (performer.TryGetComponent(out Rigidbody2D rigidbody))
-                {
-                    performerRigidbody = rigidbody;
-                }
-                else
-                {
-                    ErrorOutputManager.Instance.ShowMessage("Action can not be done, missing Physics component.", "Debug");
-                    return false;
-                }
-            }
-            return true;
-        }
-
 
         private Vector3 GetPositionFromParam(Vector3 position, string param)
         {

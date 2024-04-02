@@ -13,16 +13,16 @@ namespace Assets.Core.GameEditor.DTOS
         public Vector3 StartPosition {get; set;}
         public Vector3 EndPosition { get; set;}
         public bool IsDone { get; set; }
-        public string PositionActionParameter { get; set;}
+        public string ActionParameters { get; set;}
         public float Cost { get; set;}
         public ActionPerformer Performer { get; set;}
         public ActionPrintingPerformer PrintingPerformer { get; set;}
 
-        public AgentActionDTO(Vector3 startPosition, Vector3 reachablePositions, string positionActionParameters, float cost, ActionPerformer actionPerformer, ActionPrintingPerformer printtingPerformer)
+        public AgentActionDTO(Vector3 startPosition, Vector3 reachablePositions, string actionParameters, float cost, ActionPerformer actionPerformer, ActionPrintingPerformer printtingPerformer)
         {
             StartPosition = startPosition;
             EndPosition = reachablePositions;
-            PositionActionParameter = positionActionParameters;
+            ActionParameters = actionParameters;
             Cost = cost;
             Performer = actionPerformer;
             PrintingPerformer = printtingPerformer;

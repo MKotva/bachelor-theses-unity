@@ -12,14 +12,14 @@ namespace Assets.Core.GameEditor.Components
     [Serializable]
     public class PlayerComponent : CustomComponent
     {
-        public ActionDTO Action;
+        public ActionDTO Actions;
         public List<ActionBindDTO> Bindings;
         public SimpleCode OnCreateAction;
         public SimpleCode OnUpdateAction;
 
         public PlayerComponent() 
         {
-            Action = null;
+            Actions = null;
             Bindings = new List<ActionBindDTO>();
             OnCreateAction = null;
             OnUpdateAction = null;
@@ -28,7 +28,7 @@ namespace Assets.Core.GameEditor.Components
         public PlayerComponent(ActionDTO action, List<ActionBindDTO> bindings, SimpleCode createAction, SimpleCode updateAction) 
         {
             ComponentName = "Player Control";
-            Action = action;
+            Actions = action;
             Bindings = bindings;
             OnCreateAction = createAction;
             OnUpdateAction = updateAction;

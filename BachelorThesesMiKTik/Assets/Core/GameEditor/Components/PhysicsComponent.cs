@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components
@@ -38,29 +37,8 @@ namespace Assets.Core.GameEditor.Components
 
         public override void SetInstance(ItemData item, GameObject instance)
         {
-            var rigid = GetOrAddComponent<Rigidbody2D>(instance);
-            GetOrAddComponent<PhysicsController>(instance);
-            SetRigid(rigid);
-        }
-
-        private void SetRigid(Rigidbody2D rigidbody)
-        {
-            rigidbody.mass = Mass;
-            rigidbody.gravityScale = Gravity;
-            rigidbody.drag = LinearDrag;
-            rigidbody.angularDrag = AngularDrag;
-
-            if (IsZRotationFreeze)
-                rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-
-            if (IsYPositionFreeze)
-                rigidbody.constraints = RigidbodyConstraints2D.FreezePositionY;
-
-            if (IsXPositionFreeze)
-                rigidbody.constraints = RigidbodyConstraints2D.FreezePositionX;
-
-            rigidbody.isKinematic = true;
-            rigidbody.Sleep();
+            var controller = GetOrAddComponent<PhysicsController>(instance);
+            controller.Initialize(this);
         }
     }
 }

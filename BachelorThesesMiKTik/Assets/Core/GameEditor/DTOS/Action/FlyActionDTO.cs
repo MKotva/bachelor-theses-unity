@@ -20,7 +20,7 @@ namespace Assets.Core.GameEditor.DTOS.Action
 
         public override List<AIActionBase> GetAction(GameObject instance)
         {
-            return new List<AIActionBase> { new FlyAIAction(Speed, SpeedCap) };
+            return new List<AIActionBase> { new FlyAIAction(instance, Speed, SpeedCap) };
         }
     }
 }

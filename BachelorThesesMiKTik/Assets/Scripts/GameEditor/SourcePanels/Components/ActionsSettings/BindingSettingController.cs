@@ -116,11 +116,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         private BindingSourcePanelController CreatePanel()
         {
             var newRow = Instantiate(SourcePanel, Parent.transform);
-            newRow.GetComponent<SourcePanelController>().onDestroyClick += DestroyPanel;
 
             var rowController = newRow.GetComponent<BindingSourcePanelController>();
+            rowController.onDestroyClick += DestroyPanel;
             rowController.SetActions(actualActions);
-            rowController.ID = newRow.GetInstanceID();
+            rowController.ID = newRow.gameObject.GetInstanceID();
             rowController.BindingSet += OnBindingChange;
             rowController.ActionChange += OnActionChange;
             return rowController;
@@ -130,9 +130,9 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         {
             for (int i = 0; i < instances.Count; i++) 
             {
-                if (instances[i].GetInstanceID() == id) 
+                if (instances[i].ID == id) 
                 {
-                    Destroy(instances[i]);
+                    Destroy(instances[i].gameObject);
                     instances.RemoveAt(i);
                 }
             }

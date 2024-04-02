@@ -29,8 +29,12 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <param name="action"></param>
         public override void SetAction(ActionDTO actions)
         {
-            movePanel.SetAction(actions);
-            jumpPanel.SetAction(actions);
+            if (actions is MoveAndJumpActionDTO)
+            {
+                var moveAndJump = actions as MoveAndJumpActionDTO;
+                movePanel.SetAction(moveAndJump.MoveAction);
+                jumpPanel.SetAction(moveAndJump.JumpAction);
+            }
         }
 
         /// <summary>

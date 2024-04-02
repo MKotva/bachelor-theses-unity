@@ -2786,7 +2786,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5178400347432823019, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5178400347432823019, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2896,4 +2896,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3fb1c01f6b525b54f98bce5105be0927, type: 2}
   - {fileID: 11400000, guid: 654ec60f9a3edba428b7892fca8c47e9, type: 2}
   ObjectCreator: {fileID: 8678761382568856281}
-  OutputConsole: {fileID: 0}

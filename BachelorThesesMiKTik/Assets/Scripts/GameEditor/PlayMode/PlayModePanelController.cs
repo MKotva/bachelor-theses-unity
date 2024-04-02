@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class PlayModePanelController : MonoBehaviour
 {
-    [SerializeField] TMP_Text OutputConsole;
     [SerializeField] Button PlayButton;
     [SerializeField] TMP_Text ButtonText;
 
@@ -24,19 +23,9 @@ public class PlayModePanelController : MonoBehaviour
 
     public void OnExitClick()
     {
+        IsPlaying = false;
+        SwitchPlayPauseButton(true);
         EditorController.Instance.ExitPlayMode();
-    }
-
-    private void Awake()
-    {
-        var instance = ErrorOutputManager.Instance;
-        if(instance != null )
-            instance.AddOnShowListener("Debug panel", ErrorHandler);
-    }
-
-    private void ErrorHandler(string message)
-    {
-        OutputConsole.text = message;
     }
 
     private void SwitchPlayPauseButton(bool isPlaying)
@@ -63,3 +52,4 @@ public class PlayModePanelController : MonoBehaviour
             instance.RemoveListener("Debug panel");
     }
 }
+ 

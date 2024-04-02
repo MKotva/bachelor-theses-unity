@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.SourcePanels
 {
-    public class BindingSourcePanelController : MonoBehaviour
+    public class BindingSourcePanelController : SourcePanelController
     {
         [SerializeField] TMP_Text ButtonText;
         [SerializeField] TMP_Dropdown ActionSelection;

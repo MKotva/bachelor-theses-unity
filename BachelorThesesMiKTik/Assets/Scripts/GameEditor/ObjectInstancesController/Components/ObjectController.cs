@@ -67,7 +67,9 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         private void OnDestroy()
         {
-            EditorController.Instance.RemoveActiveObject(gameObject.GetInstanceID());
+            var editorInstance = EditorController.Instance;
+            if(editorInstance != null)
+                editorInstance.RemoveActiveObject(gameObject.GetInstanceID());
         }
     }
 }

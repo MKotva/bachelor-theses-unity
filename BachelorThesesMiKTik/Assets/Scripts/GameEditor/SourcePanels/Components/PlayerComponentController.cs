@@ -13,7 +13,6 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         [SerializeField] RuntimeActionSettingPanelController UpdateController;
         [SerializeField] BindingSettingController BindingSettings;
 
-        //This is needed because Awake func of this script is called sooner than in given scripts.
         private bool isInitialized = false;
 
         public override void SetComponent(CustomComponent component)
@@ -26,10 +25,9 @@ namespace Assets.Scripts.GameEditor.SourcePanels
                 }
 
                 var player = (PlayerComponent) component;
-                ActionSettings.SetAction(player.Action);
+                ActionSettings.SetAction(player.Actions);
                 CreateController.SetPanel(player.OnCreateAction);
                 UpdateController.SetPanel(player.OnUpdateAction);
-                //TODO: Check if actions are setted.
                 BindingSettings.SetBindings(player.Bindings);
             }
             else
@@ -47,12 +45,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         /// <summary>
         /// Used instead of awake thank to reasons above.
         /// </summary>
-        private void Update()
+        private void Start()
         {
             if (!isInitialized)
-            {
                 Initialize();
-            }
         }
 
         /// <summary>

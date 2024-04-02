@@ -156,7 +156,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             }
         }
 
-        public void Initialized(PhysicsComponent physics)
+        public void Initialize(PhysicsComponent physics)
         {
             physicsSetting = physics;
             GravityScale = physicsSetting.Gravity;
@@ -184,11 +184,12 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         public void Exit()
         {
+            rigid.rotation = 0;
             rigid.Sleep();
             rigid.isKinematic = true;
 
             if (physicsSetting != null)
-                Initialized(physicsSetting);
+                Initialize(physicsSetting);
         }
 
         public float GetVelocityX()

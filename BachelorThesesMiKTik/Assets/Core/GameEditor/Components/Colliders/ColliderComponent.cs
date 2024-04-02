@@ -32,7 +32,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
         public override void SetInstance(ItemData item, GameObject instance)
         {
             var collisionControler = GetOrAddComponent<ColliderController>(instance);
-            collisionControler.Initialize(item.ShownName, this);
+            collisionControler.Initialize(item.ShownName, item.GroupName, this);
         }
     }
 }

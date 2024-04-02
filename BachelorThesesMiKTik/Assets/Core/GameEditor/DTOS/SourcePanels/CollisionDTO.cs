@@ -1,17 +1,20 @@
 ﻿using Assets.Core.SimpleCompiler;
 using System;
+using System.Collections.Generic;
 
 namespace Assets.Core.GameEditor.DTOS.SourcePanels
 {
     [Serializable]
     public class CollisionDTO
     {
-        public string ObjectName;
+        public List<string> ObjectsNames;
+        public List<string> GroupsNames;
         public SimpleCode Handler;
 
-        public CollisionDTO(string name, SimpleCode handler) 
+        public CollisionDTO(List<string> names, List<string> groups, SimpleCode handler) 
         {
-            ObjectName = name;
+            ObjectsNames = names;
+            GroupsNames = groups;
             Handler = handler;
         }
     }

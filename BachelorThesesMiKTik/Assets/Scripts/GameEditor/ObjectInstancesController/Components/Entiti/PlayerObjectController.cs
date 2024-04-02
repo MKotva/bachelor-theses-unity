@@ -11,23 +11,27 @@ namespace Assets.Scripts.GameEditor.Entiti
     {
         private PlayerComponent playerSetting;
         private List<AIActionBase> actions;
+
+        private delegate void ActionFinishHandler();
+        private Dictionary<List<KeyCode>, ActionFinishHandler> actionsFinishers;
+
         private bool IsInitDone;
-        
         private bool WasPlayed;
         private bool IsPlaying;
 
         public void Initialize(PlayerComponent component)
         {
             playerSetting = component;
-            actions = component.Action.GetAction(gameObject);
+            actions = component.Actions.GetAction(gameObject);
+            actionsFinishers = new Dictionary<List<KeyCode>, ActionFinishHandler>();
             IsInitDone = false;
         }
 
-        public void Play() 
-        { 
-            if(!WasPlayed) 
+        public void Play()
+        {
+            if (!WasPlayed)
             {
-                if(playerSetting.OnCreateAction != null) 
+                if (playerSetting.OnCreateAction != null)
                     playerSetting.OnCreateAction.Execute(gameObject);
                 WasPlayed = true;
             }
@@ -60,47 +64,84 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         private void FixedUpdate()
         {
-            if(!IsPlaying) 
+            if (!IsPlaying)
             {
                 return;
             }
 
-            if (!IsInitDone && playerSetting.OnCreateAction != null) 
+            if (!IsInitDone && playerSetting.OnCreateAction != null)
             {
                 playerSetting.OnCreateAction.Execute(gameObject);
             }
 
-            if (CheckBindings(playerSetting.Bindings, out var actionType))
+            HandleReleasedKeys();
+
+            if (HandlePressedKeys(playerSetting.Bindings, out var selectedAction))
             {
-                foreach (var action in actions)
-                    action.PerformAction(actionType);
+                if (selectedAction.ActionCode != null)
+                    selectedAction.ActionCode.Execute(gameObject);
+                else
+                {
+                    foreach (var action in actions)
+                    {
+                        action.PerformAction(selectedAction.ActionType);
+                        if (!actionsFinishers.ContainsKey(selectedAction.Binding))
+                            actionsFinishers.Add(selectedAction.Binding, action.FinishAction);
+                    }
+                }
             }
-            
-            if(playerSetting.OnUpdateAction != null)
+
+            if (playerSetting.OnUpdateAction != null)
                 playerSetting.OnUpdateAction.Execute(gameObject);
         }
 
-        private bool CheckBindings(List<ActionBindDTO> bindings, out string action)
+        private bool HandlePressedKeys(List<ActionBindDTO> bindings, out ActionBindDTO action)
         {
-            foreach (var actionBind in bindings) 
+            foreach (var actionBind in bindings)
             {
                 bool isEqual = true;
-                foreach(var binding in actionBind.Binding)
+                foreach (var binding in actionBind.Binding)
                 {
-                    if(!Input.GetKeyDown(binding))
+                    if (!Input.GetKey(binding))
                     {
                         isEqual = false;
                         break;
                     }
                 }
-                if (isEqual) 
+                if (isEqual)
                 {
-                    action = actionBind.ActionType;
+                    action = actionBind;
                     return true;
                 }
             }
-            action = "";
+            action = null;
             return false;
+        }
+
+        private void HandleReleasedKeys()
+        {
+            var executed = new List<List<KeyCode>>();
+            foreach (var binding in actionsFinishers.Keys)
+            {
+                bool isEqual = true;
+                foreach (var key in binding)
+                {
+                    if (!Input.GetKeyUp(key))
+                    {
+                        isEqual = false;
+                        break;
+                    }
+                }
+
+                if (isEqual)
+                {
+                    actionsFinishers[binding].Invoke();
+                    executed.Add(binding);
+                }
+            }
+
+            foreach(var key in executed)
+                actionsFinishers.Remove(key);
         }
         #endregion
     }
