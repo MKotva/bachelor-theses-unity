@@ -24,6 +24,11 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             Name = name;
         }
 
+        public void Kill(bool shouldFinishAnimation, bool shouldFinishAudio)
+        {
+
+        }
+
         public void Play()
         {
             foreach (var component in Components.Values) 

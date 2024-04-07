@@ -3,7 +3,6 @@ using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.OutputControllers;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +23,7 @@ namespace Assets.Scripts.GameEditor.Audio
 
         [SerializeField] AudioSource AudioSource;
 
-        public delegate void SaveHandler(SourceDTO source);
+        public delegate void SaveHandler(SourceReference source);
         public event SaveHandler OnSave;
 
         private AudioSourceDTO actualAudioSource;
@@ -80,9 +79,8 @@ namespace Assets.Scripts.GameEditor.Audio
             var instance = AudioManager.Instance;
             if (instance != null)
             {
-                await instance.AddAudioClip(actualAudioSource);
-                if(OnSave != null)
-                    OnSave.Invoke(new SourceDTO(actualAudioSource.Name, SourceType.Sound));
+                if (await instance.AddAudioClip(actualAudioSource))
+                    InvokeListeners();
             }
         }
 
@@ -117,6 +115,12 @@ namespace Assets.Scripts.GameEditor.Audio
                 return false;
             }
             return true;
+        }
+
+        private void InvokeListeners() 
+        {
+            if (OnSave != null)
+                OnSave.Invoke(new SourceReference(actualAudioSource.Name, SourceType.Sound));
         }
     }
 }

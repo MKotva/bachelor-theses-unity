@@ -1,35 +1,33 @@
 ﻿using Assets.Core.GameEditor.AssetLoaders;
+using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Scripts.GameEditor.Managers;
 using UnityEngine;
-using UnityEngine.Rendering;
+
 
 namespace Assets.Scripts.GameEditor.ObjectInstancesController
 {
     public class SpriteController : MonoBehaviour, IObjectController
     {
-        private float x;
-        private float y;
+        public  SourceReference SourceReference { get; private set; }
         private SpriteRenderer spriteRendered;
         private SpriteRendererSnapshot snapshot;
 
-        public void SetSprite(Sprite sprite, float xSize = 30, float ySize = 30)
+        public void SetSprite(Sprite sprite, SourceReference source)
         {
-            x = xSize;
-            y = ySize;
-
+            SourceReference = source;
             spriteRendered.sprite = sprite;
-            SpriteLoader.SetScale(spriteRendered, xSize, ySize);
+            SpriteLoader.SetScale(spriteRendered, SourceReference.XSize, SourceReference.YSize);
         }
 
         public void EditSprite(Sprite sprite)
         {
-            if (x <= 0 || y <= 0)
+            if (SourceReference.XSize <= 0 || SourceReference.YSize <= 0)
             {
-                x = 30;
-                y = 30;
+                SourceReference.XSize = 30;
+                SourceReference.YSize = 30;
             }
             spriteRendered.sprite = sprite;
-            SpriteLoader.SetScale(spriteRendered, x, y);
+            SpriteLoader.SetScale(spriteRendered, SourceReference.XSize, SourceReference.YSize);
         }
 
         public void DeleteSprite()
@@ -44,12 +42,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
                 spriteRendered.color = new Color(r, g, b);
         }
 
-        public void SetImage(string source)
-        {
-            SetImage(source, 0, 0);
-        }
-
-        public void SetImage(string name, float xSize, float ySize)
+        public void SetImage(SourceReference source)
         {
             var instance = SpriteManager.Instance;
             if (instance != null)
@@ -57,7 +50,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
                 if (instance.ContainsName(name))
                 {
                     var sprite = instance.Sprites[name];
-                    SetSprite(sprite, xSize, ySize);
+                    SetSprite(sprite, source);
                 }
             }
         }
@@ -90,6 +83,13 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
                 controller.Components.Add(typeof(SpriteController), this);
 
             }
+        }
+
+        private void OnDestroy()
+        {
+            var instance = SpriteManager.Instance;
+            if (instance != null && SourceReference != null)
+                instance.RemoveActiveController(SourceReference.Name, this);
         }
     }
 

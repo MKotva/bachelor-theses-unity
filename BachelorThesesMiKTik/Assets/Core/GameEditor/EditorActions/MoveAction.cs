@@ -10,11 +10,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 {
     internal class MoveAction : EditorActionBase
     {
-        private bool _isMouseDown;
-        private bool _moveSelection;
-        private Vector3 _startPosition;
-        private Vector3 _lastMousePosition;
-        private Vector3 _cameraOriginPosition;
+        private bool isMouseDown;
+        private bool moveSelection;
+        private Vector3 startPosition;
+        private Vector3 lastMousePosition;
+        private Vector3 cameraOriginPosition;
 
         public override void OnMouseDown(MouseButton key)
         {
@@ -23,40 +23,40 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 lastActionRecord = null;
                 lastActionRecordReverse = null;
 
-                _isMouseDown = true;
-                _startPosition = map.GetWorldMousePosition();
-                var worldCellPosition = map.GetCellCenterPosition(_startPosition);
+                isMouseDown = true;
+                startPosition = map.GetWorldMousePosition();
+                var worldCellPosition = map.GetCellCenterPosition(startPosition);
                 if (map.Selected.ContainsKey(worldCellPosition))
                 {
-                    _moveSelection = true;
+                    moveSelection = true;
                 }
                 else
                 {
-                    _cameraOriginPosition = map.CameraObj.transform.position;
+                    cameraOriginPosition = map.CameraObj.transform.position;
                 }
             }
         }
 
         public override void OnMouseUp()
         {
-            if (_moveSelection)
+            if (moveSelection)
             {
                 SaveToMove();
-                lastActionRecord = new JournalActionDTO($"MS;{_startPosition.x}:{_startPosition.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
-                lastActionRecordReverse = new JournalActionDTO($"MS;{_lastMousePosition.x}:{_lastMousePosition.y};{_startPosition.x}:{_startPosition.y}", PerformAction);
-                _moveSelection = false;
+                lastActionRecord = new JournalActionDTO($"MS;{startPosition.x}:{startPosition.y};{lastMousePosition.x}:{lastMousePosition.y}", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO($"MS;{lastMousePosition.x}:{lastMousePosition.y};{startPosition.x}:{startPosition.y}", PerformAction);
+                moveSelection = false;
             }
             else
             {
-                lastActionRecord = new JournalActionDTO($"MC;{_startPosition.x}:{_startPosition.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
-                lastActionRecordReverse = new JournalActionDTO($"MC;{_lastMousePosition.x}:{_lastMousePosition.y};{_startPosition.x}:{_startPosition.y}", PerformAction);
+                lastActionRecord = new JournalActionDTO($"MC;{startPosition.x}:{startPosition.y};{lastMousePosition.x}:{lastMousePosition.y}", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO($"MC;{lastMousePosition.x}:{lastMousePosition.y};{startPosition.x}:{startPosition.y}", PerformAction);
             }
-            _isMouseDown = false;
+            isMouseDown = false;
         }
 
         public override void OnUpdate(Vector3 mousePosition)
         {
-            if (_isMouseDown)
+            if (isMouseDown)
             {
                 Move(mousePosition);
             }
@@ -81,12 +81,12 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void Move(Vector3 position)
         {
-            if (_moveSelection)
-                MoveSelected(_startPosition, position);
+            if (moveSelection)
+                MoveSelected(startPosition, position);
             else
-                MoveMapView(_startPosition, position);
+                MoveMapView(startPosition, position);
 
-            _lastMousePosition = position;
+            lastMousePosition = position;
         }
 
         public void MoveSelected(Vector3 fromPos, Vector3 toPos)
@@ -132,7 +132,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var xMove = ( fromPosition.x - position.x ) * 0.75f;
             var yMove = ( fromPosition.y - position.y ) * 0.75f;
 
-            map.CameraObj.transform.position = new Vector3(_cameraOriginPosition.x + xMove, _cameraOriginPosition.y + yMove, _cameraOriginPosition.z);
+            map.CameraObj.transform.position = new Vector3(cameraOriginPosition.x + xMove, cameraOriginPosition.y + yMove, cameraOriginPosition.z);
         }
     }
 }

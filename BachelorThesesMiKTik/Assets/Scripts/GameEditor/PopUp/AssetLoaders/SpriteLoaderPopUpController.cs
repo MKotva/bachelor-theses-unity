@@ -1,6 +1,5 @@
 ﻿using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.OutputControllers;
 using System.Collections.Generic;
@@ -29,6 +28,9 @@ namespace Assets.Scripts.GameEditor.PopUp
             callbacks.Add(callbackFunction);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public async void OnCreateClick()
         {
             if (NameSource.text == "")
@@ -47,14 +49,14 @@ namespace Assets.Scripts.GameEditor.PopUp
             if (instance != null)
             {
                 var source = GetComponent();
-                await SpriteManager.Instance.AddSprite(source);
-                InvokeCallBacks(source.Name);
+                if(await SpriteManager.Instance.AddSprite(source))
+                    InvokeCallBacks(source.Name);
             }
         }
 
         public async void OnPreviewClick()
         {
-            await SpriteLoader.SetSprite(ImageSource, GetComponent().URL);
+            await SpriteLoader.SetSprite(ImageSource, GetComponent());
         }
 
         #region PRIVATE
@@ -73,10 +75,7 @@ namespace Assets.Scripts.GameEditor.PopUp
 
         private AssetSourceDTO GetComponent()
         {
-            return new AssetSourceDTO(SourceType.Image, URLSource.text)
-            {
-                Name = NameSource.text,
-            };
+            return new AssetSourceDTO(NameSource.text, URLSource.text);
         }
 
         private bool CheckName(string name)

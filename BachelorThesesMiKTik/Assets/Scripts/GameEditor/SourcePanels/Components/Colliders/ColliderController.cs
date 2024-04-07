@@ -22,7 +22,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
         public virtual ColliderComponent GetComponent() { return null; }
         public virtual void SetComponent(ColliderComponent component) { }
 
-        public void ChangePreview(SourceDTO source)
+        public void ChangePreview(SourceReference source)
         {
             if (source.Type == SourceType.Image)
                 PreviewImage.sprite = SpriteManager.Instance.Sprites[source.Name];

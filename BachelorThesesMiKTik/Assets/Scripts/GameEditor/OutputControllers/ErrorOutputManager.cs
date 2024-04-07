@@ -57,6 +57,9 @@ public class ErrorOutputManager : Singleton<ErrorOutputManager>
     }
     public void RemoveListener(string name) 
     {
+        if (name == null)
+            return;
+
         if(onShowListeners.ContainsKey(name))
             onShowListeners.Remove(name);
         if(onAddMessageListeners.ContainsKey(name))
@@ -134,10 +137,9 @@ public class ErrorOutputManager : Singleton<ErrorOutputManager>
     private async Task UpdateText((string, string) infoText)
     {
         InvokeListeners(onShowListeners, infoText.Item1, infoText.Item2);
-        await Task.Delay(5000);
+        await Task.Delay(10000);
         await ClearText();
     }
-
 
     private void InvokeListeners(Dictionary<string, Dictionary<string, ShowMessageAction>> listeners, string authorName, string message)
     {

@@ -4,19 +4,19 @@ namespace Assets.Scripts.GameEditor.PopUp.CodeEditor
 {
     public class PreviewManager : Singleton<PreviewManager>
     {
-        public delegate SourceDTO PreviewGetter();
-        public delegate void PreviewChangeHangler(SourceDTO source);
+        public delegate SourceReference PreviewGetter();
+        public delegate void PreviewChangeHangler(SourceReference source);
         public event PreviewChangeHangler onPreviewChange;
 
         public PreviewGetter previewGetter;
 
-        public void ChangePreview(SourceDTO source)
+        public void ChangePreview(SourceReference source)
         {
             if(onPreviewChange != null) 
                 onPreviewChange.Invoke(source);
         }
 
-        public SourceDTO GetPreview()
+        public SourceReference GetPreview()
         {
             if (previewGetter != null)
                 return previewGetter.Invoke();

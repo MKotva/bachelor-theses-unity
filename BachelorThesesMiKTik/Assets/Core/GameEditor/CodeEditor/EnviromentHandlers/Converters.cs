@@ -7,7 +7,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 {
     public class Converters : EnviromentObject
     {
-        public override void SetInstance(GameObject instance) { }
+        public override bool SetInstance(GameObject instance) { return true; }
 
         [CodeEditorAttribute("Converts given num (toConvert) to string.", "returns string, ( num toConvert)")]
         public static string NumToString(float f) 

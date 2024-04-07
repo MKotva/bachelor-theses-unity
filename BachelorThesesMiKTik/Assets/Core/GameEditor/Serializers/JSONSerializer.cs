@@ -5,12 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Unity.VisualScripting;
 
 namespace Assets.Core.GameEditor.Serializers
 {
     public static class JSONSerializer
     {
+        /// <summary>
+        /// Loads GameData from file on given path.
+        /// </summary>
+        /// <param name="path">Path to file with game data.</param>
+        /// <param name="result">Out parameter with deserialized game data.</param>
+        /// <returns>True if data were succesfully read and stored to GameDataDTO. Otherwise false.</returns>
         public static bool Deserialize(string path, out GameDataDTO result)
         {
             var data = ReadData(path);
@@ -36,6 +41,12 @@ namespace Assets.Core.GameEditor.Serializers
             return false;
         }
 
+        /// <summary>
+        /// Serializes GameDataDTO to json and saves it to file on given path.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="path"></param>
+        /// <returns>True if data were succesfully serialized to file. Otherwise false.</returns>
         public static bool Serialize(GameDataDTO data, string path)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings
@@ -58,6 +69,11 @@ namespace Assets.Core.GameEditor.Serializers
             }
         }
 
+        /// <summary>
+        /// Reads all data from file on given path if exists.
+        /// </summary>
+        /// <param name="path">Path to file</param>
+        /// <returns>File content in string.</returns>
         private static string ReadData(string path)
         {
             if (File.Exists(path))

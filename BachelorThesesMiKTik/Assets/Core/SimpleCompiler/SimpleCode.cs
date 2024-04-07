@@ -153,7 +153,7 @@ namespace Assets.Core.SimpleCompiler
                 var depInstance = dependency.Value.Instance;
                 if (depInstance is EnviromentObject)
                 {
-                    var enviroment = (EnviromentObject)depInstance;
+                    var enviroment = (EnviromentObject) depInstance;
                     enviroment.SetInstance(instance);
                 }
             }

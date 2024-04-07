@@ -1,4 +1,5 @@
 ﻿using Assets.Core.GameEditor.Animation;
+using Assets.Core.GameEditor.CodeEditor.EnviromentHandlers;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Scripts.GameEditor.Controllers;
@@ -11,12 +12,12 @@ namespace Assets.Scripts.GameEditor.Managers
 {
     public class AnimationsManager : Singleton<AnimationsManager>
     {
-        public Dictionary<string, List<AnimationsController>> AnimationControllers { get; private set; }
+        public Dictionary<string, Dictionary<int, AnimationsController>> AnimationControllers { get; private set; }
         public Dictionary<string, CustomAnimation> Animations { get; private set; }
         public Dictionary<string, AnimationSourceDTO> AnimationData { get; private set; }
         protected override void Awake()
         {
-            AnimationControllers = new Dictionary<string, List<AnimationsController>>();
+            AnimationControllers = new Dictionary<string, Dictionary<int, AnimationsController>>();
             Animations = new Dictionary<string, CustomAnimation>();
             AnimationData = new Dictionary<string, AnimationSourceDTO>();
             base.Awake();
@@ -35,23 +36,27 @@ namespace Assets.Scripts.GameEditor.Managers
                 RemoveAnimation(name);
             }
 
+            var tasks = new List<Task<bool>>();
             foreach (var data in managerDTO.Sources)
             {
                 if (!( data is AnimationSourceDTO ))
                 {
-                    ErrorOutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!");
+                    ErrorOutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!", "Animations Manager");
                     continue;
                 }
-                await AddAnimation((AnimationSourceDTO) data);
+                tasks.Add(AddAnimation((AnimationSourceDTO) data));
             }
+            await Task.WhenAll(tasks);
         }
 
-        public async Task AddAnimation(AnimationSourceDTO animationData)
+        #region AnimationMethods
+        public async Task<bool> AddAnimation(AnimationSourceDTO animationData)
         {
             var name = animationData.Name;
             if(AnimationData.ContainsKey(name)) 
             {
-                return;
+                ErrorOutputManager.Instance.ShowMessage($"Animation with given name: {name} already exists!", "Animations Manager");
+                return false;
             }
             
             var customAnim = await AnimationLoader.LoadAnimation(animationData);
@@ -59,6 +64,41 @@ namespace Assets.Scripts.GameEditor.Managers
             { 
                 Animations.Add(name, customAnim);
                 AnimationData.Add(name, animationData);
+                return true;
+            }
+            return false;
+        }
+
+        public Sprite GetAnimationPreview(string name)
+        {
+            if (!Animations.ContainsKey(name))
+                return null;
+
+            return Animations[name].Frames[0].Sprite;
+        }
+
+        public async Task EditAnimation(string name, AnimationSourceDTO animationData)
+        {
+            if (!AnimationData.ContainsKey(name))
+            {
+                return;
+            }
+
+            var customAnim = await AnimationLoader.LoadAnimation(animationData);
+            if (customAnim != null)
+            {
+                Animations[name] = customAnim;
+                AnimationData[name] = animationData;
+
+                if (!AnimationControllers.ContainsKey(name))
+                {
+                    return;
+                }
+
+                foreach (var anim in AnimationControllers[name].Values)
+                {
+                    anim.EditCutomAnimation(customAnim);
+                }
             }
         }
 
@@ -76,7 +116,7 @@ namespace Assets.Scripts.GameEditor.Managers
 
             if (AnimationControllers.ContainsKey(name))
             {
-                foreach (var controller in AnimationControllers[name])
+                foreach (var controller in AnimationControllers[name].Values)
                 {
                     controller.RemoveAnimation();
                 }
@@ -87,76 +127,77 @@ namespace Assets.Scripts.GameEditor.Managers
             AnimationControllers.Remove(name);
         }
 
-        public void SetAnimation(GameObject ob, SourceDTO source, bool shouldLoop = true, bool onAwake = true)
+        public void SetAnimation(GameObject ob, SourceReference source, bool shouldLoop = true, bool onAwake = true)
         {
-            var name = source.Name;
-            if (!Animations.ContainsKey(name))
-                return;
-
             AnimationsController controller;
             if (!ob.TryGetComponent(out controller))
                 controller = ob.AddComponent<AnimationsController>();
 
-            controller.SetCustomAnimation(Animations[name], shouldLoop, onAwake, source.XSize, source.YSize);
-            AddActivePlayer(name, controller);
+            SetAnimation(controller, source, shouldLoop, onAwake);
         }
 
-        public async Task EditAnimation(string name, AnimationSourceDTO animationData)
+        public void SetAnimation(AnimationsController controller, SourceReference source, bool shouldLoop = true, bool onAwake = true)
         {
-            if (!AnimationData.ContainsKey(name))
-            {
+            if (!Animations.ContainsKey(source.Name))
                 return;
-            }
 
-            var customAnim = await AnimationLoader.LoadAnimation(animationData);
-            if (customAnim != null)
+            if (ContainsActiveController(source.Name, controller.GetInstanceID()))
+                return;
+
+            var sourceReference = controller.SourceReference;
+            if (sourceReference.Name != "")
             {
-                Animations[name] =  customAnim;
-                AnimationData[name] = animationData;
-
-                if(!AnimationControllers.ContainsKey(name)) 
-                {
-                    return;
-                }
-
-                foreach(var anim in AnimationControllers[name])
-                {
-                    anim.EditCutomAnimation(customAnim);
-                }
+                RemoveActiveController(sourceReference.Name, controller);
             }
+
+            controller.SetCustomAnimation(Animations[source.Name], source, shouldLoop, onAwake);
+            AddActiveController(source.Name, controller);
         }
+        #endregion
 
-        public Sprite GetAnimationPreview(string name)
-        {
-            if (!Animations.ContainsKey(name))
-                return null;
-
-            return Animations[name].Frames[0].Sprite;
-        }
-
-        public bool AddActivePlayer(string name, AnimationsController controller)
+        #region ControllerMethods
+        public bool AddActiveController(string name, AnimationsController controller)
         {
             if (Animations.ContainsKey(name))
             {
-                if(AnimationControllers.ContainsKey(name)) 
+                if (AnimationControllers.ContainsKey(name))
                 {
-                    AnimationControllers[name].Add(controller);
-                    return true;
+                    var instanceID = controller.GetInstanceID();
+                    if (ContainsActiveController(name, instanceID))
+                        return false;
+                    
+                    AnimationControllers[name].Add(instanceID, controller);
                 }
                 else
                 {
-                    AnimationControllers.Add(name, new List<AnimationsController> { controller });
+                    AnimationControllers.Add(name, new Dictionary<int, AnimationsController> 
+                    { 
+                        { controller.GetInstanceID(), controller } 
+                    });
                 }
+                
+                return true;
             }
             return false;
         }
 
-        public bool RemoveActivePlayer(string name)
+        public bool ContainsActiveController(string name, int instanceID) 
+        {
+            if (AnimationControllers[name].ContainsKey(instanceID))
+                return true;
+            return false;
+        }
+
+        public bool RemoveActiveController(string name, AnimationsController controller)
         {
             if (AnimationControllers.ContainsKey(name))
             {
-                AnimationControllers.Remove(name);
-                return true;
+                var id = controller.GetInstanceID();
+                if (AnimationControllers[name].ContainsKey(id))
+                {
+                    AnimationControllers[name].Remove(id);
+                    return true;
+                }
             }
             return false;
         }
@@ -177,7 +218,7 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 foreach (var controllers in AnimationControllers.Values)
                 {
-                    foreach (var controller in controllers)
+                    foreach (var controller in controllers.Values)
                         controller.Pause();
                 }
                 return true;
@@ -189,7 +230,7 @@ namespace Assets.Scripts.GameEditor.Managers
                     if (!AnimationControllers.ContainsKey(name))
                         return false;
 
-                    foreach(var controller in AnimationControllers[name])
+                    foreach(var controller in AnimationControllers[name].Values)
                         controller.Pause();
                 }
                 return true;
@@ -202,7 +243,7 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 foreach (var controllers in AnimationControllers.Values)
                 {
-                    foreach (var controller in controllers)
+                    foreach (var controller in controllers.Values)
                         controller.Resume();
                 }
                 return true;
@@ -214,7 +255,7 @@ namespace Assets.Scripts.GameEditor.Managers
                     if (!AnimationControllers.ContainsKey(name))
                         return false;
 
-                    foreach (var controller in AnimationControllers[name])
+                    foreach (var controller in AnimationControllers[name].Values)
                         controller.Resume();
                 }
                 return true;
@@ -227,7 +268,7 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 foreach (var controllers in AnimationControllers.Values)
                 {
-                    foreach (var controller in controllers)
+                    foreach (var controller in controllers.Values)
                         controller.ResetClip();
                 }
                 return true;
@@ -239,11 +280,38 @@ namespace Assets.Scripts.GameEditor.Managers
                     if (!AnimationControllers.ContainsKey(name))
                         return false;
 
-                    foreach (var controller in AnimationControllers[name])
+                    foreach (var controller in AnimationControllers[name].Values)
                         controller.ResetClip();
                 }
                 return true;
             }
         }
+
+        public bool OnStop(List<string> names)
+        {
+            if (names.Count == 0)
+            {
+                foreach (var controllers in AnimationControllers.Values)
+                {
+                    foreach (var controller in controllers.Values)
+                        controller.Stop();
+                }
+                return true;
+            }
+            else
+            {
+                foreach (var name in names)
+                {
+                    if (!AnimationControllers.ContainsKey(name))
+                        return false;
+
+                    foreach (var controller in AnimationControllers[name].Values)
+                        controller.Stop();
+                }
+                return true;
+            }
+        }
+        #endregion
+
     }
 }

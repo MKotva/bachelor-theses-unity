@@ -35,24 +35,27 @@ namespace Assets.Scripts.GameEditor.Managers
                 RemoveClip(name);
             }
 
+            var tasks = new List<Task<bool>>();
             foreach (var data in managerDTO.Sources)
             {
                 if (!( data is AudioSourceDTO ))
                 {
-                    ErrorOutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!");
+                    ErrorOutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!", "Audio manager");
                     continue;
                 }
-                await AddAudioClip((AudioSourceDTO)data);
+                tasks.Add(AddAudioClip((AudioSourceDTO)data));
             }
+            await Task.WhenAll(tasks);
         }
 
         #region AudioClipMethods
-        public async Task AddAudioClip(AudioSourceDTO audioSourceDTO)
+        public async Task<bool> AddAudioClip(AudioSourceDTO audioSourceDTO)
         {
             var name = audioSourceDTO.Name;
             if (AudioData.ContainsKey(name))
             {
-                return;
+                ErrorOutputManager.Instance.ShowMessage($"Audio clip with given name: {name} already exists!", "Audio manager");
+                return false;
             }
 
             var result = await AudioLoader.LoadAudioClip(audioSourceDTO.URL);
@@ -60,7 +63,9 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 AudioClips.Add(name, result);
                 AudioData.Add(name, audioSourceDTO);
+                return true;
             }
+            return false;
         }
 
         public void EditAudioClip(AudioSourceDTO audioSourceDTO) 
@@ -78,20 +83,6 @@ namespace Assets.Scripts.GameEditor.Managers
                     controller.EditAudio(audioSourceDTO);
                 }
             }
-        }
-
-        public void SetAudioClip(GameObject ob, SourceDTO source)
-        {
-            var name = source.Name;
-            if (!AudioClips.ContainsKey(name))
-                return;
-
-            AudioController controller;
-            if (!ob.TryGetComponent(out controller))
-                controller = ob.AddComponent<AudioController>();
-
-            controller.SetAudioClip(name);
-            AddActivePlayer(name, controller);
         }
 
         public void RemoveClip(string name)
@@ -114,9 +105,29 @@ namespace Assets.Scripts.GameEditor.Managers
             AudioData.Remove(name);
             AudioControllers.Remove(name);
         }
+
+        public void SetAudioClip(GameObject ob, SourceReference source, bool playOnAwake = true)
+        {
+            AudioController controller;
+            if (!ob.TryGetComponent(out controller))
+                controller = ob.AddComponent<AudioController>();
+
+            SetAudioClip(controller, source, playOnAwake);
+        }
+
+        public void SetAudioClip(AudioController controller, SourceReference source, bool playOnAwake = true)
+        {
+            var name = source.Name;
+            if (!AudioClips.ContainsKey(name))
+                return;
+
+            controller.SetAudioClip(name, playOnAwake);
+            AddActiveController(name, controller);
+        }
         #endregion
 
-        public void AddActivePlayer(string name, AudioController controller)
+        #region ControllerMethods
+        public void AddActiveController(string name, AudioController controller)
         {
             if (!AudioControllers.ContainsKey(name))
             {
@@ -128,11 +139,20 @@ namespace Assets.Scripts.GameEditor.Managers
             }
         }
 
-        public bool RemoveActivePlayer(string name)
+        public bool RemoveActiveController(string name, AudioController controller)
         {
             if (AudioControllers.ContainsKey(name))
             {
-                AudioControllers.Remove(name);
+                var id = controller.GetInstanceID();
+                var controllers = AudioControllers[name];
+                for (int i = 0; i < controllers.Count; i++)
+                {
+                    if (id == controllers[i].GetInstanceID())
+                    {
+                        controllers.RemoveAt(i);
+                    }
+
+                }
                 return true;
             }
             return false;
@@ -222,5 +242,31 @@ namespace Assets.Scripts.GameEditor.Managers
                 return true;
             }
         }
+
+        public bool OnStop(List<string> names)
+        {
+            if (names.Count == 0)
+            {
+                foreach (var controllerGroup in AudioControllers.Values)
+                {
+                    foreach (var controller in controllerGroup)
+                        controller.StopClip();
+                }
+                return true;
+            }
+            else
+            {
+                foreach (var name in names)
+                {
+                    if (!AudioControllers.ContainsKey(name))
+                        return false;
+
+                    foreach (var controller in AudioControllers[name])
+                        controller.StopClip();
+                }
+                return true;
+            }
+        }
+        #endregion
     }
 }

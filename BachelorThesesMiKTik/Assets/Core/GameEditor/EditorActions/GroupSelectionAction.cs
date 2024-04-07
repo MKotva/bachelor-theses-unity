@@ -8,40 +8,56 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 {
     public class GroupSelectionAction : EditorActionBase
     {
-        bool _isMouseDown;
+        bool isMouseDown;
+        SelectAction selectAction;
+
+        public GroupSelectionAction()
+        {
+            selectAction = new SelectAction();
+        }
+
+        /// <summary>
+        ///  On left mouse key press, this method will allow performing GroupSelect action.
+        ///  If there is any selected item, 
+        /// </summary>
+        /// <param name="key"></param>
         public override void OnMouseDown(MouseButton key) 
         {
             lastActionRecord = null;
             lastActionRecordReverse = null;
 
-            _isMouseDown = true;
+            isMouseDown = true;
             if (map.Selected.Count != 0)
             {
                 var positions = GetSelectedPositionsString();
-                lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
-                map.UnSelectAll();
+                lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", selectAction.PerformAction);
+                map.UnselectAll();
             }
             else
             {
-                lastActionRecordReverse = new JournalActionDTO("SUA", PerformAction);
+                lastActionRecordReverse = new JournalActionDTO("SUA", selectAction.PerformAction);
             }
         }
 
         public override void OnMouseUp() 
         {
-            _isMouseDown = false;
+            isMouseDown = false;
         }
 
         public override void OnUpdate(Vector3 mousePosition) 
         {
-            if(_isMouseDown)
+            if(isMouseDown)
             {
                 SelectAllGroupItems(mousePosition);
                 lastActionRecord = new JournalActionDTO($"SG;{mousePosition.x}:{mousePosition.y}", PerformAction);
             }
-            _isMouseDown = false;
+            isMouseDown = false;
         }
 
+        /// <summary>
+        /// This method will perform action based on given string.
+        /// </summary>
+        /// <param name="action"></param>
         public override void PerformAction(string action)
         {
             var descriptions = action.Split(';');
@@ -51,15 +67,16 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
             if (descriptions[0] == "SG")
             {
-                map.UnSelectAll();
+                map.UnselectAll();
                 SelectAllGroupItems(MathHelper.GetVector3FromString(descriptions[1]));
-            }
-            else if(descriptions[0] == "SUA")
-            {
-                map.UnSelectAll();
             }
         }
 
+        /// <summary>
+        /// Finds object on given position (if exists) and selects all items
+        /// with same ItemID (same type of objects)
+        /// </summary>
+        /// <param name="position">Mouse click position.</param>
         private void SelectAllGroupItems(Vector3 position)
         {
             var worldCellPosition = map.GetCellCenterPosition(position);
@@ -80,6 +97,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 }
             }
         }
+
+        /// <summary>
+        /// Goes thru all selected objects and returs theirs positions in one string.
+        /// </summary>
+        /// <returns></returns>
         private string GetSelectedPositionsString()
         {
             StringBuilder sb = new StringBuilder();

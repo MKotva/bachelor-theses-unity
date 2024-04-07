@@ -12,13 +12,16 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
     {
         public BackgroundController BackgroundController { get; set; }
         
-        private List<SourceDTO> newBackground;
+        private List<SourceReference> newBackground;
 
-        public Background() 
+        public override bool SetInstance(GameObject instance) 
         {
             BackgroundController = BackgroundController.Instance;
+            if (BackgroundController == null)
+                return false;
+
+            return true;
         }
-        public override void SetInstance(GameObject instance) { }
 
         #region NewBackgroundCreate
 
@@ -26,7 +29,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             "you can append new image/animation layers. For applying concept use SetBackground().")]
         public void CreateBackgroundConcept()
         {
-            newBackground = new List<SourceDTO>();
+            newBackground = new List<SourceReference>();
         }
 
         [CodeEditorAttribute("Appends animation with given name (if exists) as layer to background concept, created by CreateBackgroundConcept()," +
@@ -46,7 +49,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (!AnimationsManager.Instance.ContainsName(name))
                 throw new RuntimeException($"Exception in method \"AppendAnimationLayer\"! There is no animation with name: {name}");
 
-            newBackground.Add(new SourceDTO(name, SourceType.Animation, xSize, ySize));
+            newBackground.Add(new SourceReference(name, SourceType.Animation, xSize, ySize));
         }
 
         [CodeEditorAttribute("Appends image with given name (if exists) as layer to background concept, created by CreateBackgroundConcept()," +
@@ -66,7 +69,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (!SpriteManager.Instance.ContainsName(name))
                 throw new RuntimeException($"Exception in method \"AppendLayerImage\"! There is no sprite with name: {name}");
 
-            newBackground.Add(new SourceDTO(name, SourceType.Image, xSize, ySize));
+            newBackground.Add(new SourceReference(name, SourceType.Image, xSize, ySize));
         }
 
         [CodeEditorAttribute("Sets created background concept as new background.")]
@@ -95,7 +98,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (!AnimationsManager.Instance.ContainsName(animationName))
                 throw new RuntimeException($"Exception in method \"AppendAnimationLayer\"! There is no animation with name: {animationName}");
 
-            BackgroundController.AppendLayer(new SourceDTO(animationName, SourceType.Animation, xSize, ySize));
+            BackgroundController.AppendLayer(new SourceReference(animationName, SourceType.Animation, xSize, ySize));
         }
 
 
@@ -109,7 +112,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (BackgroundController.BackgroundLayers.Count <= layer || layer < 0)
                 throw new RuntimeException($"Ivalid layer id {layer}! Index out of range.");
 
-            BackgroundController.SetLayer(new SourceDTO(name, SourceType.Animation, xSize, ySize), layer);
+            BackgroundController.SetLayer(new SourceReference(name, SourceType.Animation, xSize, ySize), layer);
         }
 
 
@@ -125,7 +128,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (!SpriteManager.Instance.ContainsName(name))
                 throw new RuntimeException($"Exception in method \"AppendLayerImage\"! There is no sprite with name: {name}");
 
-            BackgroundController.AppendLayer(new SourceDTO(name, SourceType.Image, xSize, ySize));
+            BackgroundController.AppendLayer(new SourceReference(name, SourceType.Image, xSize, ySize));
         }
 
         [CodeEditorAttribute("Sets image with given name to existing background layer on index (num layer), with scaling X and Y. " +
@@ -138,7 +141,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             if (BackgroundController.BackgroundLayers.Count <= layer || layer < 0)
                 throw new RuntimeException($"Ivalid layer id {layer}! Index out of range.");
 
-            BackgroundController.SetLayer(new SourceDTO(name, SourceType.Image, xSize, ySize), layer);
+            BackgroundController.SetLayer(new SourceReference(name, SourceType.Image, xSize, ySize), layer);
         }
 
         [CodeEditorAttribute("Gets actual background layer count.", "returns num")]

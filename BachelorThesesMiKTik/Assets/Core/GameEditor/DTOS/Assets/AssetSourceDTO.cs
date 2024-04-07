@@ -1,5 +1,4 @@
-﻿using Assets.Core.GameEditor.Enums;
-using System;
+﻿using System;
 
 namespace Assets.Core.GameEditor.DTOS
 {
@@ -7,13 +6,12 @@ namespace Assets.Core.GameEditor.DTOS
     public class AssetSourceDTO
     {
         public string Name { get; set; }
-        public SourceType Type { get; set; }
         public string URL { get; set; }
 
-        public AssetSourceDTO(SourceType type, string url)
+        public AssetSourceDTO(string name, string url)
         {
-            Type = type;
-            URL = url;
+           Name = name;
+           URL = url;
         }
     }
 }

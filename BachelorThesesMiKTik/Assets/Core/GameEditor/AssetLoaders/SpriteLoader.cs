@@ -1,3 +1,4 @@
+using Assets.Core.GameEditor.DTOS;
 using Assets.Core.SimpleCompiler.Compilation.CodeBase;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,62 +11,19 @@ namespace Assets.Core.GameEditor.AssetLoaders
     public static class SpriteLoader
     {
         /// <summary>
-        /// Loads a sprite via LoadSprite() and sets the size. If the size is not given, method will
-        /// scale sprite to fit a size of an object. Sprite will be assigned to a given object.
-        /// </summary>
-        /// <param name="ob">Object for set.</param>
-        /// <param name="url">Path to source.</param>
-        /// <param name="xSize">X scale size.</param>
-        /// <param name="ySize">Y scale size.</param>
-        /// <returns></returns>
-        public static async Task SetSprite(GameObject ob, string url, float xSize = 0, float ySize = 0)
-        {
-            if (ob == null || url == string.Empty)
-            {
-                ErrorOutputManager.Instance.ShowMessage($"Unable to set sprite to an object! Object or url {url} is empty!");
-                return;
-            }
-
-            if(xSize == 0 || ySize == 0)
-            {
-                if (ob.TryGetComponent(out RectTransform rect))
-                {
-                    xSize = rect.rect.width;
-                    ySize = rect.rect.height;
-                }
-                else
-                {
-                    ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
-                    return;
-                }
-            }
-
-            if(ob.TryGetComponent(out SpriteRenderer spriteRenderer)) 
-            {
-                await SetSprite(spriteRenderer, ob, url, xSize, ySize);
-            }
-            else if(ob.TryGetComponent(out Image image))
-            {
-                await SetSprite(image, ob, url, xSize, ySize);
-            }
-            else
-            {
-                ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Object does not contain sprite renderer.");
-            }
-        }
-
-        /// <summary>
         /// Loads a texture with LoadTextureMethod and than creates a new sprite.
         /// </summary>
         /// <param name="url">Path to texture.</param>
         /// <returns></returns>
-        public static async Task<Sprite> LoadSprite(string url)
+        public static async Task<Sprite> LoadSprite(AssetSourceDTO source)
         {
-            var texture = await LoadTexture(url);
+            var texture = await LoadTexture(source.URL);
 
             if (texture == null)
-                return null; // TODO Exception handling;
-
+            {
+                ErrorOutputManager.Instance.ShowMessage($"Sprite with given name: {source.Name} could not be loaded!", "Sprite loader");
+                return null;
+            }
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         }
 
@@ -103,6 +61,51 @@ namespace Assets.Core.GameEditor.AssetLoaders
         }
 
         /// <summary>
+        /// Loads a sprite via LoadSprite() and sets the size. If the size is not given, method will
+        /// scale sprite to fit a size of an object. Sprite will be assigned to a given object.
+        /// </summary>
+        /// <param name="ob">Object for set.</param>
+        /// <param name="url">Path to source.</param>
+        /// <param name="xSize">X scale size.</param>
+        /// <param name="ySize">Y scale size.</param>
+        /// <returns></returns>
+        public static async Task SetSprite(GameObject ob, AssetSourceDTO source, float xSize = 0, float ySize = 0)
+        {
+            if (ob == null || source.URL == string.Empty)
+            {
+                ErrorOutputManager.Instance.ShowMessage($"Unable to set sprite to an object! Object or URL: {source.URL} is empty!");
+                return;
+            }
+
+            if (xSize == 0 || ySize == 0)
+            {
+                if (ob.TryGetComponent(out RectTransform rect))
+                {
+                    xSize = rect.rect.width;
+                    ySize = rect.rect.height;
+                }
+                else
+                {
+                    ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
+                    return;
+                }
+            }
+
+            if (ob.TryGetComponent(out SpriteRenderer spriteRenderer))
+            {
+                await SetSprite(spriteRenderer, source, xSize, ySize);
+            }
+            else if (ob.TryGetComponent(out Image image))
+            {
+                await SetSprite(image, source);
+            }
+            else
+            {
+                ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Object does not contain sprite renderer.");
+            }
+        }
+
+        /// <summary>
         /// Creates path to streaming asset folder.
         /// </summary>
         /// <param name="relativePath"></param>
@@ -112,9 +115,9 @@ namespace Assets.Core.GameEditor.AssetLoaders
             return "file://" + Path.Combine(Application.streamingAssetsPath, relativePath);
         }
 
-        private static async Task SetSprite(SpriteRenderer renderer, GameObject ob, string url, float xSize = 0, float ySize = 0)
+        private static async Task SetSprite(SpriteRenderer renderer, AssetSourceDTO source, float xSize = 0, float ySize = 0)
         {
-            var sprite = await LoadSprite(url);
+            var sprite = await LoadSprite(source);
             if (sprite != null)
             {
                 renderer.sprite = sprite;
@@ -122,9 +125,9 @@ namespace Assets.Core.GameEditor.AssetLoaders
             }
         }
 
-        private static async Task SetSprite(Image image, GameObject ob, string url, float xSize = 0, float ySize = 0)
+        private static async Task SetSprite(Image image, AssetSourceDTO source)
         {
-            var sprite = await LoadSprite(url);
+            var sprite = await LoadSprite(source);
             if (sprite != null)
             {
                 image.sprite = sprite;

@@ -94,7 +94,7 @@ public class ImageComponentController : ObjectComponent
         }
     }
 
-    public void ScalePreview(SourceDTO source)
+    public void ScalePreview(SourceReference source)
     {
         var preview = PreviewObject.GetComponent<Image>();
         var transform = preview.GetComponent<RectTransform>();

@@ -17,7 +17,7 @@ public class BackgroundPopUpController : PopUpController
 
     private BackgroundController backgroundController;
     private List<AssetPanelController> lineControllers;
-    private List<SourceDTO> assetSources;
+    private List<SourceReference> assetSources;
 
     #region PUBLIC
     /// <summary>
@@ -59,7 +59,7 @@ public class BackgroundPopUpController : PopUpController
 
         var value = AudioDropDown.options[AudioDropDown.value].text;
         if (value != "Create" || value != "None")
-            backgroundController.SetAudioSource(new SourceDTO(value, SourceType.Sound));
+            backgroundController.SetAudioSource(new SourceReference(value, SourceType.Sound));
         
     }
 
@@ -87,7 +87,7 @@ public class BackgroundPopUpController : PopUpController
     {
         backgroundController = BackgroundController.Instance;
         lineControllers = new List<AssetPanelController>();
-        assetSources = new List<SourceDTO>();
+        assetSources = new List<SourceReference>();
 
         AudioDropDown.onValueChanged.AddListener(AudioDropDownChange);
         var names = AudioManager.Instance.AudioClips.Keys.ToArray();
@@ -181,7 +181,7 @@ public class BackgroundPopUpController : PopUpController
         }
     }
 
-    private void AudioCreatorExitHandler(SourceDTO source)
+    private void AudioCreatorExitHandler(SourceReference source)
     {
         var manager = SpriteManager.Instance;
         if (manager != null)

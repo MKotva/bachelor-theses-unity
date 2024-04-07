@@ -11,10 +11,9 @@ namespace Assets.Core.GameEditor.DTOS
         public bool Loop { get; set; }
 
         public bool OnAwake { get; set; }
-        public AnimationSourceDTO(List<AnimationFrameDTO> data, string name, SourceType type, bool loop = true, bool onAwake = true) : base(type, "")
+        public AnimationSourceDTO(List<AnimationFrameDTO> data, string name, bool loop = true, bool onAwake = true) : base(name, "")
         {
             AnimationData = data;
-            Name = name;
             Loop = loop;
             OnAwake = onAwake;
         }

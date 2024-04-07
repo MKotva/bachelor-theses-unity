@@ -14,7 +14,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         private GameItemController itemController;
         private MapCanvas editor;
 
-        public override void SetInstance(GameObject instance) { }
+        public override bool SetInstance(GameObject instance) { return true; }
 
         public MyAI()
         {

@@ -3,6 +3,8 @@ using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.Animation;
 using UnityEngine.UI;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
+using Assets.Scripts.GameEditor.Managers;
+using Assets.Core.GameEditor.DTOS.Assets;
 
 namespace Assets.Scripts.GameEditor.Controllers
 {
@@ -10,6 +12,7 @@ namespace Assets.Scripts.GameEditor.Controllers
     {
         public IAnimator Animator { get; private set; }
         public bool ShouldLoop {  get; set; }
+        public SourceReference SourceReference { get; private set; }
 
 
         private void Update()
@@ -22,15 +25,15 @@ namespace Assets.Scripts.GameEditor.Controllers
             if (!Animator.Animating())
                 return;
 
-            if (ShouldLoop || !Animator.HasFinished())
+            if (!Animator.HasFinished())
                 Animator.Animate(Time.deltaTime);
         }
 
-        public void SetCustomAnimation(CustomAnimation animation, bool loop = true, bool playOnAwake = true, float x = 30, float y = 30)
+        public void SetCustomAnimation(CustomAnimation animation, SourceReference source, bool loop = true, bool playOnAwake = true)
         {
             if (TryGetComponent(out SpriteRenderer spriteRenderer))
             {
-               Animator = new SpriteAnimator(spriteRenderer, animation, playOnAwake, x, y);
+               Animator = new SpriteAnimator(spriteRenderer, animation, playOnAwake, source.XSize, source.YSize);
             }
             else if (TryGetComponent(out Image image))
             {
@@ -39,9 +42,11 @@ namespace Assets.Scripts.GameEditor.Controllers
             else
             {
                 var renderer = gameObject.AddComponent<SpriteRenderer>();
-                Animator = new SpriteAnimator(renderer, animation, playOnAwake, x, y);
+                Animator = new SpriteAnimator(renderer, animation, playOnAwake, source.XSize, source.YSize);
             }
+
             ShouldLoop = loop;
+            SourceReference = source;
         }
 
         public void EditCutomAnimation(CustomAnimation animation)
@@ -98,9 +103,9 @@ namespace Assets.Scripts.GameEditor.Controllers
             ShouldLoop = false;
         }
 
-        public bool HasFinishedLoop()
+        public bool CheckIfIsFinished()
         {
-            if (Animator != null)
+            if (Animator != null && !ShouldLoop)
                 return Animator.HasFinished();
             return false;
         }
@@ -113,46 +118,11 @@ namespace Assets.Scripts.GameEditor.Controllers
             }
         }
 
-        //public void AddAnimationFrame(string source, float displayTime)
-        //{
-        //    CheckAnimationConditions();
-
-        //    if (frames == null)
-        //        frames = new List<AnimationFrameDTO>();
-        //    frames.Add(new AnimationFrameDTO(displayTime, source));
-        //}
-
-        //public void SetAnimation(bool shouldLoop)
-        //{
-        //    SetAnimation(shouldLoop, 0, 0);
-        //}
-
-        //public void SetAnimation(bool shouldLoop, float xSize, float ySize)
-        //{
-        //    if (frames == null)
-        //        throw new RuntimeException("You can not set animation before adding at least one frame via \"AddAnimationFrame()\"");
-
-        //    SetSource(new AnimationSourceDTO(frames, "", SourceType.Animation), xSize, ySize, shouldLoop);
-        //}
-
-        //public bool IsAnimationComplete()
-        //{
-        //    return animationController.HasFinishedLoop();
-        //}
-
-        //public void PauseAnimation()
-        //{
-        //    animationController.Pause();
-        //}
-
-        //public void ResumeAnimation()
-        //{
-        //    animationController.Resume();
-        //}
-
-        //public void ResetAnimation()
-        //{
-        //    animationController.ResetClip();
-        //}
+        private void OnDestroy()
+        {
+            var instance = AnimationsManager.Instance;
+            if (instance != null && SourceReference != null)
+                instance.RemoveActiveController(SourceReference.Name, this);
+        }
     }
 }

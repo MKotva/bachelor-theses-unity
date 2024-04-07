@@ -44,6 +44,7 @@ public class ItemCreatorController : PopUpController
         {
             ObjectCreator.CreateItem(active.Values.ToList());
         }
+        OnExitClick();
     }
 
 

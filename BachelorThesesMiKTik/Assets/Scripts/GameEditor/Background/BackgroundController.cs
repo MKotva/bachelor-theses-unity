@@ -1,13 +1,15 @@
+using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor;
 using Assets.Scripts.GameEditor.Audio;
 using Assets.Scripts.GameEditor.Managers;
+using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class BackgroundController : Singleton<BackgroundController>
+public class BackgroundController : Singleton<BackgroundController>, IObjectController
 {
     [SerializeField] GameObject LayerPrefab;
     [SerializeField] public TMP_Dropdown AudioDropDown;
@@ -15,11 +17,11 @@ public class BackgroundController : Singleton<BackgroundController>
     [SerializeField] public AudioController AudioController;
 
     public List<GameObject> BackgroundLayers { get; private set; }
-    public List<SourceDTO> Sources { get; private set; }
-    public SourceDTO AudioSource { get; private set; }
+    public List<SourceReference> Sources { get; private set; }
+    public SourceReference AudioSource { get; private set; }
 
     #region PUBLIC
-    public void SetBackground(List<SourceDTO> sources)
+    public void SetBackground(List<SourceReference> sources)
     {
         if (sources.Count == 1)
         {
@@ -31,9 +33,9 @@ public class BackgroundController : Singleton<BackgroundController>
         }
 
         ClearBackground();
-        foreach (var source in sources)
+        foreach (var layerSource in sources)
         {
-            AppendLayer(source);
+            AppendLayer(layerSource);
         }
     }
 
@@ -43,7 +45,7 @@ public class BackgroundController : Singleton<BackgroundController>
     /// <param name="source"></param>
     /// <param name="xSize"></param>
     /// <param name="ySize"></param>
-    public void AppendLayer(SourceDTO source)
+    public void AppendLayer(SourceReference source)
     {
         var layer = AppendBackgroundLayer();
         SetLayer(layer, source);
@@ -57,7 +59,7 @@ public class BackgroundController : Singleton<BackgroundController>
     /// <param name="layerId"></param>
     /// <param name="xSize"></param>
     /// <param name="ySize"></param>
-    public void SetLayer(SourceDTO source, int layerId)
+    public void SetLayer(SourceReference source, int layerId)
     {
         SetLayer(BackgroundLayers[layerId], source);
         Sources[layerId] = source;
@@ -73,7 +75,7 @@ public class BackgroundController : Singleton<BackgroundController>
         {
             BackgroundLayers.Add(Instantiate(defaultLayer, transform));
         }
-        Sources.Add(new SourceDTO(null, SourceType.Image));
+        Sources.Add(new SourceReference(null, SourceType.Image));
     }
 
     /// <summary>
@@ -101,10 +103,45 @@ public class BackgroundController : Singleton<BackgroundController>
     /// </summary>
     /// <param name="audioSourceDTO"></param>
     /// <returns></returns>
-    public void SetAudioSource(SourceDTO audioSourceDTO)
+    public void SetAudioSource(SourceReference audioSourceDTO)
     {
+        if (audioSourceDTO == null)
+            return;
+
         AudioSource = audioSourceDTO;
-        AudioManager.Instance.SetAudioClip(gameObject, audioSourceDTO);
+        AudioManager.Instance.SetAudioClip(gameObject, audioSourceDTO, false);
+    }
+
+    public void Play()
+    {
+        var names = GetAnimationNames();
+        if (names.Count != 0)
+            AnimationsManager.Instance.OnPlay(names);
+        
+        if(AudioSource != null)
+            AudioManager.Instance.OnPlay(new List<string> { AudioSource.Name });
+    }
+
+    public void Pause()
+    {
+        var names = GetAnimationNames();
+        if (names.Count != 0)
+            AnimationsManager.Instance.OnPause(names);
+
+        if (AudioSource != null)
+            AudioManager.Instance.OnPause(new List<string> { AudioSource.Name });
+    }
+
+    public void Enter() {}
+
+    public void Exit()
+    {
+        var names = GetAnimationNames();
+        if (names.Count != 0)
+            AnimationsManager.Instance.OnStop(names);
+
+        if (AudioSource != null)
+            AudioManager.Instance.OnStop(new List<string> { AudioSource.Name });
     }
 
     #endregion
@@ -113,8 +150,9 @@ public class BackgroundController : Singleton<BackgroundController>
     private void Start()
     {
         BackgroundLayers = new List<GameObject>();
-        Sources = new List<SourceDTO>();
+        Sources = new List<SourceReference>();
         SetDefault();
+        EditorController.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
     }
 
     /// <summary>
@@ -140,7 +178,7 @@ public class BackgroundController : Singleton<BackgroundController>
     /// <param name="xSize"></param>
     /// <param name="ySize"></param>
     /// <returns></returns>
-    private void SetLayer(GameObject layer, SourceDTO source)
+    private void SetLayer(GameObject layer, SourceReference source)
     {
         if (source.Type == SourceType.Image)
         {
@@ -155,10 +193,23 @@ public class BackgroundController : Singleton<BackgroundController>
             var instance = AnimationsManager.Instance;
             if (instance != null)
             {
-                instance.SetAnimation(layer, source);
+                instance.SetAnimation(layer, source, true, false);
             }
         }
 
+    }
+
+    private List<string> GetAnimationNames()
+    {
+        var names = new List<string>();
+        foreach (var source in Sources)
+        {
+            if (source.Type == SourceType.Animation)
+            {
+                names.Add(source.Name);
+            }
+        }
+        return names;
     }
     #endregion
 }

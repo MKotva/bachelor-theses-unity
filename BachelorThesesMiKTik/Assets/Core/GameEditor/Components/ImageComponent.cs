@@ -9,14 +9,14 @@ namespace Assets.Core.GameEditor.Components
     [Serializable]
     public class ImageComponent : CustomComponent
     {
-        public SourceDTO Data;
+        public SourceReference Data;
 
         public ImageComponent()
         {
             Data = null;
         }
 
-        public ImageComponent(SourceDTO data)
+        public ImageComponent(SourceReference data)
         {
             ComponentName = "Image/Animation";
             Data = data;

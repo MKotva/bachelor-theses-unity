@@ -1,7 +1,9 @@
 ﻿using Assets.Core.GameEditor.Enums;
+using System;
 
 namespace Assets.Core.GameEditor.DTOS.Assets
 {
+    [Serializable]
     public class AudioSourceDTO : AssetSourceDTO
     {
         public int Priority { get; set; }
@@ -10,13 +12,8 @@ namespace Assets.Core.GameEditor.DTOS.Assets
         public float Volume { get; set; }
         public bool ShouldLoop { get; set; }
 
-        public AudioSourceDTO(string name, string url) : base(SourceType.Sound, url) 
+        public AudioSourceDTO (string name, string url, int priority = 128, float stereoPan = 0, float pitch = 0, float volume = 50, bool shouldLoop = false) : base(name, url)
         {
-            Name = name;
-        }
-        public AudioSourceDTO (string name, string url, int priority = 128, float stereoPan = 0, float pitch = 0, float volume = 50, bool shouldLoop = false) : base(SourceType.Sound, url)
-        {
-            Name = name;
             Priority = priority;
             StereoPan = stereoPan;
             Pitch = pitch;

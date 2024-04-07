@@ -5,7 +5,15 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 {
     public class Output : EnviromentObject
     {
-        public override void SetInstance(GameObject instance) { }
+        private ErrorOutputManager output;
+
+        public override bool SetInstance(GameObject instance) 
+        {
+            output = ErrorOutputManager.Instance;
+            if (output == null)
+                return false;
+            return true;
+        }
 
         [CodeEditorAttribute("Prints given number(element) to console(InfoPanel)", "(num element)")]
         public void PrintTest(float element)

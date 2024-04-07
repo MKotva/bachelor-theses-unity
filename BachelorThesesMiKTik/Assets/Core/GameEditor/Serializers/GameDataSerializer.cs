@@ -133,6 +133,8 @@ namespace Assets.Core.GameEditor.Serializers
             var map = MapCanvas.Instance;
             map.MapJournal.Clear();
             map.EraseMap();
+            map.UnselectAll();
+
             foreach (var obj in mapObjects)
             {
                 var item = GameItemController.Instance.Items[obj.Id];
@@ -146,8 +148,8 @@ namespace Assets.Core.GameEditor.Serializers
         private static BackgroundDTO GetBackgroundSetting()
         {
             var instance = BackgroundController.Instance;
-            if(instance != null)
-                return new BackgroundDTO(instance.Sources);
+            if (instance != null)
+                return new BackgroundDTO(instance.Sources, instance.AudioSource);
 
             return new BackgroundDTO();
         }
@@ -161,7 +163,10 @@ namespace Assets.Core.GameEditor.Serializers
         {
             var instance = BackgroundController.Instance;
             if (instance != null)
+            {
                 instance.SetBackground(background.LayersSources);
+                instance.SetAudioSource(background.AudioSource);
+            }
         }
     }
 }

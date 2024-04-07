@@ -28,7 +28,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
 
         public async void OnPreviewClick()
         {
-            await SpriteLoader.SetSprite(ImageSource, GetComponent().URL);
+            await SpriteLoader.SetSprite(ImageSource, GetComponent());
         }
         public void SetData(AssetSourceDTO spriteSource)
         {
@@ -48,10 +48,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
             if (SpriteSource != null)
                 name = SpriteSource.Name;
 
-            return new AssetSourceDTO(SourceType.Image, URLSource.text)
-            {
-                Name = name
-            };
+            return new AssetSourceDTO(name, URLSource.text);
         }
         #endregion
     }

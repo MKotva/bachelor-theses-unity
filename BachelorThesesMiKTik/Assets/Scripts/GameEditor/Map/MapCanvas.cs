@@ -59,7 +59,7 @@ public class MapCanvas : Singleton<MapCanvas>
         actualAction = defaultAction;
     }
 
-    public void UnSelectAll()
+    public void UnselectAll()
     {
         foreach (var item in Selected)
         {

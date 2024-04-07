@@ -1,32 +1,56 @@
-﻿using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.Enums;
+﻿using Assets.Core.GameEditor.Attributes;
 using Assets.Core.SimpleCompiler.Exceptions;
-using Assets.Scripts.GameEditor.GameObjects.Elements;
-using System.Collections.Generic;
+using Assets.Scripts.GameEditor.ObjectInstancesController;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 {
     class CustomObject : EnviromentObject
     {
-        public CustomObjectController CustomController { get; set; }
+        private Rigidbody2D rigid;
+        private ObjectController controller;
 
         public int HP { get; set; }
         public int Score { get; set; }
 
-        public float MaxSpeed { get; set; } = 5f;
+        public override bool SetInstance(GameObject instance) 
+        { 
+            controller = instance.GetComponent<ObjectController>();
+            if (controller == null) 
+            {
+                return false;
+            }
 
-        public override void SetInstance(GameObject instance) { }
+            instance.TryGetComponent(out rigid);
+            return true; 
+        }
 
+        [CodeEditorAttribute("If players velocity is aproximately equal to zero, returns true. Otherwise returns false.")]
+        public bool CheckIfIsMoving()
+        {
+            if (rigid == null)
+                throw new RuntimeException($"\"Exception in method \\\"CheckIfIsMoving\\\"! Object is missing Physics Component!");
 
-        #region Sprite
-        #endregion
+            return false;
+        }
 
-        #region Animation
+        [CodeEditorAttribute("Destroyes actual object. If the actual animation or audio clip should be finished before" +
+            "object's destruction, set the bool values to true.", "(bool finishAnimation, bool finishAudio)")]
+        public void Kill(bool finishAnimation, bool finishAudio)
+        {
+            controller.Kill(finishAnimation, finishAudio);
+        }
 
-        #endregion
+        [CodeEditorAttribute("Freezes actual object -> ")]
+        public void Freeze()
+        {
+            controller.Pause();
+        }
 
-        #region PRIVATE
-        #endregion
+        [CodeEditorAttribute("Finds created animation by given name and sets it for this object.")]
+        public void UnFreeze()
+        {
+            controller.Play();
+        }
     }
 }

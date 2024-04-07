@@ -4,9 +4,7 @@ using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.OutputControllers;
 using Assets.Scripts.GameEditor.SourcePanels;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 namespace Assets.Scripts.GameEditor.PopUp.Managers
 {
@@ -25,7 +23,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (!AudioManager.Instance.OnPlay(GetSelectedNames()))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this clip present in the scene!");
             }
             else
             {
@@ -37,7 +35,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (!AudioManager.Instance.OnPause(GetSelectedNames()))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this clip present in the scene!");
             }
             else
             {
@@ -49,7 +47,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (!AudioManager.Instance.OnResume(GetSelectedNames()))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this clip present in the scene!");
             }
             else
             {
@@ -61,7 +59,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (!AudioManager.Instance.OnRestart(GetSelectedNames()))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this clip present in the scene!");
             }
             else
             {

@@ -29,15 +29,15 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         /// This method returns proper SourceDTO class based on selected type in type dropdown.
         /// </summary>
         /// <returns></returns>
-        public SourceDTO GetData()
+        public SourceReference GetData()
         {
             var x = MathHelper.GetPositiveFloat(XSize.text, DefaultX);
             var y = MathHelper.GetPositiveFloat(YSize.text, DefaultY);
 
             if (SourceT.value == 0)
-                return new SourceDTO(GetName(SpritesDropdown), SourceType.Image, x, y);
+                return new SourceReference(GetName(SpritesDropdown), SourceType.Image, x, y);
             else
-                return new SourceDTO(GetName(AnimationsDropdown), SourceType.Animation, x, y);
+                return new SourceReference(GetName(AnimationsDropdown), SourceType.Animation, x, y);
 
         }
 
@@ -46,7 +46,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         /// contructor.
         /// </summary>
         /// <param name="source"></param>
-        public void SetData(SourceDTO source)
+        public void SetData(SourceReference source)
         {
             if(source.Type == SourceType.Image) 
             {

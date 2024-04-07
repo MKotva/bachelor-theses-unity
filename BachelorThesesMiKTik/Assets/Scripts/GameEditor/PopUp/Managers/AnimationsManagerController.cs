@@ -24,7 +24,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
             var names = GetSelectedNames();
             if (!AnimationsManager.Instance.OnPlay(names))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this animation present in the scene!");
             }
             else
             {
@@ -37,7 +37,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
             var names = GetSelectedNames();
             if (!AnimationsManager.Instance.OnPause(names))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this animation present in the scene!");
             }
             else
             {
@@ -50,7 +50,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
             var names = GetSelectedNames();
             if (!AnimationsManager.Instance.OnResume(names))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this animation present in the scene!");
             }
             else
             {
@@ -63,7 +63,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
             var names = GetSelectedNames();
             if (!AnimationsManager.Instance.OnRestart(names))
             {
-                OutputConsole.ShowMessage("Invalid clip name!");
+                OutputConsole.ShowMessage("No object with this animation present in the scene!");
             }
             else
             {

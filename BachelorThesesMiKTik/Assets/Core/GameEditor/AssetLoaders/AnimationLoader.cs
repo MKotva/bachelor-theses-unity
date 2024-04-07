@@ -1,6 +1,7 @@
 ﻿using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.DTOS;
+using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Scripts.GameEditor.Controllers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -40,7 +41,8 @@ namespace Assets.Core.GameEditor.Animation
                     }
                 }
 
-                controller.SetCustomAnimation(animation, shouldLoop, animateOnAwake, xSize, ySize);
+                var sourceReference = new SourceReference(data.Name, Enums.SourceType.Animation, xSize, ySize);
+                controller.SetCustomAnimation(animation, sourceReference, shouldLoop, animateOnAwake);
             }
         }
 
@@ -54,9 +56,10 @@ namespace Assets.Core.GameEditor.Animation
         public static async Task<CustomAnimation> LoadAnimation(AnimationSourceDTO data)
         {
             var spriteTasks = new List<Task<Sprite>>();
-            foreach (var frame in data.AnimationData)
+            for(int i = 0; i < data.AnimationData.Count; i++)
             {
-                spriteTasks.Add(SpriteLoader.LoadSprite(frame.URL));
+                var name = $"{data.Name}-Frame{i}";
+                spriteTasks.Add(SpriteLoader.LoadSprite(new AssetSourceDTO(name, data.AnimationData[i].URL)));
             }
             await Task.WhenAll(spriteTasks);
 

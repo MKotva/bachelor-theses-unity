@@ -130,7 +130,7 @@ namespace Assets.Scripts.GameEditor.PopUp.AssetLoaders
                     data.Add(new AnimationFrameDTO(time, URL));
             }
 
-            return new AnimationSourceDTO(data, NameField.text, SourceType.Animation);
+            return new AnimationSourceDTO(data, NameField.text);
         }
 
         /// <summary>

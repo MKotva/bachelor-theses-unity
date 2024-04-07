@@ -4,14 +4,14 @@ using System;
 namespace Assets.Core.GameEditor.DTOS.Assets
 {
     [Serializable] 
-    public class SourceDTO
+    public class SourceReference
     {
         public string Name;
         public SourceType Type;
         public float XSize;
         public float YSize;
 
-        public SourceDTO(string name, SourceType type, float xSize = 30, float ySize = 30) 
+        public SourceReference(string name, SourceType type, float xSize = 30, float ySize = 30) 
         {
             Name = name;
             Type = type;

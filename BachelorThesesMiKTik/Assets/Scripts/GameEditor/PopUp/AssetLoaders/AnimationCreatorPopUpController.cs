@@ -1,12 +1,10 @@
 using Assets.Core.GameEditor.Animation;
 using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.OutputControllers;
 using Assets.Scripts.GameEditor.SourcePanels;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,8 +72,8 @@ public class AnimationCreatorPopUpController : PopUpController
         if (instance != null)
         {
             var data = GetData();
-            await instance.AddAnimation(data);
-            InvokeCallBacks(data.Name);
+            if(await instance.AddAnimation(data))
+                InvokeCallBacks(data.Name);
         }
     }
 
@@ -145,7 +143,7 @@ public class AnimationCreatorPopUpController : PopUpController
                 data.Add(new AnimationFrameDTO(time, URL));
         }
 
-        return new AnimationSourceDTO(data, NameField.text, SourceType.Animation);
+        return new AnimationSourceDTO(data, NameField.text);
     }
 
     /// <summary>

@@ -1,12 +1,7 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.DTOS;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using UnityEditor;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -32,7 +27,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 {
                     var positions = GetSelectedPositionsString();
                     lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
-                    map.UnSelectAll();
+                    map.UnselectAll();
                 }
                 else
                 {
@@ -93,7 +88,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var descriptions = action.Split(';');
             if (descriptions.Length < 1)
             {
-                return; //TODO: ERROR
+                ErrorOutputManager.Instance.ShowMessage("Journal action parsing error!");
+                return;
             }
 
             if (descriptions[0] == "SS")
@@ -101,7 +97,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (descriptions.Length < 2)
                     return;
 
-                map.UnSelectAll();
+                map.UnselectAll();
                 for (int i = 1; i < descriptions.Length; i++)
                 {
                     if (descriptions[i] == "")
@@ -115,15 +111,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (descriptions.Length != 3)
                     return;
 
-                map.UnSelectAll();
                 var fromPos = MathHelper.GetVector3FromString(descriptions[1]);
                 var toPos = MathHelper.GetVector3FromString(descriptions[2]);
-
                 SquareSelection(fromPos, toPos);
             }
             else if (descriptions[0] == "SUA")
             {
-                map.UnSelectAll();
+                map.UnselectAll();
             }
         }
 
@@ -164,7 +158,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
         private void SquareSelection(Vector3 fromPos, Vector3 toPos)
         {
-            map.UnSelectAll();
+            map.UnselectAll();
 
             var xCellSize = map.GridLayout.cellSize.x;
             var yCellSize = map.GridLayout.cellSize.y;
@@ -182,6 +176,9 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     var calculatedPosition = new Vector3(toPos.x + ( xSign * i * xCellSize ), toPos.y + ( ySign * j * yCellSize ));
                     var cellCenter = map.GetCellCenterPosition(calculatedPosition);
                     GameObject objectAtPos = map.GetObjectAtPosition(cellCenter);
+
+                    if (map.Selected.ContainsKey(cellCenter))
+                        continue;
 
                     if (objectAtPos != null)
                     {
