@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components
@@ -23,6 +22,7 @@ namespace Assets.Core.GameEditor.Components
             item.ShownName = Name;
             item.Prefab.name = Name;
             item.GroupName = Group;
+            item.Id = Name.GetHashCode();
         }
 
         public override void SetInstance(ItemData item, GameObject instance) {}

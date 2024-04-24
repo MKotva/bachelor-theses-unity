@@ -955,11 +955,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3205810856410693525, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 390
+      value: 375
       objectReference: {fileID: 0}
     - target: {fileID: 3598734048884818291, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_Size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4756580167997134832, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchorMax.x
@@ -982,8 +982,16 @@ PrefabInstance:
       value: Spite Manager
       objectReference: {fileID: 0}
     - target: {fileID: 6910260077308043047, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910260077308043047, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910260077308043047, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 253.64742
+      value: 0.0002797528
       objectReference: {fileID: 0}
     - target: {fileID: 7306426747812089388, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchorMax.y
@@ -995,11 +1003,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7306426747812089388, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 640
+      value: 635
       objectReference: {fileID: 0}
     - target: {fileID: 7306426747812089388, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -380
+      value: -375
       objectReference: {fileID: 0}
     - target: {fileID: 7830948227866340662, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_Name
@@ -1103,6 +1111,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9130504873858189874, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9174824865939161617, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
+      propertyPath: m_HorizontalFit
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

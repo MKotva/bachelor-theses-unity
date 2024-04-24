@@ -18,9 +18,9 @@ namespace Assets.Core.GameEditor.DTOS.Action
             SpeedCap = speedCap;
         }
 
-        public override List<AIActionBase> GetAction(GameObject instance)
+        public override List<ActionBase> GetAction(GameObject instance)
         {
-            return new List<AIActionBase> { new FlyAIAction(instance, Speed, SpeedCap) };
+            return new List<ActionBase> { new FlyAction(instance, Speed, SpeedCap) };
         }
     }
 }

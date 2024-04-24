@@ -8,7 +8,6 @@ namespace Assets.Scripts.GameEditor.Audio
 {
     public class AudioController : MonoBehaviour, IObjectController
     {
-        [SerializeField] AudioMixerGroup MixerGroup;
         public string Name { get; set; }
         public AudioSourceDTO AudioSourceDTO { get; set; }
         
@@ -95,14 +94,10 @@ namespace Assets.Scripts.GameEditor.Audio
             {
                 audioSource = gameObject.AddComponent<AudioSource>();
                 audioSource.hideFlags = HideFlags.HideInInspector;
-            }
-        }
 
-        private void Update()
-        {
-            if (audioSource == null)
-            {
-                return;
+                var instance = AudioManager.Instance;
+                if (instance != null && instance.MixerGroup)
+                    audioSource.outputAudioMixerGroup = instance.MixerGroup;
             }
         }
 

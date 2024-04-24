@@ -23,11 +23,19 @@ namespace Assets.Scripts.GameEditor.Managers
             base.Awake();
         }
 
+        /// <summary>
+        /// </summary>
+        /// <returns>Actual state of manager in ManagerDTO</returns>
         public ManagerDTO Get()
         {
             return new ManagerDTO(AnimationData.Values.ToArray());
         }
 
+        /// <summary>
+        /// Sets actual state of manager based on ManagerDTO.
+        /// </summary>
+        /// <param name="managerDTO"></param>
+        /// <returns></returns>
         public async Task Set(ManagerDTO managerDTO)
         {
             var names = AnimationData.Keys.ToList();
@@ -50,6 +58,13 @@ namespace Assets.Scripts.GameEditor.Managers
         }
 
         #region AnimationMethods
+
+        /// <summary>
+        /// Loads animation based on given AnimationDTO (if there is not animation with same name).
+        /// Animation and her DTO are than stored in Animations and AnimationsData.
+        /// </summary>
+        /// <param name="animationData"></param>
+        /// <returns></returns>
         public async Task<bool> AddAnimation(AnimationSourceDTO animationData)
         {
             var name = animationData.Name;
@@ -69,6 +84,11 @@ namespace Assets.Scripts.GameEditor.Managers
             return false;
         }
 
+        /// <summary>
+        /// Returns first image of animation as preview.
+        /// </summary>
+        /// <param name="name">Animation name.</param>
+        /// <returns>If animation exist, returns sprite. Otherwise null.</returns>
         public Sprite GetAnimationPreview(string name)
         {
             if (!Animations.ContainsKey(name))
@@ -77,6 +97,12 @@ namespace Assets.Scripts.GameEditor.Managers
             return Animations[name].Frames[0].Sprite;
         }
 
+        /// <summary>
+        /// Rewrites animation of given name with new one, based on AnimaitonDTO.
+        /// </summary>
+        /// <param name="name">Name of old animation</param>
+        /// <param name="animationData">New animation desription.</param>
+        /// <returns></returns>
         public async Task EditAnimation(string name, AnimationSourceDTO animationData)
         {
             if (!AnimationData.ContainsKey(name))
@@ -102,6 +128,11 @@ namespace Assets.Scripts.GameEditor.Managers
             }
         }
 
+        /// <summary>
+        /// Removes animation with given name and all connected objects from manager data -> 
+        /// (SourceDTO and all controller with this name.)
+        /// </summary>
+        /// <param name="name"></param>
         public void RemoveAnimation(string name)
         {
             if (!AnimationData.ContainsKey(name))
@@ -127,6 +158,14 @@ namespace Assets.Scripts.GameEditor.Managers
             AnimationControllers.Remove(name);
         }
 
+        /// <summary>
+        /// Sets animation to a given object. If object has no Animation controller, method will add one.
+        /// This controller is than added to registered controllers in this manager.
+        /// </summary>
+        /// <param name="ob">Object to be set.</param>
+        /// <param name="source">Reference to animation with scaling.</param>
+        /// <param name="shouldLoop">Should animation loop?</param>
+        /// <param name="onAwake">Should be animation played after set?</param>
         public void SetAnimation(GameObject ob, SourceReference source, bool shouldLoop = true, bool onAwake = true)
         {
             AnimationsController controller;
@@ -136,6 +175,14 @@ namespace Assets.Scripts.GameEditor.Managers
             SetAnimation(controller, source, shouldLoop, onAwake);
         }
 
+        /// <summary>
+        /// Sets animation to a given animation controller. If object has no Animation controller, method will add one.
+        /// This controller is than added to registered controllers in this manager.
+        /// </summary>
+        /// <param name="ob">Object to be set.</param>
+        /// <param name="source">Reference to animation with scaling.</param>
+        /// <param name="shouldLoop">Should animation loop?</param>
+        /// <param name="onAwake">Should be animation played after set?</param>
         public void SetAnimation(AnimationsController controller, SourceReference source, bool shouldLoop = true, bool onAwake = true)
         {
             if (!Animations.ContainsKey(source.Name))
@@ -153,9 +200,25 @@ namespace Assets.Scripts.GameEditor.Managers
             controller.SetCustomAnimation(Animations[source.Name], source, shouldLoop, onAwake);
             AddActiveController(source.Name, controller);
         }
+
+        public CustomAnimation GetAnimation(string name)
+        {
+            if (Animations.ContainsKey(name))
+            {
+                return Animations[name];
+            }
+            return null;
+        }
+
         #endregion
 
         #region ControllerMethods
+        /// <summary>
+        /// Adds animations controller as registered controller to manager as pair(animation name, controller)
+        /// </summary>
+        /// <param name="name">Animation name</param>
+        /// <param name="controller">Animation controller</param>
+        /// <returns></returns>
         public bool AddActiveController(string name, AnimationsController controller)
         {
             if (Animations.ContainsKey(name))
@@ -181,6 +244,13 @@ namespace Assets.Scripts.GameEditor.Managers
             return false;
         }
 
+        /// <summary>
+        /// Checks if manager registers controller with given instance id 
+        /// of animation with given name.
+        /// </summary>
+        /// <param name="name">Animation name</param>
+        /// <param name="instanceID">Animation controller instance id.</param>
+        /// <returns></returns>
         public bool ContainsActiveController(string name, int instanceID) 
         {
             if (AnimationControllers[name].ContainsKey(instanceID))
@@ -188,6 +258,12 @@ namespace Assets.Scripts.GameEditor.Managers
             return false;
         }
 
+        /// <summary>
+        /// Removes controller from registered controllers.
+        /// </summary>
+        /// <param name="name">Animation name</param>
+        /// <param name="controller">Animation controller</param>
+        /// <returns></returns>
         public bool RemoveActiveController(string name, AnimationsController controller)
         {
             if (AnimationControllers.ContainsKey(name))
@@ -202,16 +278,31 @@ namespace Assets.Scripts.GameEditor.Managers
             return false;
         }
 
+        /// <summary>
+        /// Checks if there is animation with given name.
+        /// </summary>
+        /// <param name="name">Animation name.</param>
+        /// <returns></returns>
         public bool ContainsName(string name)
         {
             return Animations.ContainsKey(name);
         }
 
+        /// <summary>
+        /// Plays all registered controllers with given animation names.
+        /// </summary>
+        /// <param name="names">List of animation names.</param>
+        /// <returns></returns>
         public bool OnPlay(List<string> names)
         {
             return OnRestart(names);
         }
 
+        /// <summary>
+        /// Pauses all registered controllers with given animation names.
+        /// </summary>
+        /// <param name="names">List of animation names.</param>
+        /// <returns></returns>
         public bool OnPause(List<string> names)
         {
             if (names.Count == 0)
@@ -237,6 +328,11 @@ namespace Assets.Scripts.GameEditor.Managers
             }
         }
 
+        /// <summary>
+        /// Resumes all paused registered controllers with given animation names.
+        /// </summary>
+        /// <param name="names">List of animation names.</param>
+        /// <returns></returns>
         public bool OnResume(List<string> names)
         {
             if (names.Count == 0)
@@ -262,6 +358,11 @@ namespace Assets.Scripts.GameEditor.Managers
             }
         }
 
+        /// <summary>
+        /// Pauses all registered controllers with given animation names.
+        /// </summary>
+        /// <param name="names">List of animation names.</param>
+        /// <returns></returns>
         public bool OnRestart(List<string> names)
         {
             if (names.Count == 0)
@@ -287,6 +388,11 @@ namespace Assets.Scripts.GameEditor.Managers
             }
         }
 
+        /// <summary>
+        /// Stops all registered controllers with given animation names.
+        /// </summary>
+        /// <param name="names">List of animation names.</param>
+        /// <returns></returns>
         public bool OnStop(List<string> names)
         {
             if (names.Count == 0)

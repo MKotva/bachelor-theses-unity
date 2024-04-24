@@ -130,6 +130,15 @@ namespace Assets.Scripts.GameEditor.Managers
             AddActiveController(name, controller);
         }
 
+        public Sprite GetSprite(string name) 
+        {
+            if(Sprites.ContainsKey(name))
+            {
+                return Sprites[name];
+            }
+            return null;
+        }
+
         #endregion
         #region ControllerMethods
         public bool AddActiveController(string name, SpriteController controller)

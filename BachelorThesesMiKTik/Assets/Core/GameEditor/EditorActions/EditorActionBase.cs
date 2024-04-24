@@ -7,13 +7,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 {
     public class EditorActionBase
     {
-        public MapCanvas map;
+        public EditorCanvas map;
         internal JournalActionDTO lastActionRecord;
         internal JournalActionDTO lastActionRecordReverse;
 
         public EditorActionBase() 
         {
-            map = MapCanvas.Instance;
+            map = EditorCanvas.Instance;
         }
 
         public virtual void OnMouseDown(MouseButton key) {}

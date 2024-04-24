@@ -67,12 +67,12 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         private void Awake()
         {
             Components = new Dictionary<System.Type, IObjectController>();
-            EditorController.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
+            GameManager.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
         }
 
         private void OnDestroy()
         {
-            var editorInstance = EditorController.Instance;
+            var editorInstance = GameManager.Instance;
             if(editorInstance != null)
                 editorInstance.RemoveActiveObject(gameObject.GetInstanceID());
         }

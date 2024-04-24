@@ -20,7 +20,7 @@ namespace Assets.Core.GameEditor.DTOS.Action
             JumpAction = jumpAction; // TODO: There might be a problem with the parsing.
         }
 
-        public override List<AIActionBase> GetAction(GameObject instance)
+        public override List<ActionBase> GetAction(GameObject instance)
         {
             var move = MoveAction.GetAction(instance);
             var jump = JumpAction.GetAction(instance);

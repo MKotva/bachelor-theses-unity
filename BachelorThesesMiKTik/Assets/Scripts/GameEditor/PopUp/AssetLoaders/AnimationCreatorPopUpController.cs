@@ -157,8 +157,9 @@ public class AnimationCreatorPopUpController : PopUpController
         {
             if (lines[i].GetInstanceID() == id)
             {
-                lines.RemoveAt(i);
                 Destroy(lines[i].gameObject);
+                lines.RemoveAt(i);
+                return;
             }
         }
     }

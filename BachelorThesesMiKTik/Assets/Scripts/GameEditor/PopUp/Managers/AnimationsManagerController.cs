@@ -73,7 +73,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
 
         public void OnCreate()
         {
-            var controller = Instantiate(AnimationCreator, EditorController.Instance.PopUpCanvas.transform)
+            var controller = Instantiate(AnimationCreator, GameManager.Instance.PopUpCanvas.transform)
                                     .GetComponent<AnimationCreatorPopUpController>();
             controller.onExit += LoadTable;
         }
@@ -91,7 +91,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
                 if (instance == null)
                     return;
 
-                var controller = Instantiate(AnimationEditor, EditorController.Instance.PopUpCanvas.transform)
+                var controller = Instantiate(AnimationEditor, GameManager.Instance.PopUpCanvas.transform)
                                     .GetComponent<AnimationEditorPopUpController>();
                 controller.SetData(instance.AnimationData[names[0]]);
             }

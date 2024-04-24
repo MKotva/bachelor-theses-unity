@@ -11,7 +11,7 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class AIAgent : MonoBehaviour, IObjectController
     {
-        public MapCanvas map;
+        public EditorCanvas map;
         public AIObject AI;
         public IAIPathFinder pathFinder;
 
@@ -57,7 +57,7 @@ namespace Assets.Scripts.GameEditor.AI
             AI.Actions.Clear();
         }
 
-        public void AddActionType(AIActionBase actionBase)
+        public void AddActionType(ActionBase actionBase)
         {
             AI.Actions.Add(actionBase);
         }
@@ -101,7 +101,7 @@ namespace Assets.Scripts.GameEditor.AI
                 controller.Components.Add(typeof(ColliderController), this);
             }
 
-            map = MapCanvas.Instance;
+            map = EditorCanvas.Instance;
             pathFinder = new AStar();
         }
 

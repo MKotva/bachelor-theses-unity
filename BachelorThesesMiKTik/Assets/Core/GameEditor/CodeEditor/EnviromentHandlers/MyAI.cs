@@ -1,7 +1,7 @@
 ﻿using Assets.Core.GameEditor.Attributes;
 using Assets.Core.SimpleCompiler.Exceptions;
 using Assets.Scripts.GameEditor.AI;
-using Assets.Scripts.GameEditor.ItemView;
+using Assets.Scripts.GameEditor.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,15 +11,15 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
     public class MyAI : EnviromentObject
     {
         public AIAgent Agent { get; set; }
-        private GameItemController itemController;
-        private MapCanvas editor;
+        private ItemManager itemManager;
+        private EditorCanvas editor;
 
         public override bool SetInstance(GameObject instance) { return true; }
 
         public MyAI()
         {
-            itemController = GameItemController.Instance;
-            editor = MapCanvas.Instance;
+            itemManager = ItemManager.Instance;
+            editor = EditorCanvas.Instance;
         }
         
         [CodeEditorAttribute("Moves actual object to closest object with given name(objectName), if its possible, with use of given actions.", "( string objectName)")]
@@ -57,7 +57,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         public bool IsInRange(string name, float distance)
         {
             var agentPos = Agent.transform.position;
-            if(itemController.TryFindIdByName(name, out var endpointId))
+            if(itemManager.TryFindIdByName(name, out var endpointId))
                 return editor.Data[endpointId].Any(x => Vector3.Distance(agentPos, x.Key) < distance);
             return false;
         }
@@ -127,7 +127,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 
         private Dictionary<Vector3, GameObject> GetElementInstances(string name)
         {
-            if(itemController.TryFindIdByName(name, out var endpointId))
+            if(itemManager.TryFindIdByName(name, out var endpointId))
                 if (editor.Data.ContainsKey(endpointId))
                 {
                     return editor.Data[endpointId];

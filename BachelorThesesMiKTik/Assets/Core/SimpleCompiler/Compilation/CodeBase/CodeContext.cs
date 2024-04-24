@@ -165,6 +165,11 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
             var enviromentObjects = new Dictionary<string, EnviromentContextDTO>();
             foreach(var env in  enviromentDTOS)
             {
+                if (enviromentObjects.ContainsKey(env.Alias))
+                {
+                    throw new CompilationException($"Dependency with name {env.Alias} already exists!");
+                }
+
                 if (EnviromentController.TryGetInstance(env.TypeName, out object instace))
                     enviromentObjects.Add(env.Alias, new EnviromentContextDTO(instace, instace.GetType()));
             }
@@ -176,6 +181,11 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
             var globalVariables = new Dictionary<string, Operand>();
             foreach(var globalVar in globalVarDTOS)
             {
+                if(globalVariables.ContainsKey(globalVar.Alias))
+                {
+                    throw new CompilationException($"Global variable with name {globalVar.Alias} already exists!");
+                }
+
                 var operand = new Operand(ParseValue(globalVar.Type, globalVar.Value), globalVar.Type);
                 globalVariables.Add(globalVar.Alias, operand);
             }

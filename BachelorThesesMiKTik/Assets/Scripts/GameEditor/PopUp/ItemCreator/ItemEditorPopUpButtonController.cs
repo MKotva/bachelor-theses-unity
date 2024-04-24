@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.GameEditor.ItemView;
+﻿using Assets.Scripts.GameEditor.Managers;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.PopUp
@@ -15,13 +15,20 @@ namespace Assets.Scripts.GameEditor.PopUp
 
         public void OnEdit()
         {
+            var actual = ItemManager.Instance.ActualSelectedItem;
+            if (ItemManager.Instance.CheckIfItemIsDefault(actual.ShownName))
+            {
+                ErrorOutputManager.Instance.ShowMessage($"You can not edit item {actual.ShownName} because it is default item.");
+                return;
+            }
+
             var itemEditor = Instantiate(ItemEditorPrefab, PopUpCanvas.transform).GetComponent<ItemCreatorController>();
-            itemEditor.EditActualObject();
+            itemEditor.EditObject(actual);
         }
 
         public void OnDelete()
         {
-            var instace = GameItemController.Instance;
+            var instace = ItemManager.Instance;
             if (instace != null) 
             {
                 instace.RemoveItem(instace.ActualSelectedItem);

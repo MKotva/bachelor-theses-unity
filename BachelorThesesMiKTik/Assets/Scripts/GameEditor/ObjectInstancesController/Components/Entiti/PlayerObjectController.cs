@@ -10,7 +10,7 @@ namespace Assets.Scripts.GameEditor.Entiti
     public class PlayerObjectController : MonoBehaviour, IObjectController
     {
         private PlayerComponent playerSetting;
-        private List<AIActionBase> actions;
+        private List<ActionBase> actions;
 
         private delegate void ActionFinishHandler();
         private Dictionary<List<KeyCode>, ActionFinishHandler> actionsFinishers;

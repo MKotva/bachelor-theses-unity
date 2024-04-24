@@ -1,23 +1,18 @@
-using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.Serializers;
-using Assets.Scenes.GameEditor.Core.DTOS;
-using Assets.Scripts.GameEditor.ItemView;
 using SimpleFileBrowser;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Playables;
 
 public class SaveDataHandler : MonoBehaviour
 { 
     [SerializeField] public string DefaultPath;
     [SerializeField] public string DefaultSaveAsPath;
 
-    private MapCanvas map;
+    private EditorCanvas map;
 
-    public void Awake()
+    public void Start()
     {
-        map = MapCanvas.Instance;
+        map = EditorCanvas.Instance;
     }
 
     /// <summary>
@@ -57,11 +52,20 @@ public class SaveDataHandler : MonoBehaviour
         FileBrowser.ShowSaveDialog((paths) => { OnSucces(paths[0]);}, OnFail, FileBrowser.PickMode.Files, false, DefaultSaveAsPath, "Map.json", "Save As", "Save");
     }
 
+    /// <summary>
+    /// This method handles the File Browser save click. Recieves path to file
+    /// from file browser and then call SaveMap with this path.
+    /// </summary>
+    /// <param name="path"></param>
     private void OnSucces(string path)
     {
        SaveMap(path);
        map.OnEnable();
     }
+
+    /// <summary>
+    /// This method handles FileBrowser fail to select a path.
+    /// </summary>
     private void OnFail()
     {
        map.OnEnable();

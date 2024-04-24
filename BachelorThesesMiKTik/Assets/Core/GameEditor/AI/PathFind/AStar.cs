@@ -14,10 +14,10 @@ namespace Assets.Scripts.GameEditor.AI
         private Vector3 _endPosition;
 
         private List<Node> _activeNodes;
-        private List<AIActionBase> _actions;
+        private List<ActionBase> _actions;
         private Dictionary<Vector3, Node> _closedNodes;
 
-        public List<AgentActionDTO> FindPath(Vector3 startPosition, Vector3 endPosition, List<AIActionBase> actions)
+        public List<AgentActionDTO> FindPath(Vector3 startPosition, Vector3 endPosition, List<ActionBase> actions)
         {
             Initialize(startPosition, endPosition, actions);
 
@@ -66,7 +66,7 @@ namespace Assets.Scripts.GameEditor.AI
             }
             return false;
         }
-        private void Initialize(Vector3 startPosition, Vector3 endPosition, List<AIActionBase> actions)
+        private void Initialize(Vector3 startPosition, Vector3 endPosition, List<ActionBase> actions)
         {
             _activeNodes = new List<Node>();
 

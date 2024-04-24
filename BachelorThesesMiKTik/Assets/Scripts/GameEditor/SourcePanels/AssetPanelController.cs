@@ -73,7 +73,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
             var names = SpriteManager.Instance.Sprites.Keys.ToArray();
             SetDropdown(SpritesDropdown, names);
 
-            Canvas = EditorController.Instance.PopUpCanvas.gameObject;
+            Canvas = GameManager.Instance.PopUpCanvas.gameObject;
         }
 
         private string GetName(TMP_Dropdown dropdown)

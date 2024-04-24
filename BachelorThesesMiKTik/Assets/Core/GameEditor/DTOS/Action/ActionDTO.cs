@@ -7,6 +7,6 @@ namespace Assets.Core.GameEditor.DTOS.Action
     public abstract class ActionDTO
     {
         public string Name;
-        public abstract List<AIActionBase> GetAction(GameObject instance);
+        public abstract List<ActionBase> GetAction(GameObject instance);
     }
 }

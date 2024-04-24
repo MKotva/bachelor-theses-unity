@@ -27,10 +27,10 @@ namespace Assets.Core.GameEditor.DTOS.Action
             HorizontalForceMax = hMax;
             JumpTimeCap = timeCap;
         }
-        public override List<AIActionBase> GetAction(GameObject instance)
+        public override List<ActionBase> GetAction(GameObject instance)
         {
-            return new List<AIActionBase> { 
-                new ChargeableJumpAIAction(
+            return new List<ActionBase> { 
+                new ChargeableJumpAction(
                         instance,
                         VerticalForceMin,
                         VerticalForceMax,

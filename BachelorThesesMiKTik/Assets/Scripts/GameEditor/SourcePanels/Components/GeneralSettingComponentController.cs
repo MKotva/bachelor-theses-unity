@@ -1,5 +1,5 @@
 ﻿using Assets.Core.GameEditor.Components;
-using Assets.Scripts.GameEditor.ItemView;
+using Assets.Scripts.GameEditor.Managers;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -35,7 +35,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         private void Awake()
         {
             var groupNames = new List<string>();
-            foreach (var groupPair in GameItemController.Instance.GroupViews)
+            foreach (var groupPair in ItemManager.Instance.Groups)
             {
                 groupNames.Add(groupPair.Key);
             }

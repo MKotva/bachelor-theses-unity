@@ -2,7 +2,6 @@
 using Assets.Core.GameEditor.Components;
 using Assets.Core.GameEditor.DTOS.Managers;
 using Assets.Scenes.GameEditor.Core.DTOS;
-using Assets.Scripts.GameEditor.ItemView;
 using Assets.Scripts.GameEditor.Managers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -65,7 +64,7 @@ namespace Assets.Core.GameEditor.Serializers
         private static List<ItemDTO> GetItems()
         {
             var dtos = new List<ItemDTO>();
-            foreach (var item in GameItemController.Instance.Items.Values)
+            foreach (var item in ItemManager.Instance.Items.Values)
             {
                 if (item.Components != null)
                     dtos.Add(new ItemDTO(item));
@@ -80,7 +79,7 @@ namespace Assets.Core.GameEditor.Serializers
         /// <returns></returns>
         private static void SetItems(List<ItemDTO> items)
         {
-            GameItemController.Instance.ClearItems();
+            ItemManager.Instance.ClearItems();
             foreach (var item in items)
             {
                 var newItem = new ItemData();
@@ -90,7 +89,7 @@ namespace Assets.Core.GameEditor.Serializers
                     SetComponent(component, newItem);
                 }
 
-                GameItemController.Instance.AddItem(newItem);
+                ItemManager.Instance.AddItem(newItem);
             }
         }
 
@@ -111,7 +110,7 @@ namespace Assets.Core.GameEditor.Serializers
         /// <returns>List of MapObjectDTO representing all instances of objects in map.</returns>
         private static List<MapObjectDTO> GetMapObjects()
         {
-            var map = MapCanvas.Instance;
+            var map = EditorCanvas.Instance;
             var mapObjects = new List<MapObjectDTO>();
 
             foreach (var id in map.Data.Keys)
@@ -130,14 +129,14 @@ namespace Assets.Core.GameEditor.Serializers
         /// <param name="mapObjects"></param>
         private static void SetObjectToMap(List<MapObjectDTO> mapObjects)
         {
-            var map = MapCanvas.Instance;
+            var map = EditorCanvas.Instance;
             map.MapJournal.Clear();
             map.EraseMap();
             map.UnselectAll();
 
             foreach (var obj in mapObjects)
             {
-                var item = GameItemController.Instance.Items[obj.Id];
+                var item = ItemManager.Instance.Items[obj.Id];
                 map.Paint(item, obj.Position);
             }
         }

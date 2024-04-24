@@ -55,7 +55,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <returns></returns>
         public override List<string> GetActionTypes()
         {
-            return JumpAIAction.ActionTypes;
+            return JumpAction.ActionTypes;
         }
     }
 }

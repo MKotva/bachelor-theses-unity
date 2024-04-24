@@ -7,6 +7,6 @@ namespace Assets.Scripts.GameEditor.AI.PathFind
 {
     public interface IAIPathFinder
     {
-        public List<AgentActionDTO> FindPath(Vector3 startPosition, Vector3 endPosition, List<AIActionBase> actions);
+        public List<AgentActionDTO> FindPath(Vector3 startPosition, Vector3 endPosition, List<ActionBase> actions);
     }
 }

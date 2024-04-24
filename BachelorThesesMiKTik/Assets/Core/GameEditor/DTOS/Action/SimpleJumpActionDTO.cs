@@ -21,9 +21,9 @@ namespace Assets.Core.GameEditor.DTOS.Action
             HorizontalForce = horizontalForce;
         }
 
-        public override List<AIActionBase> GetAction(GameObject instance)
+        public override List<ActionBase> GetAction(GameObject instance)
         {
-            return new List<AIActionBase> { new JumpAIAction(instance, VerticalForce, HorizontalForce) };
+            return new List<ActionBase> { new JumpAction(instance, VerticalForce, HorizontalForce) };
         }
     }
 }

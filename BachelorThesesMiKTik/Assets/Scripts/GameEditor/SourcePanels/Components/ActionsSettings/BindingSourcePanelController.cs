@@ -107,7 +107,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         #region PRIVATE
         private void Awake()
         {
-            parent = EditorController.Instance.PopUpCanvas.gameObject;
+            parent = GameManager.Instance.PopUpCanvas.gameObject;
             ActionSelection.onValueChanged.AddListener(delegate { OnActionChange(); });
         }
 

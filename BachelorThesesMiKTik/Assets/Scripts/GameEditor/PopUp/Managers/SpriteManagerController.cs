@@ -19,7 +19,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
 
         public void OnCreateClick()
         {
-            var controller = Instantiate(SpriteCreator, EditorController.Instance.PopUpCanvas.transform)
+            var controller = Instantiate(SpriteCreator, GameManager.Instance.PopUpCanvas.transform)
                                     .GetComponent<SpriteLoaderPopUpController>();
             controller.onExit += LoadTable;
         }
@@ -47,7 +47,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
                 if (instance == null)
                     return;
 
-                var controller = Instantiate(SpriteEditor, EditorController.Instance.PopUpCanvas.transform)
+                var controller = Instantiate(SpriteEditor, GameManager.Instance.PopUpCanvas.transform)
                                     .GetComponent<SpriteEditorPopUpController>();
                 controller.SetData(instance.SpriteData[names[0]]);
             }

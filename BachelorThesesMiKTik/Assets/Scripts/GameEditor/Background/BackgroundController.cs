@@ -12,7 +12,6 @@ using UnityEngine;
 public class BackgroundController : Singleton<BackgroundController>, IObjectController
 {
     [SerializeField] GameObject LayerPrefab;
-    [SerializeField] public TMP_Dropdown AudioDropDown;
     [SerializeField] List<GameObject> DefaultBackgroundPrefabs;
     [SerializeField] public AudioController AudioController;
 
@@ -21,6 +20,11 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     public SourceReference AudioSource { get; private set; }
 
     #region PUBLIC
+    /// <summary>
+    /// Based on given sources, sets the background layers. Layers are created from
+    /// back -> source on index 0 == the most distant layer.
+    /// </summary>
+    /// <param name="sources"></param>
     public void SetBackground(List<SourceReference> sources)
     {
         if (sources.Count == 1)
@@ -37,6 +41,20 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
         {
             AppendLayer(layerSource);
         }
+    }
+
+    /// <summary>
+    /// Sets audio source based on given DTO.
+    /// </summary>
+    /// <param name="audioSourceDTO"></param>
+    /// <returns></returns>
+    public void SetAudioSource(SourceReference audioSourceDTO)
+    {
+        if (audioSourceDTO == null)
+            return;
+
+        AudioSource = audioSourceDTO;
+        AudioManager.Instance.SetAudioClip(gameObject, audioSourceDTO, false);
     }
 
     /// <summary>
@@ -91,37 +109,37 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
         Sources.Clear();
     }
 
+    /// <summary>
+    /// Removes layer with given id.(Id is a sorting order in which is background diplayed)
+    /// Layers goes from 0 (first from back) to n (first in front).
+    /// </summary>
+    /// <param name="layerId"></param>
     public void RemoveLayer(int layerId)
     {
         Destroy(BackgroundLayers[layerId]);
         BackgroundLayers.RemoveAt(layerId);
         Sources.RemoveAt(layerId);
     }
+    #endregion
+     
+    #region RuntimeControl
 
     /// <summary>
-    /// Sets audio source based on given DTO.
+    /// This method will play all animations and audiosource present in bacground.
     /// </summary>
-    /// <param name="audioSourceDTO"></param>
-    /// <returns></returns>
-    public void SetAudioSource(SourceReference audioSourceDTO)
-    {
-        if (audioSourceDTO == null)
-            return;
-
-        AudioSource = audioSourceDTO;
-        AudioManager.Instance.SetAudioClip(gameObject, audioSourceDTO, false);
-    }
-
     public void Play()
     {
         var names = GetAnimationNames();
         if (names.Count != 0)
             AnimationsManager.Instance.OnPlay(names);
-        
-        if(AudioSource != null)
+
+        if (AudioSource != null)
             AudioManager.Instance.OnPlay(new List<string> { AudioSource.Name });
     }
 
+    /// <summary>
+    /// This method will pause animations and audiosource present in bacground.
+    /// </summary>
     public void Pause()
     {
         var names = GetAnimationNames();
@@ -132,8 +150,11 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
             AudioManager.Instance.OnPause(new List<string> { AudioSource.Name });
     }
 
-    public void Enter() {}
+    public void Enter() { }
 
+    /// <summary>
+    /// This method will stop(reset and pause) animations and audiosource present in bacground.
+    /// </summary>
     public void Exit()
     {
         var names = GetAnimationNames();
@@ -143,7 +164,6 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
         if (AudioSource != null)
             AudioManager.Instance.OnStop(new List<string> { AudioSource.Name });
     }
-
     #endregion
 
     #region PRIVATE
@@ -152,7 +172,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
         BackgroundLayers = new List<GameObject>();
         Sources = new List<SourceReference>();
         SetDefault();
-        EditorController.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
+        GameManager.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
     }
 
     /// <summary>
@@ -171,7 +191,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     }
 
     /// <summary>
-    /// Method will decide (based on source valueType) which Layer should be added(Image/Animation).
+    /// Method will decide (based on source type) which Layer should be added(Image/Animation).
     /// </summary>
     /// <param name="layer"></param>
     /// <param name="source"></param>
@@ -199,6 +219,11 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
 
     }
 
+    /// <summary>
+    /// If there is any animation layer present in background, this
+    /// method will return their names.
+    /// </summary>
+    /// <returns>Names of animations in background layers.</returns>
     private List<string> GetAnimationNames()
     {
         var names = new List<string>();

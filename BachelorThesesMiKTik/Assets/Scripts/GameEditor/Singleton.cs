@@ -19,6 +19,8 @@ namespace Assets.Scripts.GameEditor
         #region  Properties
         public static bool Quitting { get; private set; }
 
+        public static bool Destroyed { get; private set; }
+
         /// <summary>
         /// Singleton instance of <see cref="T"/>. If such instance doesn't exist it will create new one.
         /// </summary>
@@ -26,7 +28,7 @@ namespace Assets.Scripts.GameEditor
         {
             get
             {
-                if (Quitting)
+                if (Quitting || Destroyed)
                 {
                     Debug.LogWarning($"[{nameof(Singleton<T>)}<{typeof(T)}>] Instance will not be returned because the application is quitting.");
                     // ReSharper disable once AssignNullToNotNullAttribute
@@ -73,6 +75,7 @@ namespace Assets.Scripts.GameEditor
             else
             {
                 SetInstance();
+                Destroyed = false;
             }
 
             if (_persistent)
@@ -83,6 +86,12 @@ namespace Assets.Scripts.GameEditor
         private void OnApplicationQuit()
         {
             Quitting = true;
+        }
+
+        private void OnDestroy()
+        {
+            Destroyed = true;
+            _instance = null;
         }
         #endregion
     }

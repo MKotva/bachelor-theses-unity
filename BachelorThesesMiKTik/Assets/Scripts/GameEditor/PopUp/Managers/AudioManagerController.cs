@@ -158,7 +158,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
             {
                 foreach (var controllerGroup in AudioManager.Instance.AudioControllers.Values)
                 {
-                    foreach(var controller in controllerGroup)
+                    foreach(var controller in controllerGroup.Values)
                         controller.EditAudio(source);
                 }
             }
@@ -168,7 +168,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
                 {
                     if (AudioManager.Instance.AudioControllers.ContainsKey(name))
                     {
-                        foreach(var controller in AudioManager.Instance.AudioControllers[name])
+                        foreach(var controller in AudioManager.Instance.AudioControllers[name].Values)
                             controller.EditAudio(source);
                     }
                 }
@@ -179,7 +179,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
         {
             if (AudioManager.Instance.AudioControllers.ContainsKey(selected[0])) 
             {
-                foreach(var controller in AudioManager.Instance.AudioControllers[selected[0]])
+                foreach(var controller in AudioManager.Instance.AudioControllers[selected[0]].Values)
                     controller.EditAudio(source);
             }
         }

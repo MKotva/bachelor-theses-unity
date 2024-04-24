@@ -15,9 +15,9 @@ public class ImageComponentController : ObjectComponent
 
     public override void SetComponent(CustomComponent component)
     {
-        if (component is ImageComponent)
+        if (component is VisualComponent)
         {
-            var imageComponent = (ImageComponent) component;
+            var imageComponent = (VisualComponent) component;
             SourcePanel.SetData(imageComponent.Data);
         }
         else
@@ -127,7 +127,7 @@ public class ImageComponentController : ObjectComponent
     private CustomComponent CreateComponent()
     {
         var sourceDTO = SourcePanel.GetData();
-        return new ImageComponent(sourceDTO);
+        return new VisualComponent(sourceDTO);
     }
 
 

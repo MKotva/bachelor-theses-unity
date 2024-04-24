@@ -9,13 +9,13 @@ namespace Assets.Scripts.GameEditor.AI
     public class AIObject
     {
         public GameObject Performer { get; set; }
-        public List<AIActionBase> Actions { get; internal set; }
+        public List<ActionBase> Actions { get; internal set; }
 
         internal Queue<AgentActionDTO> actionsToPerform;
         internal Task performingTask;
         internal bool isPerforming;
 
-        public AIObject(GameObject performer, List<AIActionBase> actions)
+        public AIObject(GameObject performer, List<ActionBase> actions)
         {
             Performer = performer;
             Performer.GetComponent<BoxCollider2D>().enabled = true;

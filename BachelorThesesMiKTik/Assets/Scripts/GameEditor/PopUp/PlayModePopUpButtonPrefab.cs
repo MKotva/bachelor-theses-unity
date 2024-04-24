@@ -12,13 +12,13 @@ namespace Assets.Scripts.GameEditor.PopUp
             var controller = Instantiate(PopUpWindow, PopUpCanvas.transform)
                             .GetComponent<PopUpController>();
 
-            EditorController.Instance.PausePlayMode();
+            GameManager.Instance.PausePlayMode();
             controller.onExit += ExitHandler;
         }
 
         public void ExitHandler()
         {
-            EditorController.Instance.StartPlayMode();
+            GameManager.Instance.StartPlayMode();
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
 
         private void Awake()
         {
-            PopUp = EditorController.Instance.PopUpCanvas.gameObject;
+            PopUp = GameManager.Instance.PopUpCanvas.gameObject;
             ActionSelection.onValueChanged.AddListener(delegate { OnValueChanged(); });
             EditButton.gameObject.SetActive(false);
         }

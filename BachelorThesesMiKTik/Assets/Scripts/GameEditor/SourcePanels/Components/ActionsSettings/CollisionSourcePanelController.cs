@@ -1,7 +1,7 @@
 ﻿using Assets.Core.GameEditor.DTOS.SourcePanels;
 using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.CodeEditor;
-using Assets.Scripts.GameEditor.ItemView;
+using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.Toolkit;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +21,12 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         private SimpleCode handler;
         private void Awake()
         {
-            Groups = GameItemController.Instance.GroupViews.Keys.ToList();
-            var itemSelection = GameItemController.Instance.ItemsNameIdPair.Keys.ToList();
+            Groups = ItemManager.Instance.Groups.Keys.ToList();
+            var itemSelection = ItemManager.Instance.ItemsNameIdPair.Keys.ToList();
             itemSelection.AddRange(Groups);
 
             MultiselectController.SetOptions(itemSelection);
-            ParentCanvas = EditorController.Instance.PopUpCanvas.gameObject;
+            ParentCanvas = GameManager.Instance.PopUpCanvas.gameObject;
         }
 
         public CollisionDTO Get()

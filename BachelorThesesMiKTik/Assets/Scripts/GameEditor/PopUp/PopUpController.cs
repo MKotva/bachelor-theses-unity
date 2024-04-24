@@ -7,12 +7,12 @@ public class PopUpController : MonoBehaviour
 
     private void Start()
     {
-        MapCanvas.Instance.OnDisable();
+        EditorCanvas.Instance.OnDisable();
     }
 
     public virtual void OnExitClick()
     {
-        MapCanvas.Instance.OnEnable();
+        EditorCanvas.Instance.OnEnable();
 
         if(onExit != null)
             onExit.Invoke();

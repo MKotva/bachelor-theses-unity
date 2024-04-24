@@ -1,40 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
+using Assets.Core.GameEditor.Serializers;
+using Assets.Scenes.GameEditor.Core.DTOS;
+using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class MenuButtonController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-  #region [SerializeField] public string SceneToBeLoaded { get; set; }
+    [SerializeField] private AudioClip PressClip, ReleaseClip;
+    [SerializeField] private AudioSource AudioSource;
 
-  /// <summary>
-  /// Defines scene to be loaded
-  /// </summary>
-  [field: Tooltip("Defines scene to be loaded")]
-  [field: SerializeField]
-  public string SceneToBeLoaded { get; set; }
+    private Color originalColor;
 
-  #endregion
+    private void Awake()
+    {
+        originalColor = gameObject.GetComponent<Image>().color;
+    }
 
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        gameObject.GetComponent<Image>().color = new Color(70, 70, 70, 255);
+        AudioSource.PlayOneShot(PressClip);
+    }
 
-  [SerializeField] private AudioClip _compressClip, _uncompressClip;
-  [SerializeField] private AudioSource _source;
-  public void OnPointerDown(PointerEventData eventData)
-  {
-    gameObject.GetComponent<Image>().color = new Color(70, 70, 70, 255);
-    _source.PlayOneShot(_compressClip);
-  }
-
-  public void OnPointerUp(PointerEventData eventData)
-  {
-    gameObject.GetComponent<Image>().color = new Color(255, 255, 255, 255);
-    _source.PlayOneShot(_uncompressClip);
-  }
-
-  public void HandleClick()
-  {
-    SceneManager.LoadScene(sceneName: SceneToBeLoaded);
-  }
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        gameObject.GetComponent<Image>().color = originalColor;
+    }
 }

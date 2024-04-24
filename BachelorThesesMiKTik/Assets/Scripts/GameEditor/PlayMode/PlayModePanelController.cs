@@ -15,9 +15,9 @@ public class PlayModePanelController : MonoBehaviour
         SwitchPlayPauseButton(IsPlaying);
 
         if (IsPlaying)
-            EditorController.Instance.StartPlayMode();
+            GameManager.Instance.StartPlayMode();
         else
-            EditorController.Instance.PausePlayMode();
+            GameManager.Instance.PausePlayMode();
 
     }
 
@@ -25,7 +25,7 @@ public class PlayModePanelController : MonoBehaviour
     {
         IsPlaying = false;
         SwitchPlayPauseButton(true);
-        EditorController.Instance.ExitPlayMode();
+        GameManager.Instance.ExitPlayMode();
     }
 
     private void SwitchPlayPauseButton(bool isPlaying)

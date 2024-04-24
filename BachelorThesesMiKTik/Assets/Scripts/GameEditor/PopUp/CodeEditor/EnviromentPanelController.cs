@@ -56,7 +56,7 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         {
             for (int i = 0; i < lines.Count; i++)
             {
-                if (lines[i].GetInstanceID() == id)
+                if (lines[i].gameObject.GetInstanceID() == id)
                 {
                     Destroy(lines[i].gameObject);
                     lines.RemoveAt(i);

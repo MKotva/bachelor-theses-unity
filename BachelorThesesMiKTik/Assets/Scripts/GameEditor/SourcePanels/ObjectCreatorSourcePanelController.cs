@@ -1,37 +1,38 @@
-using Assets.Scripts.GameEditor.ItemView;
+using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class ObjectCreatorSourcePanelController : MonoBehaviour
 {
     private bool hasPassed;
-    public void CreateItem(List<ObjectComponent> components)
+    public bool CreateItem(List<ObjectComponent> components)
     {
         ErrorOutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
         var newItem = CreateNewPrefab (components);
         if (hasPassed)
         {
-            GameItemController.Instance.AddItem(newItem);
+            ItemManager.Instance.AddItem(newItem);
+            return true;
         }
+
         ErrorOutputManager.Instance.RemoveListener("ObjectCreate");
+        return false;
     }
 
-    public void EditItem(List<ObjectComponent> components)
+    public bool EditItem(List<ObjectComponent> components)
     {
         ErrorOutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
         var newItem = CreateEditingPrefab(components);
         if (hasPassed)
         {
-            GameItemController.Instance.EditActualSelectedItem(GameItemController.Instance.ActualSelectedItem, newItem);
-        }
-        else
-        {
+            ItemManager.Instance.EditActualSelectedItem(ItemManager.Instance.ActualSelectedItem, newItem);
+            return true;
+        }  
 
-        }    
         ErrorOutputManager.Instance.RemoveListener("ObjectCreate");
+        return false;
     }
 
     #region PRIVATE
@@ -116,7 +117,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// <returns></returns>
     private bool CheckName(ItemData item)
     {
-        if (GameItemController.Instance.ItemsNameIdPair.ContainsKey(item.ShownName))
+        if (ItemManager.Instance.ItemsNameIdPair.ContainsKey(item.ShownName))
         {
             ErrorOutputManager.Instance.ShowMessage($"Invalid item name {item.ShownName}, name is already used!", "ObjectCreate");
             return false;

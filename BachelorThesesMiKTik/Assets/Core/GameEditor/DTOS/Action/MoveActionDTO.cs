@@ -23,9 +23,9 @@ namespace Assets.Core.GameEditor.DTOS.Action
             CanFall = canFall;
         }
 
-        public override List<AIActionBase> GetAction(GameObject instance)
+        public override List<ActionBase> GetAction(GameObject instance)
         {
-            return new List<AIActionBase> { new MoveAIAction(instance, Speed, SpeedCap, CanFall) };
+            return new List<ActionBase> { new MoveAction(instance, Speed, SpeedCap, CanFall) };
         }
     }
 }

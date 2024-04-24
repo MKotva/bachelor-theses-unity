@@ -1,4 +1,4 @@
-using Assets.Scripts.GameEditor.ItemView;
+using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,19 +32,22 @@ public class ItemCreatorController : PopUpController
     }
 
     /// <summary>
-    /// Button click handler. Creates element with given components.
+    /// Button click handler. Trigers item creating/editing method with given components.
     /// </summary>
     public void OnSetClick()
     {
+        var result = false;
         if (IsEditing)
         {
-            ObjectCreator.EditItem(active.Values.ToList());
+            result = ObjectCreator.EditItem(active.Values.ToList());
         }
         else
         {
-            ObjectCreator.CreateItem(active.Values.ToList());
+            result = ObjectCreator.CreateItem(active.Values.ToList());
         }
-        OnExitClick();
+
+        if (result) 
+            OnExitClick();
     }
 
 
@@ -54,19 +57,8 @@ public class ItemCreatorController : PopUpController
     /// <param name="data">Component scriptable object with data.</param>
     public void AddComponent(ComponentData data)
     {
-        if (!active.ContainsKey(data.Name))
+        if (!active.ContainsKey(data.Name) && CheckComponentCollision(data))
         {
-            if(data.Name == "AI Control")
-            {
-                if (active.ContainsKey("Player Control"))
-                    ErrorOutputManager.Instance.ShowMessage("You can not add AI and Player components at the same time.");
-            }
-            else if (data.Name == "Player Control")
-            {
-                if (active.ContainsKey("AI Control"))
-                    ErrorOutputManager.Instance.ShowMessage("You can not add AI and Player components at the same time.");
-            }
-
             var component = CreateComponentPanel(data);
             active.Add(component.name, component);
         }
@@ -75,17 +67,10 @@ public class ItemCreatorController : PopUpController
     /// <summary>
     /// Sets object editor based on created object.
     /// </summary>
-    public void EditActualObject()
+    public void EditObject(ItemData item)
     {
         IsEditing = true;
-        var actual = GameItemController.Instance.ActualSelectedItem;
-        if(GameItemController.Instance.CheckIfItemIsDefault(actual.ShownName))
-        {
-            ErrorOutputManager.Instance.ShowMessage($"You can not edit item {actual.ShownName} because it is default item.");
-            return;
-        }
-
-        foreach(var component in actual.Components) 
+        foreach(var component in item.Components) 
         {
             if (component.ComponentName == StaticComponent.Name)
             {
@@ -150,5 +135,17 @@ public class ItemCreatorController : PopUpController
         component.SetExitMethod(DestroyComponentPanel);
         return component;
     }
+
+    private bool CheckComponentCollision(ComponentData data)
+    {
+        if ((data.Name == "AI Control" && active.ContainsKey("Player Control")) ||
+            (data.Name == "Player Control") && active.ContainsKey("AI Control"))
+        {
+                ErrorOutputManager.Instance.ShowMessage("You can not add AI and Player components at the same time.");
+                return false;
+        }
+        return true;
+    }
+
     #endregion
 }

@@ -24,8 +24,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
 
         public void ChangePreview(SourceReference source)
         {
+            if(source == null) 
+                return;
+
             if (source.Type == SourceType.Image)
-                PreviewImage.sprite = SpriteManager.Instance.Sprites[source.Name];
+                PreviewImage.sprite = SpriteManager.Instance.GetSprite(source.Name);
             else if (source.Type == SourceType.Animation)
                 PreviewImage.sprite = AnimationsManager.Instance.GetAnimationPreview(source.Name);
             else
@@ -119,7 +122,6 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
             var previewTransform = PreviewPanel.GetComponent<RectTransform>();
             var previewSize = previewTransform.sizeDelta;
             
-
             var maxDiff = 0f;
             for(int i = 0; i < instances.Count; i++) 
             {

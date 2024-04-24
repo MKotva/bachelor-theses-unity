@@ -133,7 +133,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 }
             }
 
-            _isMouseDown = false; //TODO: Check if this is good idea...
+            _isMouseDown = false;
         }
 
         private void InsertReverse(Vector3 position)

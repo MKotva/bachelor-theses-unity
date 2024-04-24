@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.GameEditor.ItemView;
+﻿using Assets.Scripts.GameEditor.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,7 +9,7 @@ namespace Assets.Scripts.GameEditor.AI
     {
         private AIAgent agent;
         private List<GameObject> markers;
-        private MapCanvas map;
+        private EditorCanvas map;
 
         public void OnShowWalkableTilesClick()
         {
@@ -29,8 +29,8 @@ namespace Assets.Scripts.GameEditor.AI
 
             foreach (var action in agent.AI.Actions)
             {
-                if (action is JumpAIAction)
-                    markers = ( (JumpAIAction) action ).PrintAllPossibleJumps(agent.transform.position);
+                if (action is JumpAction)
+                    markers = ( (JumpAction) action ).PrintAllPossibleJumps(agent.transform.position);
             }
         }
 
@@ -61,7 +61,7 @@ namespace Assets.Scripts.GameEditor.AI
         private void Awake()
         {
             markers = new List<GameObject>();
-            map = MapCanvas.Instance;
+            map = EditorCanvas.Instance;
         }
 
         private bool TryInitialize()
@@ -91,7 +91,7 @@ namespace Assets.Scripts.GameEditor.AI
 
         private bool TryFindEndPosition(string name, out Vector3 endPosition)
         {
-            if (GameItemController.Instance.TryFindIdByName(name, out int edpointId))
+            if (ItemManager.Instance.TryFindIdByName(name, out int edpointId))
             {
                 if (map.Data.ContainsKey(edpointId))
                 {

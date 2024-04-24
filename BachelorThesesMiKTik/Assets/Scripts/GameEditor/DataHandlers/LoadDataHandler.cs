@@ -7,8 +7,11 @@ public class LoadDataHandler : MonoBehaviour
 {
     [SerializeField] string DefaultPath;
 
-    private MapCanvas map;
+    private EditorCanvas map;
 
+    /// <summary>
+    /// Creates new file browser window on default path ./Maps.
+    /// </summary>
     public void OnLoad()
     {
         map.OnDisable();
@@ -19,6 +22,12 @@ public class LoadDataHandler : MonoBehaviour
         FileBrowser.ShowLoadDialog((paths) => { OnSucces(paths[0]); }, OnFail, FileBrowser.PickMode.Files, false, DefaultPath, null, "Select Map", "Select");
     }
 
+    /// <summary>
+    /// Loads game data from the file on selected path and sets it as actual
+    /// game status. (Loads the map)
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     public async Task LoadMap(string path)
     {
         if (JSONSerializer.Deserialize(path, out var gameData))
@@ -28,17 +37,25 @@ public class LoadDataHandler : MonoBehaviour
     }
 
     #region PRIVATE
-    private void Awake()
+    private void Start()
     {
-        map = MapCanvas.Instance;
+        map = EditorCanvas.Instance;
     }
 
+    /// <summary>
+    /// This method handles the File Browser select click. Recieves path to file
+    /// from file browser and then call LoadMap with this path.
+    /// </summary>
+    /// <param name="path"></param>
     private async void OnSucces(string path)
     {
         map.OnEnable();
         await LoadMap(path);
     }
 
+    /// <summary>
+    /// This method handles FileBrowser fail to select a path.
+    /// </summary>
     private void OnFail()
     {
         map.OnEnable();

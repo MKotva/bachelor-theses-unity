@@ -6,9 +6,9 @@ namespace Assets.Scripts.GameEditor.PlayMode
     {
         public void OnClick()
         {
-            var instance = EditorController.Instance;
+            var instance = GameManager.Instance;
             if(instance != null)
-                EditorController.Instance.DisplayPlayMode();
+                GameManager.Instance.DisplayPlayMode();
         }
     }
 }
