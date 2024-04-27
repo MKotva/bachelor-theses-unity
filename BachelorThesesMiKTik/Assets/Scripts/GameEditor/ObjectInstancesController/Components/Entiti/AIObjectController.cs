@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
 {
-    public class AIAgent : MonoBehaviour, IObjectController
+    public class AIObjectController : MonoBehaviour, IObjectController
     {
         public EditorCanvas map;
         public AIObject AI;

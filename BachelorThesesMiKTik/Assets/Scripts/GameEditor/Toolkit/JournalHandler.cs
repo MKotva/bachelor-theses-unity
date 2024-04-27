@@ -1,7 +1,4 @@
 using Assets.Core.GameEditor.Journal;
-using Assets.Scenes.GameEditor.Core.EditorActions;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class JournalHandler : MonoBehaviour
@@ -19,16 +16,16 @@ public class JournalHandler : MonoBehaviour
         var undo = _journal.GetUndoAction();
         if (undo != null) 
         {
-            undo.Performer(undo.Parameters);
+            undo.Performer(undo);
         }
     }
 
     public void OnRedoClick() 
     {
-        var undo = _journal.GetRedoAction();
-        if (undo != null)
+        var redo = _journal.GetRedoAction();
+        if (redo != null)
         {
-            undo.Performer(undo.Parameters);
+            redo.Performer(redo);
         }
     }
 }

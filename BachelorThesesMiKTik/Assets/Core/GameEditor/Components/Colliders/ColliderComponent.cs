@@ -10,17 +10,27 @@ namespace Assets.Core.GameEditor.Components.Colliders
     public class ColliderComponent : CustomComponent
     {
         public List<CollisionDTO> Colliders;
+        public Vector2 Scale;
 
         public ColliderComponent() 
         {
             ComponentName = "Collider";
             Colliders = new List<CollisionDTO>();
+            Scale = new Vector2(1f / 100f, 1f / 100f);
         }
 
-        public ColliderComponent(List<CollisionDTO> colliders) 
+        public ColliderComponent(Vector2 scale)
+        {
+            ComponentName = "Collider";
+            Colliders = new List<CollisionDTO>();
+            Scale = scale;
+        }
+
+        public ColliderComponent(List<CollisionDTO> colliders, Vector2 scale) 
         {
             ComponentName = "Collider";
             Colliders = colliders;
+            Scale = scale;
         }
 
         public override void Set(ItemData item)

@@ -11,7 +11,7 @@ using BoxCollider = Assets.Scripts.GameEditor.SourcePanels.Components.Colliders.
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
 {
-    public class BoxColliderComponentController : ObjectComponent
+    public class ColliderComponentController : ObjectComponent
     {
         [SerializeField] TMP_Dropdown ColliderType;
         [SerializeField] BoxCollider BoxColliderMenu;
@@ -21,10 +21,14 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] GameObject ContentView;
         [SerializeField] GameObject CollisionSourcePanel;
 
-
-        private GameObject actualActriveMenu;
+        private GameObject actualActiveMenu;
         private List<CollisionSourcePanelController> instances;
 
+
+        /// <summary>
+        /// Sets component panel based on given component class.
+        /// </summary>
+        /// <param name="component"></param>
         public override void SetComponent(CustomComponent component)
         {
             if (component is ColliderComponent)
@@ -39,31 +43,38 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
                 
                 if(component is BoxColliderComponent)
                 {
+                    ColliderType.value = 0;
                     BoxColliderMenu.SetComponent(boxCollider);
-                    actualActriveMenu = BoxColliderMenu.gameObject;
                 }
                 else if (component is PolygonColliderComponent)
                 {
+                    ColliderType.value = 2;
                     PolygonMenu.SetComponent(boxCollider);
-                    actualActriveMenu = PolygonMenu.gameObject;
                 }
                 else
                 {
+                    ColliderType.value = 1;
                     CircularMenu.SetComponent(boxCollider);
-                    actualActriveMenu = CircularMenu.gameObject;
                 }
-                actualActriveMenu.SetActive(true);
             }
             else
             {
                 ErrorOutputManager.Instance.ShowMessage("General component parsing error!", "ObjectCreate");
             }
         }
+
+        /// <summary>
+        /// Returns component new class from data, in component panel. 
+        /// </summary>
+        /// <returns></returns>
         public override CustomComponent GetComponent()
         {
             return CreateComponent();
         }
 
+        /// <summary>
+        /// Handles Add button click by adding new collision panel. 
+        /// </summary>
         public void OnAdd()
         {
             instances.Add(AddSourcePanel());
@@ -72,33 +83,45 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         #region PRIVATE
         private void Awake()
         {
-            actualActriveMenu = BoxColliderMenu.gameObject;
+            actualActiveMenu = BoxColliderMenu.gameObject;
             instances = new List<CollisionSourcePanelController>();
-            ColliderType.onValueChanged.AddListener(ChangeMenu);
-            
+            ColliderType.onValueChanged.AddListener(ChangeMenu);    
         }
 
+        /// <summary>
+        /// Changes shape of collider based on menu value. This change is
+        /// performed by displaying proper setting panel.
+        /// </summary>
+        /// <param name="id"></param>
         private void ChangeMenu(int id)
         {
-            actualActriveMenu.SetActive(false);
+            actualActiveMenu.SetActive(false);
             if (id == 0)
             {
-                actualActriveMenu = BoxColliderMenu.gameObject;
+                actualActiveMenu = BoxColliderMenu.gameObject;
             }
             else if(id == 1)
             {
-                actualActriveMenu = CircularMenu.gameObject;
+                actualActiveMenu = CircularMenu.gameObject;
             }
             else
             {
-                actualActriveMenu = PolygonMenu.gameObject;
+                actualActiveMenu = PolygonMenu.gameObject;
             }
-            actualActriveMenu.SetActive(true);
+            actualActiveMenu.SetActive(true);
         }
 
+
+        /// <summary>
+        /// Creates component class based on data and shape in component panel. Also
+        /// stores all data from collision panels.
+        /// </summary>
+        /// <returns></returns>
         private ColliderComponent CreateComponent()
         {
-            var component = actualActriveMenu.GetComponent<ColliderController>().GetComponent();
+            var component = actualActiveMenu.GetComponent<ColliderController>().GetComponent();
+            if (component == null)
+                return null;
 
             var colliders = new List<CollisionDTO>();
             foreach (var instance in instances)
@@ -113,6 +136,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             return component;
         }
 
+        /// <summary>
+        /// Creates new instance of collision panel.
+        /// </summary>
+        /// <returns></returns>
         private CollisionSourcePanelController AddSourcePanel()
         {
             var panel = Instantiate(CollisionSourcePanel, ContentView.transform);
@@ -120,6 +147,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             return panel.GetComponent<CollisionSourcePanelController>();
         }
 
+        /// <summary>
+        /// Destroys collision panel with given instance id.
+        /// </summary>
+        /// <param name="id"></param>
         private void PanelDestroyHandler(int id)
         {
             for (int i = 0; i < instances.Count; i++)

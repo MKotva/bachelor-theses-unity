@@ -15,8 +15,8 @@ namespace Assets.Scripts.GameEditor.AI
 
         private static Dictionary<string, Vector2> actionTypes = new Dictionary<string, Vector2>
         {
-            { "Jump left", Vector2.left },
-            { "Jump right", Vector2.right },
+            { "Jump left", new Vector2(-1, 1) },
+            { "Jump right", new Vector2(1, 1) },
             { "Jump up", Vector2.up }
         };
         public static List<string> ActionTypes
@@ -126,6 +126,13 @@ namespace Assets.Scripts.GameEditor.AI
                 performerRigidbody.AddForce(JumpHelper.GetJumpVector(actionTypes[action], forceUp, forceInDirection));
                 Vector3.ClampMagnitude(performerRigidbody.velocity, 50);
             }
+        }
+
+        public override void FinishAction() { }
+
+        public override bool ContainsActionCode(string code)
+        {
+            return ActionTypes.Contains(code);
         }
 
         private List<TrajectoryDTO> GetTrajectories(Vector2 position)

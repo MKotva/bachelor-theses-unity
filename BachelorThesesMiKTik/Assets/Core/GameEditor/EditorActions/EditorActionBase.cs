@@ -8,8 +8,8 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
     public class EditorActionBase
     {
         public EditorCanvas map;
-        internal JournalActionDTO lastActionRecord;
-        internal JournalActionDTO lastActionRecordReverse;
+        internal JournalActionDTO lastActionRecord; //Record of performed action.
+        internal JournalActionDTO lastActionRecordReverse; //Record of reverse action of performed action.
 
         public EditorActionBase() 
         {
@@ -23,14 +23,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         public virtual void OnKeyUp() {}
         public virtual void PerformAction(string action) {}
 
-        public virtual JournalActionDTO GetLastActionRecord() 
-        {
-            return lastActionRecord;
-        }
-
-        public virtual JournalActionDTO GetLastActionRecordReverse()
-        {
-            return lastActionRecordReverse;
+ 
+        internal void SaveRecord(JournalActionDTO lastAction, JournalActionDTO redoAction) 
+        { 
+            if(map.IsRecording && map.MapJournal != null)
+            {
+                map.MapJournal.Record(lastAction, redoAction);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿using Assets.Core.GameEditor;
-using Assets.Core.GameEditor.DTOS;
-using System.Text;
+﻿using Assets.Core.GameEditor.DTOS;
+using Assets.Core.GameEditor.DTOS.EditorActions;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -29,13 +30,12 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             isMouseDown = true;
             if (map.Selected.Count != 0)
             {
-                var positions = GetSelectedPositionsString();
-                lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", selectAction.PerformAction);
+                lastActionRecordReverse = new PositionOperation(selectAction.SingleSelection, map.Selected.Keys.ToList());
                 map.UnselectAll();
             }
             else
             {
-                lastActionRecordReverse = new JournalActionDTO("SUA", selectAction.PerformAction);
+                lastActionRecordReverse = new JournalActionDTO(selectAction.UnselectAll);
             }
         }
 
@@ -49,26 +49,26 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             if(isMouseDown)
             {
                 SelectAllGroupItems(mousePosition);
-                lastActionRecord = new JournalActionDTO($"SG;{mousePosition.x}:{mousePosition.y}", PerformAction);
+                lastActionRecord = new PositionOperation(Perform , new List<Vector3>() { mousePosition });
+                SaveRecord(lastActionRecord, lastActionRecordReverse);
             }
             isMouseDown = false;
         }
 
         /// <summary>
-        /// This method will perform action based on given string.
+        /// This method will perform action based on given JournalAction.
         /// </summary>
         /// <param name="action"></param>
-        public override void PerformAction(string action)
+        public void Perform(JournalActionDTO action)
         {
-            var descriptions = action.Split(';');
-            if (descriptions.Length < 1)
+            if(action is PositionOperation)
             {
-                return;
-            }
-            if (descriptions[0] == "SG")
-            {
-                map.UnselectAll();
-                SelectAllGroupItems(MathHelper.GetVector3FromString(descriptions[1]));
+                var positionAction = (PositionOperation)action;
+                if(positionAction.Positions.Count > 0) 
+                {
+                    map.UnselectAll();
+                    SelectAllGroupItems(positionAction.Positions[0]);   
+                }
             }
         }
 
@@ -96,20 +96,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Goes thru all selected objects and returs theirs positions in one string.
-        /// </summary>
-        /// <returns></returns>
-        private string GetSelectedPositionsString()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var selectedPos in map.Selected.Keys)
-            {
-                sb.Append($"{selectedPos.x}:{selectedPos.y};");
-            }
-            return sb.ToString();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class AIPanelController : MonoBehaviour
     {
-        private AIAgent agent;
+        private AIObjectController agent;
         private List<GameObject> markers;
         private EditorCanvas map;
 
@@ -74,12 +74,12 @@ namespace Assets.Scripts.GameEditor.AI
             return false;
         }
 
-        private bool TryFindSelectedObject(out AIAgent aIAgent)
+        private bool TryFindSelectedObject(out AIObjectController aIAgent)
         {
             if (map.Selected.Count == 1)
             {
                 var selectedObject = map.GetObjectAtPosition(map.Selected.Keys.First());
-                if (selectedObject.TryGetComponent(out AIAgent agent))
+                if (selectedObject.TryGetComponent(out AIObjectController agent))
                 {
                     aIAgent = agent;
                     return true;

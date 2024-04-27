@@ -4,7 +4,6 @@ using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.Entiti;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components
@@ -34,7 +33,18 @@ namespace Assets.Core.GameEditor.Components
             OnUpdateAction = updateAction;
         }
 
-        public override void Set(ItemData item) {}
+        public override void Set(ItemData item) 
+        {
+            foreach (var component in item.Components)
+            {
+                if (component.ComponentName == "Physics")
+                    return;
+            }
+
+            var physicsComponent = new PhysicsComponent();
+            physicsComponent.Set(item);
+            item.Components.Add(physicsComponent);
+        }
 
         public override void SetInstance(ItemData item, GameObject instance)
         {

@@ -91,9 +91,16 @@ namespace Assets.Core.GameEditor.AIActions
             performerRigidbody.velocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
         }
 
+        public override void FinishAction() { }
+
         public override bool IsPerforming()
         {
             throw new NotImplementedException();
+        }
+
+        public override bool ContainsActionCode(string code)
+        {
+            return ActionTypes.Contains(code);
         }
 
         private Vector2 GetPositionFromParam(string action) 

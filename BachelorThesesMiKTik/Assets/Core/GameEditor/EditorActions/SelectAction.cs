@@ -1,6 +1,9 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.DTOS;
+using Assets.Core.GameEditor.DTOS.EditorActions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,6 +18,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private Vector3 _squareStart;
         private Vector3 _lastMousePosition;
 
+        /// <summary>
+        /// Handles mouse left button click. If there were selected objects, stores unselect and select 
+        /// actions to journal.
+        /// </summary>
+        /// <param name="button"></param>
         public override void OnMouseDown(MouseButton button)
         {
             if (button == MouseButton.LeftMouse)
@@ -24,33 +32,23 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
                 _isMouseDown = true;
                 if (map.Selected.Count != 0)
-                {
-                    var positions = GetSelectedPositionsString();
-                    lastActionRecordReverse = new JournalActionDTO($"SS;{positions}", PerformAction);
+                { 
+                    lastActionRecordReverse = new PositionOperation(SingleSelection, map.Selected.Keys.ToList());
                     map.UnselectAll();
                 }
                 else
                 {
-                    lastActionRecordReverse = new JournalActionDTO($"SUA", PerformAction);
+                    lastActionRecordReverse = new JournalActionDTO(UnselectAll);
                 }
             }
         }
 
-        public override void OnMouseUp()
-        {
-            if (_isMouseDown && !_isKeyDown)
-            {
-                var positions = GetSelectedPositionsString();
-                lastActionRecord = new JournalActionDTO($"SS;{positions}", PerformAction);
-            }
-            else if (_isMouseDown && _isKeyDown)
-            {
-                lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
-            }
-
-            _isMouseDown = false;
-        }
-
+        /// <summary>
+        /// Handles shift key press, by storing actual mouse position as start point for
+        /// square selection.
+        /// actions to journal.
+        /// </summary>
+        /// <param name="button"></param>
         public override void OnKeyDown(Key key)
         {
             if (key == Key.LeftShift || key == Key.RightShift)
@@ -60,13 +58,46 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
+        /// <summary>
+        /// Handles mouse button release by storing all performed actions to Journal. 
+        /// actions to journal.
+        /// </summary>
+        /// <param name="button"></param>
+        public override void OnMouseUp()
+        {
+            if (_isMouseDown && !_isKeyDown)
+            {
+                lastActionRecord = new PositionOperation(SingleSelection, map.Selected.Keys.ToList());
+                SaveRecord(lastActionRecord, lastActionRecordReverse);
+            }
+            else if (_isMouseDown && _isKeyDown)
+            {
+                lastActionRecord = new PositionOperation(SquareSelection, new List<Vector3> { _squareStart, _lastMousePosition });
+                SaveRecord(lastActionRecord, lastActionRecordReverse);
+            }
+
+            _isMouseDown = false;
+        }
+
+        /// <summary>
+        /// Handles key release by storing data about performed square selection action to Journal. 
+        /// actions to journal.
+        /// </summary>
+        /// <param name="button"></param>
         public override void OnKeyUp()
         {
             _isKeyDown = false;
             _isMouseDown = false;
-            lastActionRecord = new JournalActionDTO($"SSQ;{_squareStart.x}:{_squareStart.y};{_lastMousePosition.x}:{_lastMousePosition.y}", PerformAction);
+            lastActionRecord = new PositionOperation(SquareSelection, new List<Vector3> {_squareStart, _lastMousePosition });
+            SaveRecord(lastActionRecord, lastActionRecordReverse);
         }
 
+
+        /// <summary>
+        /// Called on Unity Update call, based on given position and combination of
+        /// pressed keys, performs single or square selection.
+        /// </summary>
+        /// <param name="mousePosition">Cursor position.</param>
         public override void OnUpdate(Vector3 mousePosition)
         {
             if (_isMouseDown)
@@ -83,44 +114,59 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
-        public override void PerformAction(string action)
+        /// <summary>
+        /// /// Based on given data from JournalAction, performs single selection.
+        /// </summary>
+        /// <param name="action"></param>
+        public void SingleSelection(JournalActionDTO action)
         {
-            var descriptions = action.Split(';');
-            if (descriptions.Length < 1)
+            if(action is PositionOperation)
             {
-                ErrorOutputManager.Instance.ShowMessage("Journal action parsing error!");
-                return;
-            }
-
-            if (descriptions[0] == "SS")
-            {
-                if (descriptions.Length < 2)
-                    return;
-
                 map.UnselectAll();
-                for (int i = 1; i < descriptions.Length; i++)
+
+                var positionOperation = (PositionOperation)action;
+                foreach (var pos in positionOperation.Positions)
                 {
-                    if (descriptions[i] == "")
-                        continue;
-
-                    SingleReselection(MathHelper.GetVector3FromString(descriptions[i]));
+                    SingleReselection(pos);
                 }
-            }
-            else if (descriptions[0] == "SSQ")
-            {
-                if (descriptions.Length != 3)
-                    return;
-
-                var fromPos = MathHelper.GetVector3FromString(descriptions[1]);
-                var toPos = MathHelper.GetVector3FromString(descriptions[2]);
-                SquareSelection(fromPos, toPos);
-            }
-            else if (descriptions[0] == "SUA")
-            {
-                map.UnselectAll();
             }
         }
 
+        /// <summary>
+        /// Based on given data from JournalAction, performs square selection.
+        /// </summary>
+        /// <param name="action"></param>
+        public void SquareSelection(JournalActionDTO action)
+        {
+            if (action is PositionOperation)
+            {
+                map.UnselectAll();
+
+                var positionOperation = (PositionOperation) action;
+                if (positionOperation.Positions.Count == 2)
+                {
+                    SquareSelection(positionOperation.Positions[0], positionOperation.Positions[1]);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Unselects all selected objects.
+        /// </summary>
+        /// <param name="action"></param>
+        public void UnselectAll(JournalActionDTO action)
+        {
+            map.UnselectAll();
+        }
+
+        #region PRIVATE
+
+        /// <summary>
+        /// Selects object on given position, if exists. If object is already selected
+        /// nothing happens.
+        /// </summary>
+        /// <param name="mousePosition"></param>
         private void SingleSelection(Vector3 mousePosition)
         {
             var cellCenter = map.GetCellCenterPosition(mousePosition);
@@ -130,12 +176,15 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var objectAtPositon = map.GetObjectAtPosition(cellCenter);
             if (objectAtPositon != null)
             {
-
                 map.Marker.MarkObject(objectAtPositon); //TODO : Initialize Marker, mb singleton?
                 map.Selected.Add(cellCenter, (objectAtPositon, false));
             }
         }
 
+        /// <summary>
+        /// Selects object on given position, if exists or creates marker object.
+        /// </summary>
+        /// <param name="mousePosition"></param>
         private void SingleReselection(Vector3 mousePosition)
         {
             var cellCenter = map.GetCellCenterPosition(mousePosition);
@@ -145,7 +194,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             var objectAtPositon = map.GetObjectAtPosition(cellCenter);
             if (objectAtPositon != null)
             {
-
                 map.Marker.MarkObject(objectAtPositon);
                 map.Selected.Add(cellCenter, (objectAtPositon, false));
             }
@@ -156,6 +204,13 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
+
+        /// <summary>
+        /// Selects objects in square between start and end vector. If there is no object present,
+        /// method will create marker instead.
+        /// </summary>
+        /// <param name="fromPos"></param>
+        /// <param name="toPos"></param>
         private void SquareSelection(Vector3 fromPos, Vector3 toPos)
         {
             map.UnselectAll();
@@ -193,15 +248,6 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 }
             }
         }
-
-        private string GetSelectedPositionsString()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var selectedPos in map.Selected.Keys)
-            {
-                sb.Append($"{selectedPos.x}:{selectedPos.y};");
-            }
-            return sb.ToString();
-        }
+        #endregion
     }
 }

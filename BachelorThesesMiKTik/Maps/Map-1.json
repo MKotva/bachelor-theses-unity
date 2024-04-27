@@ -7,14 +7,12 @@
       "Sources": [
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "dirtbox",
-          "Type": 1,
-          "URL": "Dirt.png"
+          "Name": "bush",
+          "URL": "Bush.png"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
           "Name": "thor",
-          "Type": 1,
           "URL": "Thor.jpg"
         }
       ]
@@ -31,21 +29,21 @@
   "Items": [
     {
       "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
-      "Name": "box",
-      "ID": 1502598545,
+      "Name": "wall",
+      "ID": 405904966,
       "Components": [
         {
           "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
-          "Name": "box",
+          "Name": "wall",
           "Group": "Boxes",
           "ComponentName": "General Setting",
           "ComponentID": 0
         },
         {
-          "$type": "Assets.Core.GameEditor.Components.ImageComponent, Assembly-CSharp",
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
           "Data": {
-            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceDTO, Assembly-CSharp",
-            "Name": "dirtbox",
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "bush",
             "Type": 1,
             "XSize": 30.0,
             "YSize": 30.0
@@ -55,32 +53,16 @@
         },
         {
           "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
-          "XSize": 2.0,
-          "YSize": 2.0,
-          "Colliders": [
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
-              "ObjectsNames": [
-                "Player"
-              ],
-              "GroupsNames": [],
-              "Handler": {
-                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-                "Code": "out.PrintTest (\"Hit\")",
-                "Output": "Hit\n",
-                "ErrorOutput": "",
-                "OutputCapacity": 1000000,
-                "EnviromentObjects": [
-                  {
-                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
-                    "Alias": "out",
-                    "TypeName": "Output"
-                  }
-                ],
-                "GlobalVariables": []
-              }
-            }
-          ],
+          "XSize": 30.0,
+          "YSize": 30.0,
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
           "ComponentName": "Collider",
           "ComponentID": 0
         }
@@ -88,28 +70,56 @@
     },
     {
       "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
-      "Name": "Player",
-      "ID": 1875862075,
+      "Name": "thor",
+      "ID": 681581529,
       "Components": [
         {
           "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
-          "Name": "Player",
-          "Group": "Entiti",
+          "Name": "thor",
+          "Group": "Entities",
           "ComponentName": "General Setting",
           "ComponentID": 0
         },
         {
-          "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
-          "XSize": 1.0,
-          "YSize": 1.0,
+          "$type": "Assets.Core.GameEditor.Components.Colliders.PolygonColliderComponent, Assembly-CSharp",
+          "Points": [
+            {
+              "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+              "x": -15.0,
+              "y": -15.0,
+              "magnitude": 21.2132034,
+              "sqrMagnitude": 450.0
+            },
+            {
+              "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+              "x": 15.0,
+              "y": 15.0,
+              "magnitude": 21.2132034,
+              "sqrMagnitude": 450.0
+            },
+            {
+              "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+              "x": 15.0,
+              "y": -15.0,
+              "magnitude": 21.2132034,
+              "sqrMagnitude": 450.0
+            }
+          ],
           "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.06233333,
+            "y": 0.09,
+            "magnitude": 0.109478056,
+            "sqrMagnitude": 0.0119854445
+          },
           "ComponentName": "Collider",
           "ComponentID": 0
         },
         {
-          "$type": "Assets.Core.GameEditor.Components.ImageComponent, Assembly-CSharp",
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
           "Data": {
-            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceDTO, Assembly-CSharp",
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
             "Name": "thor",
             "Type": 1,
             "XSize": 30.0,
@@ -133,18 +143,32 @@
         {
           "$type": "Assets.Core.GameEditor.Components.PlayerComponent, Assembly-CSharp",
           "Actions": {
-            "$type": "Assets.Core.GameEditor.DTOS.Action.FlyActionDTO, Assembly-CSharp",
-            "Speed": 20.0,
-            "SpeedCap": 20.0,
-            "Name": "Fly"
+            "$type": "Assets.Core.GameEditor.DTOS.Action.MoveAndJumpActionDTO, Assembly-CSharp",
+            "MoveAction": {
+              "$type": "Assets.Core.GameEditor.DTOS.Action.MoveActionDTO, Assembly-CSharp",
+              "Speed": 50.0,
+              "SpeedCap": 100.0,
+              "CanFall": true,
+              "Name": null
+            },
+            "JumpAction": {
+              "$type": "Assets.Core.GameEditor.DTOS.Action.ChargeJumpDTO, Assembly-CSharp",
+              "VerticalForceMin": 5.0,
+              "VerticalForceMax": 100.0,
+              "HorizontalForceMin": 10.0,
+              "HorizontalForceMax": 50.0,
+              "JumpTimeCap": 2.0,
+              "Name": null
+            },
+            "Name": "Move + Jump"
           },
           "Bindings": [
             {
               "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.ActionBindDTO, Assembly-CSharp",
               "Binding": [
-                119
+                97
               ],
-              "ActionType": "Fly up",
+              "ActionType": "Move left",
               "ActionCode": null
             },
             {
@@ -152,15 +176,25 @@
               "Binding": [
                 100
               ],
-              "ActionType": "Fly right",
+              "ActionType": "Move right",
               "ActionCode": null
             },
             {
               "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.ActionBindDTO, Assembly-CSharp",
               "Binding": [
-                97
+                100,
+                32
               ],
-              "ActionType": "Fly left",
+              "ActionType": "Jump right",
+              "ActionCode": null
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.ActionBindDTO, Assembly-CSharp",
+              "Binding": [
+                97,
+                32
+              ],
+              "ActionType": "Jump left",
               "ActionCode": null
             }
           ],
@@ -178,11 +212,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 984.8,
-        "y": 484.319977,
+        "x": -27.68,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1097.4502,
-        "sqrMagnitude": 1204396.88
+        "magnitude": 27.6804619,
+        "sqrMagnitude": 766.208
       }
     },
     {
@@ -190,11 +224,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 985.12,
-        "y": 484.319977,
+        "x": -27.3599987,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1097.7373,
-        "sqrMagnitude": 1205027.25
+        "magnitude": 27.360466,
+        "sqrMagnitude": 748.595154
       }
     },
     {
@@ -202,11 +236,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 985.44,
-        "y": 484.319977,
+        "x": -27.039999,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1098.02454,
-        "sqrMagnitude": 1205657.88
+        "magnitude": 27.040472,
+        "sqrMagnitude": 731.187134
       }
     },
     {
@@ -214,11 +248,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 985.759949,
-        "y": 484.319977,
+        "x": -26.72,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1098.31165,
-        "sqrMagnitude": 1206288.5
+        "magnitude": 26.7204781,
+        "sqrMagnitude": 713.983948
       }
     },
     {
@@ -226,11 +260,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 986.079956,
-        "y": 484.319977,
+        "x": -26.4,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1098.59888,
-        "sqrMagnitude": 1206919.5
+        "magnitude": 26.4004841,
+        "sqrMagnitude": 696.9856
       }
     },
     {
@@ -238,11 +272,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 986.399963,
-        "y": 484.319977,
+        "x": -26.08,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1098.88611,
-        "sqrMagnitude": 1207550.75
+        "magnitude": 26.08049,
+        "sqrMagnitude": 680.192
       }
     },
     {
@@ -250,11 +284,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 986.72,
-        "y": 484.319977,
+        "x": -25.76,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1099.17334,
-        "sqrMagnitude": 1208182.13
+        "magnitude": 25.760498,
+        "sqrMagnitude": 663.6032
       }
     },
     {
@@ -262,11 +296,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 987.04,
-        "y": 484.319977,
+        "x": -25.4399986,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1099.46069,
-        "sqrMagnitude": 1208813.75
+        "magnitude": 25.4405022,
+        "sqrMagnitude": 647.2191
       }
     },
     {
@@ -274,11 +308,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 987.36,
-        "y": 484.639984,
+        "x": -25.1199989,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1099.88892,
-        "sqrMagnitude": 1209755.63
+        "magnitude": 25.1205082,
+        "sqrMagnitude": 631.0399
       }
     },
     {
@@ -286,11 +320,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 987.68,
-        "y": 484.639984,
+        "x": -24.8,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1100.17615,
-        "sqrMagnitude": 1210387.63
+        "magnitude": 24.8005161,
+        "sqrMagnitude": 615.065552
       }
     },
     {
@@ -298,11 +332,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.0,
-        "y": 484.639984,
+        "x": -24.48,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1100.4635,
-        "sqrMagnitude": 1211019.88
+        "magnitude": 24.4805222,
+        "sqrMagnitude": 599.295959
       }
     },
     {
@@ -310,11 +344,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.32,
-        "y": 484.639984,
+        "x": -24.16,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1100.75085,
-        "sqrMagnitude": 1211652.38
+        "magnitude": 24.16053,
+        "sqrMagnitude": 583.7312
       }
     },
     {
@@ -322,11 +356,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.639954,
-        "y": 484.639984,
+        "x": -23.84,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1101.03809,
-        "sqrMagnitude": 1212284.88
+        "magnitude": 23.8405361,
+        "sqrMagnitude": 568.3712
       }
     },
     {
@@ -334,11 +368,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.639954,
-        "y": 484.319977,
+        "x": -23.5199986,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1100.89722,
-        "sqrMagnitude": 1211974.75
+        "magnitude": 23.5205421,
+        "sqrMagnitude": 553.215942
       }
     },
     {
@@ -346,11 +380,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.959961,
-        "y": 484.319977,
+        "x": -23.1999989,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1101.18469,
-        "sqrMagnitude": 1212607.63
+        "magnitude": 23.20055,
+        "sqrMagnitude": 538.265564
       }
     },
     {
@@ -358,11 +392,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 989.279968,
-        "y": 484.319977,
+        "x": -22.88,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1101.472,
-        "sqrMagnitude": 1213240.75
+        "magnitude": 22.880558,
+        "sqrMagnitude": 523.519958
       }
     },
     {
@@ -370,11 +404,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 989.6,
-        "y": 484.319977,
+        "x": -22.56,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1101.75952,
-        "sqrMagnitude": 1213874.0
+        "magnitude": 22.5605659,
+        "sqrMagnitude": 508.9792
       }
     },
     {
@@ -382,11 +416,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 989.92,
-        "y": 484.319977,
+        "x": -22.24,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1102.04688,
-        "sqrMagnitude": 1214507.38
+        "magnitude": 22.2405758,
+        "sqrMagnitude": 494.6432
       }
     },
     {
@@ -394,323 +428,71 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 990.24,
-        "y": 484.319977,
+        "x": -21.92,
+        "y": 0.16,
         "z": 0.0,
-        "magnitude": 1102.33435,
-        "sqrMagnitude": 1215141.13
+        "magnitude": 21.9205837,
+        "sqrMagnitude": 480.512
       }
     },
     {
       "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": -1234459612,
+      "Id": 405904966,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 990.56,
-        "y": 484.319977,
+        "x": -21.92,
+        "y": 0.48,
         "z": 0.0,
-        "magnitude": 1102.62183,
-        "sqrMagnitude": 1215775.0
+        "magnitude": 21.9252548,
+        "sqrMagnitude": 480.7168
       }
     },
     {
       "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": -1234459612,
+      "Id": 405904966,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 990.88,
-        "y": 484.319977,
+        "x": -22.24,
+        "y": 0.48,
         "z": 0.0,
-        "magnitude": 1102.9093,
-        "sqrMagnitude": 1216409.0
+        "magnitude": 22.2451782,
+        "sqrMagnitude": 494.848
       }
     },
     {
       "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": -1234459612,
+      "Id": 405904966,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 991.199951,
-        "y": 484.319977,
+        "x": -22.56,
+        "y": 0.48,
         "z": 0.0,
-        "magnitude": 1103.19678,
-        "sqrMagnitude": 1217043.13
+        "magnitude": 22.5651054,
+        "sqrMagnitude": 509.184
       }
     },
     {
       "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": -1234459612,
+      "Id": 405904966,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 991.519958,
-        "y": 484.319977,
+        "x": -22.88,
+        "y": 0.48,
         "z": 0.0,
-        "magnitude": 1103.48438,
-        "sqrMagnitude": 1217677.63
+        "magnitude": 22.8850327,
+        "sqrMagnitude": 523.724731
       }
     },
     {
       "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": -1234459612,
+      "Id": 681581529,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 991.839966,
-        "y": 484.319977,
+        "x": -27.039999,
+        "y": 0.48,
         "z": 0.0,
-        "magnitude": 1103.77185,
-        "sqrMagnitude": 1218312.38
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": -1234459612,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 992.16,
-        "y": 484.319977,
-        "z": 0.0,
-        "magnitude": 1104.05945,
-        "sqrMagnitude": 1218947.25
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1875862075,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.0,
-        "y": 486.56,
-        "z": 0.0,
-        "magnitude": 1101.31042,
-        "sqrMagnitude": 1212884.63
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 986.079956,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1099.30518,
-        "sqrMagnitude": 1208471.88
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 986.399963,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1099.59229,
-        "sqrMagnitude": 1209103.13
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 986.72,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1099.87927,
-        "sqrMagnitude": 1209734.5
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 987.04,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1100.16638,
-        "sqrMagnitude": 1210366.13
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 987.36,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1100.45349,
-        "sqrMagnitude": 1210998.0
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 987.68,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1100.7406,
-        "sqrMagnitude": 1211630.0
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.0,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1101.02783,
-        "sqrMagnitude": 1212262.25
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.32,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1101.315,
-        "sqrMagnitude": 1212894.63
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.639954,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1101.602,
-        "sqrMagnitude": 1213527.25
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.959961,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1101.88928,
-        "sqrMagnitude": 1214160.0
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 989.279968,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1102.17651,
-        "sqrMagnitude": 1214793.13
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 989.6,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1102.46375,
-        "sqrMagnitude": 1215426.38
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 989.92,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1102.751,
-        "sqrMagnitude": 1216059.75
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 990.24,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1103.03833,
-        "sqrMagnitude": 1216693.5
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 990.56,
-        "y": 485.919983,
-        "z": 0.0,
-        "magnitude": 1103.32556,
-        "sqrMagnitude": 1217327.38
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.959961,
-        "y": 483.68,
-        "z": 0.0,
-        "magnitude": 1100.90332,
-        "sqrMagnitude": 1211988.13
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 988.32,
-        "y": 484.96,
-        "z": 0.0,
-        "magnitude": 1100.89172,
-        "sqrMagnitude": 1211962.63
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 991.199951,
-        "y": 484.639984,
-        "z": 0.0,
-        "magnitude": 1103.33728,
-        "sqrMagnitude": 1217353.25
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": 1502598545,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": 990.56,
-        "y": 482.08,
-        "z": 0.0,
-        "magnitude": 1101.63977,
-        "sqrMagnitude": 1213610.25
+        "magnitude": 27.0442581,
+        "sqrMagnitude": 731.391968
       }
     }
   ],
@@ -718,12 +500,13 @@
     "$type": "Assets.Core.GameEditor.DTOS.BackgroundDTO, Assembly-CSharp",
     "LayersSources": [
       {
-        "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceDTO, Assembly-CSharp",
+        "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
         "Name": null,
         "Type": 1,
         "XSize": 30.0,
         "YSize": 30.0
       }
-    ]
+    ],
+    "AudioSource": null
   }
 }

@@ -13,8 +13,8 @@ public class EditorCanvas : Singleton<EditorCanvas>
     [SerializeField] public Camera CameraObj;
     [SerializeField] public Grid GridLayout;
     [SerializeField] public Marker Marker;
+    [SerializeField] public bool IsRecording;
     [SerializeField] private List<string> BlockingObjectTags;
-    [SerializeField] private bool IsRecording;
     [SerializeField] private int JournalCapacity;
 
     public ItemData ActualPrefab
@@ -74,23 +74,20 @@ public class EditorCanvas : Singleton<EditorCanvas>
     }
 
 
-    public void ReplaceData(Vector3 oldKey, Vector3 newKey, GameObject newValue)
+    public void ReplaceData(Vector3 oldPosition, Vector3 newPosition, GameObject newValue)
     {
         foreach (var group in Data)
         {
             var groupMembers = group.Value;
-            if (groupMembers.ContainsKey(oldKey))
+            if (groupMembers.ContainsKey(oldPosition))
             {
-                groupMembers.Remove(oldKey);
-                if (groupMembers.ContainsKey(newKey))
+                groupMembers.Remove(oldPosition);
+                if (ContainsObjectAtPosition(newPosition, out var id))
                 {
-                    Erase(groupMembers[newKey]);
-                    groupMembers[newKey] = newValue;
+                    Destroy(Data[id][newPosition]);
+                    RemoveFromData(newPosition);
                 }
-                else
-                {
-                    groupMembers.Add(newKey, newValue);
-                }
+                groupMembers.Add(newPosition, newValue);
                 return;
             }
         }
@@ -114,6 +111,21 @@ public class EditorCanvas : Singleton<EditorCanvas>
             if (group.ContainsKey(position))
                 return true;
         }
+        return false;
+    }
+
+    public bool ContainsObjectAtPosition(Vector3 position, out int id)
+    {
+        foreach(var prototypeId in Data.Keys)
+        {
+            if (Data[prototypeId].ContainsKey(position))
+            {
+                id = prototypeId;
+                return true;
+            }
+        }
+
+        id = 0;
         return false;
     }
 
@@ -151,10 +163,16 @@ public class EditorCanvas : Singleton<EditorCanvas>
 
     public void RemoveFromData(Vector3 position)
     {
-        foreach (var group in Data.Values)
+        foreach(var id in Data.Keys)
         {
-            if (group.ContainsKey(position))
-                group.Remove(position);
+            if (Data[id].ContainsKey(position))
+            {
+                Data[id].Remove(position);
+                if(Data[id].Count == 0)
+                    Data.Remove(id);
+
+                return;
+            }
         }
     }
 
@@ -183,6 +201,21 @@ public class EditorCanvas : Singleton<EditorCanvas>
             return Data[groupId];
         }
         return new Dictionary<Vector3, GameObject>();
+    }
+
+    public bool TryGetID(Vector3 position, out int prototypeId)
+    {
+        foreach(var id in Data.Keys)
+        {
+            if (Data[id].ContainsKey(position))
+            {
+                prototypeId = id;
+                return true;
+            }
+        }
+
+        prototypeId = 0;
+        return false;
     }
 
     public GameObject Paint(ItemData item, Vector3 position)
@@ -322,14 +355,6 @@ public class EditorCanvas : Singleton<EditorCanvas>
         {
             _isActionAllowed = false;
             actualAction.OnMouseUp();
-            if (IsRecording)
-            {
-                var actionRecord = actualAction.GetLastActionRecord();
-                var actionReverse = actualAction.GetLastActionRecordReverse();
-
-                if(actionRecord != null && actionReverse != null)
-                    MapJournal.Record(actionRecord, actionReverse);
-            }
         }
     }
 

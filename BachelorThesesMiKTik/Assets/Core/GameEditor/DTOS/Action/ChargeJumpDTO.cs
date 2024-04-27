@@ -1,11 +1,7 @@
 ﻿using Assets.Core.GameEditor.AIActions;
 using Assets.Scenes.GameEditor.Core.AIActions;
-using Assets.Scripts.GameEditor.AI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.DTOS.Action

@@ -27,7 +27,7 @@ namespace Assets.Core.GameEditor.AIActions
 
         public static Vector2 GetJumpVector(Vector2 direction, float verticalForce, float horizontalForce)
         {
-            return ( Vector2.up * verticalForce ) + ( direction * horizontalForce );
+            return new Vector2(direction.x * horizontalForce, direction.y * verticalForce);
         }
 
         public static TrajectoryDTO GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 jumpDirection, int depth = 40)

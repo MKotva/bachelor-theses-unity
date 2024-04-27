@@ -20,11 +20,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
         public override ColliderComponent GetComponent()
         {
             var lines = GetLines();
-            if (CheckIfDoNotIntersect(lines))
-            {
-                ErrorOutputManager.Instance.ShowMessage("You cant have collider with crossing lines!", "ObjectCreate");
-                return null;
-            }
+            //if (!CheckIfDoNotIntersect(lines))
+            //{
+            //    ErrorOutputManager.Instance.ShowMessage("You cant have collider with crossing lines!", "ObjectCreate");
+            //    return null;
+            //}
 
             var points = new List<Vector2>();
             foreach (var line in lines) 
@@ -32,28 +32,37 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
                 points.Add(line.Item1);
             }
 
-            return new PolygonColliderComponent(points);
+            return new PolygonColliderComponent(points, counterScale);
         }
 
         public override void SetComponent(ColliderComponent data)
         {
             if(data is PolygonColliderComponent)
             {
+                if (sourcePanels == null)
+                    Awake();
+
+                ClearLines();
                 foreach(var point in ((PolygonColliderComponent)data).Points)
                 {
                     var panelController = AddPanel();
                     panelController.SetPoint(point);
                 }
+
+                ChangePreview();
             }
         }
 
         protected override void Awake()
         {
-            base.Awake();
-            sourcePanels = new List<PositionSoucePanelController>();
-            for(int i = 0; i < 3; i++) 
+            if (sourcePanels == null)
             {
-                AddPanel();
+                base.Awake();
+                sourcePanels = new List<PositionSoucePanelController>();
+                for (int i = 0; i < 3; i++)
+                {
+                    AddPanel();
+                }
             }
         }
 
@@ -64,7 +73,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
             
             var panelController = sourcePanel.GetComponent<PositionSoucePanelController>();
             panelController.OnEdit += ChangePreview;
-            
+
             sourcePanels.Add(panelController);
             return panelController;
         }
@@ -80,14 +89,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
             for(int i = 0; i < lines.Count; i++)
             {
                 var line1 = lines[i];
-                for(int j = i; j < lines.Count; j++)
+                for(int j = i + 1; j < lines.Count; j++)
                 {
                     var line2 = lines[j];
                     if (MathHelper.CheckLineIntersection(line1.Item1, line1.Item2, line2.Item1, line2.Item2))
-                    {
-                        ErrorOutputManager.Instance.ShowMessage("You cant have collider with crossing lines!");
                         return false;
-                    }
                 }
             }
             return true;
@@ -108,6 +114,15 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
 
             lines.Add((previous, sourcePanels[0].GetPoint()));
             return lines;
+        }
+
+        private void ClearLines()
+        {
+            foreach (var line in sourcePanels)
+            {
+                Destroy(line.gameObject);
+            }
+            sourcePanels.Clear();
         }
 
         private void OnExit(int id)

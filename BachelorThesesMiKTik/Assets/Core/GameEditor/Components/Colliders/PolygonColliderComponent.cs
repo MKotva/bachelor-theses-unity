@@ -9,7 +9,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
     {
         public List<Vector2> Points;
 
-        public PolygonColliderComponent(List<Vector2> points)
+        public PolygonColliderComponent(List<Vector2> points, Vector2 scale) : base(scale)
         {
             Points = points;
         }
@@ -17,7 +17,13 @@ namespace Assets.Core.GameEditor.Components.Colliders
         public override void Set(ItemData item)
         {
             var collider = GetOrAddComponent<PolygonCollider2D>(item.Prefab);
-            collider.SetPath(Points.Count - 1, Points);
+            
+            var scaledPoints = new List<Vector2>();
+            foreach(var point in Points)
+            {
+                scaledPoints.Add(new Vector2(point.x * Scale.x, point.y * Scale.y));
+            }
+            collider.SetPath(0, scaledPoints);
             collider.enabled = true;
         }
     }

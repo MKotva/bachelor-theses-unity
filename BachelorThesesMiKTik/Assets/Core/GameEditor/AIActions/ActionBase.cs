@@ -17,7 +17,10 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             map = EditorCanvas.Instance;
             this.performer = performer;
             if (!performer.TryGetComponent(out performerRigidbody))
-                performer.AddComponent<Rigidbody2D>();
+            {
+                performerRigidbody = performer.AddComponent<Rigidbody2D>();
+                performerRigidbody.isKinematic = true;
+            }
             actionCost = cost;
         }
 
@@ -26,8 +29,9 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
         public abstract Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action);
         public abstract List<AgentActionDTO> GetPossibleActions(Vector3 position);
         public abstract void PerformAction(string action);
+        public abstract void FinishAction();
 
-        public virtual void FinishAction() { }
+        public virtual bool ContainsActionCode(string code) { return false; }
 
         public virtual List<Vector3> GetReacheablePositions(Vector3 position)
         {

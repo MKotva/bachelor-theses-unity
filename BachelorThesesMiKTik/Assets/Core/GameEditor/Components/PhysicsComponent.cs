@@ -16,7 +16,14 @@ namespace Assets.Core.GameEditor.Components
         public bool IsYPositionFreeze;
         public bool IsXPositionFreeze;
 
-        public PhysicsComponent() { }
+        public PhysicsComponent() 
+        {
+            ComponentName = "Physics";
+            Mass = 1.0f;
+            Gravity = 1.0f;
+            AngularDrag = 0.05f;
+            LinearDrag = 0;
+        }
 
         public PhysicsComponent(float mass, float gravity, float linearDrag, float angularDrag, bool isZRotationFreeze, bool isYPositionFreeze, bool isXPositionFreeze)
         {
@@ -32,7 +39,7 @@ namespace Assets.Core.GameEditor.Components
 
         public override void Set(ItemData item)
         {
-            GetOrAddComponent<Rigidbody2D>(item.Prefab); 
+            GetOrAddComponent<Rigidbody2D>(item.Prefab);
         }
 
         public override void SetInstance(ItemData item, GameObject instance)

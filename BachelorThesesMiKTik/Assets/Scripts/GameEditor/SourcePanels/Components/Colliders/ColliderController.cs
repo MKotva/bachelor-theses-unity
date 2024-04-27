@@ -18,14 +18,18 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
         [SerializeField] internal Image PreviewImage;
 
         private List<GameObject> instances;
+        internal Vector2 counterScale;
 
         public virtual ColliderComponent GetComponent() { return null; }
         public virtual void SetComponent(ColliderComponent component) { }
 
         public void ChangePreview(SourceReference source)
         {
-            if(source == null) 
+            if (source == null)
+            {
+                PreviewImage.sprite = null;
                 return;
+            }
 
             if (source.Type == SourceType.Image)
                 PreviewImage.sprite = SpriteManager.Instance.GetSprite(source.Name);
@@ -33,6 +37,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
                 PreviewImage.sprite = AnimationsManager.Instance.GetAnimationPreview(source.Name);
             else
                 return;
+
+            CorrectSize(source);
 
             var transform = PreviewImage.GetComponent<RectTransform>();
             transform.sizeDelta = new Vector2(source.XSize, source.YSize);
@@ -68,7 +74,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
             var newCircle = Instantiate(CirclePrefab, PreviewPanel.GetComponent<RectTransform>());
             var circleTransform = newCircle.GetComponent<RectTransform>();
             circleTransform.localPosition = new Vector2(center.x, center.y);
-            circleTransform.sizeDelta = new Vector2(radius, radius);
+            circleTransform.sizeDelta = new Vector2(radius * 2, radius * 2);
 
             instances.Add(newCircle);
             ScalePreview();
@@ -76,8 +82,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
 
         protected virtual void Awake()
         {
-            instances = new List<GameObject>() {};
-            
+            instances = new List<GameObject>() { };
+
             var previewManager = PreviewManager.Instance;
             if (previewManager != null)
                 previewManager.onPreviewChange += ChangePreview;
@@ -160,6 +166,21 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
             var diff = newValue - oldValue;
             if (diff > max)
                 max = diff;
+        }
+
+        private void CorrectSize(SourceReference reference)
+        {
+            if (PreviewImage.sprite != null)
+            {
+                var pixelsPerUnit = PreviewImage.sprite.pixelsPerUnit;
+                var xScale = PreviewImage.sprite.rect.width / reference.XSize;
+                var yScale = PreviewImage.sprite.rect.height / reference.YSize;
+                counterScale = new Vector2(xScale / pixelsPerUnit, yScale / pixelsPerUnit);
+            }
+            else
+            {
+                counterScale = new Vector2(1 / 100, 1 / 100);
+            }
         }
 
         private void ClearInstances()

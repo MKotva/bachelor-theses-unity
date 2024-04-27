@@ -6,10 +6,11 @@ namespace Assets.Core.GameEditor.Components.Colliders
     [Serializable]
     public class CircleColliderComponent : ColliderComponent
     {
-        public Vector2 Center;
         public float Radius;
+        public Vector2 Center;
 
-        public CircleColliderComponent(Vector2 center, float radius)
+        public CircleColliderComponent(Vector2 center, float radius, Vector2 scale)
+            :base(scale)
         {
             Center = center;
             Radius = radius;
@@ -19,7 +20,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
         {
             var collider = GetOrAddComponent<CircleCollider2D>(item.Prefab);
             collider.transform.position = Center;
-            collider.radius = Radius;
+            collider.radius = Radius * Scale.x;
             collider.enabled = true;
         }
     }

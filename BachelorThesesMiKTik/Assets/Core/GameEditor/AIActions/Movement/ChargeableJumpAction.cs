@@ -12,9 +12,9 @@ namespace Assets.Core.GameEditor.AIActions
     {
         private static Dictionary<string, Vector2> actionTypes = new Dictionary<string, Vector2>
         {
-            { "Charge jump left", Vector2.left },
-            { "Charge jump right", Vector2.right },
-            { "Charge jump up", Vector2.up }
+            { "Jump left", new Vector2(-1, 1) },
+            { "Jump right", new Vector2(1, 1) },
+            { "Jump up", Vector2.up }
         };
         public static List<string> ActionTypes
         {
@@ -32,6 +32,8 @@ namespace Assets.Core.GameEditor.AIActions
         private float chargeTimeMax;
         private float chargeTimeStart;
         private Vector2 chargeJumpDirection;
+
+        private bool isPerforming;
 
         private JumperDTO jumperDTO;
 
@@ -133,27 +135,35 @@ namespace Assets.Core.GameEditor.AIActions
 
         public override void PerformAction(string action)
         {
-            if (!actionTypes.ContainsKey(action))
+            if (!actionTypes.ContainsKey(action) || isPerforming)
                 return;
 
             if (JumpHelper.CheckIfStaysOnGround(performer))
             {
                 chargeTimeStart = Time.time;
                 chargeJumpDirection = actionTypes[action];
+                isPerforming = true;
             }
         }
 
         public override void FinishAction()
         {
-            var spentTime = Time.time - chargeTimeStart > chargeTimeMax ? Time.time - chargeTimeStart : chargeTimeMax;
-            var percent = (spentTime / (chargeTimeStart / 100f));
+            var spentTime = Time.time - chargeTimeStart < chargeTimeMax ? Time.time - chargeTimeStart : chargeTimeMax;
+            var percent = (spentTime / (chargeTimeMax / 100f));
+            var additionVertical = ( maxVertical - minVertical ) * ( percent / 100 );
+            var additionHorizontal = ( maxHorizontal - minHorizontal ) * ( percent / 100 );
 
-            var verticalForce = maxVertical * percent < minVertical ? maxVertical * percent : minVertical;
-            var horiziontalForce = maxHorizontal * percent < minHorizontal ? maxHorizontal * percent : minHorizontal;
+            var jumpVector = JumpHelper.GetJumpVector(chargeJumpDirection, minVertical + additionVertical, minHorizontal + additionHorizontal);
+            performerRigidbody.AddForce(jumpVector);
 
+            isPerforming = false;
+            //var verticalForce = maxVertical * percent < minVertical ? maxVertical * percent : minVertical;
+            //var horiziontalForce = maxHorizontal * percent < minHorizontal ? maxHorizontal * percent : minHorizontal;
+        }
 
-            performerRigidbody.AddForce(JumpHelper.GetJumpVector(chargeJumpDirection, verticalForce, horiziontalForce));
-            Vector3.ClampMagnitude(performerRigidbody.velocity, 50);
+        public override bool ContainsActionCode(string code)
+        {
+            return ActionTypes.Contains(code);
         }
         #region PRIVATE
 

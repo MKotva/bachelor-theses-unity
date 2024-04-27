@@ -1,6 +1,6 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.DTOS;
-using System;
+using Assets.Core.GameEditor.DTOS.EditorActions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,6 +16,21 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private Vector3 lastMousePosition;
         private Vector3 cameraOriginPosition;
 
+        private RemoveAction removeAction;
+        private InsertAction insertAction;
+        public MoveAction() : base()
+        {
+            removeAction = new RemoveAction();
+            insertAction = new InsertAction();
+        }
+
+        /// <summary>
+        /// Handles mouse left button click. If click is performed on selected position,
+        /// this method will set actual action to move selection. Otherwise the actual action
+        /// will be camera move.
+        /// actions to journal.
+        /// </summary>
+        /// <param name="button"></param>
         public override void OnMouseDown(MouseButton key)
         {
             if (key == MouseButton.LeftMouse)
@@ -37,23 +52,37 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
+        /// <summary>
+        /// Handles mouse button release by saving performed action data to Journal.
+        /// </summary>
+        /// <param name="button"></param>
         public override void OnMouseUp()
         {
+            if (!isMouseDown)
+                return;
+
             if (moveSelection)
             {
-                SaveToMove();
-                lastActionRecord = new JournalActionDTO($"MS;{startPosition.x}:{startPosition.y};{lastMousePosition.x}:{lastMousePosition.y}", PerformAction);
-                lastActionRecordReverse = new JournalActionDTO($"MS;{lastMousePosition.x}:{lastMousePosition.y};{startPosition.x}:{startPosition.y}", PerformAction);
+                RecordOverride(SaveMove());
+                lastActionRecord = new PositionOperation(MoveSelected, new List<Vector3> { startPosition, lastMousePosition });
+                lastActionRecordReverse = new PositionOperation(MoveSelected, new List<Vector3> { lastMousePosition, startPosition });
                 moveSelection = false;
             }
             else
             {
-                lastActionRecord = new JournalActionDTO($"MC;{startPosition.x}:{startPosition.y};{lastMousePosition.x}:{lastMousePosition.y}", PerformAction);
-                lastActionRecordReverse = new JournalActionDTO($"MC;{lastMousePosition.x}:{lastMousePosition.y};{startPosition.x}:{startPosition.y}", PerformAction);
+                lastActionRecord = new PositionOperation(MoveMapView, new List<Vector3> { startPosition, lastMousePosition });
+                lastActionRecordReverse = new PositionOperation(MoveMapView, new List<Vector3> { lastMousePosition, startPosition });
             }
+
+            SaveRecord(lastActionRecord, lastActionRecordReverse);
             isMouseDown = false;
         }
 
+        /// <summary>
+        /// Called on Unity Update call, based on given position,
+        /// performs move action.
+        /// </summary>
+        /// <param name="mousePosition">Cursor position.</param>
         public override void OnUpdate(Vector3 mousePosition)
         {
             if (isMouseDown)
@@ -62,33 +91,29 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
-        public override void PerformAction(string action)
+        /// <summary>
+        /// Moves objects in selection based on given journal action.
+        /// </summary>
+        /// <param name="action"></param>
+        public void MoveSelected(JournalActionDTO action)
         {
-            var descriptions = action.Split(';');
-            var fromPos = MathHelper.GetVector3FromString(descriptions[1]);
-            var toPos = MathHelper.GetVector3FromString(descriptions[2]);
-
-            if (descriptions[0] == "MS")
+            if (action is PositionOperation)
             {
-                MoveSelected(fromPos, toPos);
-                SaveToMove();
-            }
-            else if (descriptions[0] == "MC")
-            {
-                MoveMapView(fromPos, toPos);
+                var operationAction = (PositionOperation) action;
+                if (operationAction.Positions.Count == 2)
+                {
+                    MoveSelected(operationAction.Positions[0], operationAction.Positions[1]);
+                    SaveMove();
+                }
             }
         }
 
-        private void Move(Vector3 position)
-        {
-            if (moveSelection)
-                MoveSelected(startPosition, position);
-            else
-                MoveMapView(startPosition, position);
-
-            lastMousePosition = position;
-        }
-
+        /// <summary>
+        /// Moves objects in selection to new position. Direction of this translation
+        /// is calculated as difference of given positions.
+        /// </summary>
+        /// <param name="fromPos">Start position</param>
+        /// <param name="toPos">End position</param>
         public void MoveSelected(Vector3 fromPos, Vector3 toPos)
         {
             var xMove = fromPos.x - toPos.x;
@@ -107,11 +132,50 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
             }
         }
 
-        private void SaveToMove()
+        /// <summary>
+        /// Moves camera based on given journal action.
+        /// </summary>
+        /// <param name="action"></param>
+        public void MoveMapView(JournalActionDTO action)
         {
+            if (action is PositionOperation)
+            {
+                var operationAction = (PositionOperation) action;
+                if (operationAction.Positions.Count == 2)
+                {
+                    MoveMapView(operationAction.Positions[0], operationAction.Positions[1]);
+                }
+            }
+        }
+
+        #region PRIVATE
+
+        /// <summary>
+        /// Moves map or selection in direction calculated from difference between
+        /// click position and actual position of cursor.
+        /// </summary>
+        /// <param name="position"></param>
+        private void Move(Vector3 position)
+        {
+            if (moveSelection)
+                MoveSelected(startPosition, position);
+            else
+                MoveMapView(startPosition, position);
+
+            lastMousePosition = position;
+        }
+
+        /// <summary>
+        /// Saves positions of tranlated objects in selection to map Data. If there
+        /// are collisions, old objects are removed and their data are stored to Journal.
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<Vector3, int> SaveMove()
+        {
+            var removedObjects = new Dictionary<Vector3, int>();
+            var newSelected = new Dictionary<Vector3, (GameObject, bool)>();
             if (map.Selected.Count > 0)
             {
-                var movedSelection = new Dictionary<Vector3, (GameObject, bool)>();
                 var keys = map.Selected.Keys.ToArray();
                 for (int i = 0; i < map.Selected.Count; i++)
                 {
@@ -120,13 +184,41 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     var newPosition = objectInfo.Item1.transform.position;
 
                     if (!objectInfo.Item2)
+                    {
+                        if (map.ContainsObjectAtPosition(newPosition, out var id))
+                        {
+                            removedObjects.Add(newPosition, id);
+                        }
                         map.ReplaceData(originPosition, newPosition, objectInfo.Item1);
-                    movedSelection.Add(newPosition, objectInfo);
+                    }
+
+                    newSelected.Add(newPosition, objectInfo);
                 }
-                map.Selected = movedSelection;
+            }
+            map.Selected = newSelected;
+            return removedObjects;
+        }
+
+        /// <summary>
+        /// Creates journal action, if there were any removes objects during selection
+        /// tranlation.
+        /// </summary>
+        /// <param name="removedObjects"></param>
+        private void RecordOverride(Dictionary<Vector3, int> removedObjects)
+        {
+            if (removedObjects.Count > 0)
+            {
+                var removeRecord = new PositionOperation(removeAction.Remove, removedObjects.Keys.ToList());
+                var insertRecord = new ItemOperation(insertAction.Insert, removedObjects);
+                SaveRecord(removeRecord, insertRecord);
             }
         }
 
+        /// <summary>
+        /// Moves camera in direction of difference between two vectors. 
+        /// </summary>
+        /// <param name="fromPosition"></param>
+        /// <param name="position"></param>
         private void MoveMapView(Vector3 fromPosition, Vector3 position)
         {
             var xMove = ( fromPosition.x - position.x ) * 0.75f;
@@ -134,5 +226,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
             map.CameraObj.transform.position = new Vector3(cameraOriginPosition.x + xMove, cameraOriginPosition.y + yMove, cameraOriginPosition.z);
         }
+
+        #endregion
     }
 }

@@ -10,7 +10,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 {
     public class MyAI : EnviromentObject
     {
-        public AIAgent Agent { get; set; }
+        public AIObjectController Agent { get; set; }
         private ItemManager itemManager;
         private EditorCanvas editor;
 

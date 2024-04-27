@@ -1,5 +1,4 @@
 ﻿using Assets.Core.GameEditor;
-using Assets.Core.GameEditor.Components;
 using Assets.Core.GameEditor.Components.Colliders;
 using System.Collections.Generic;
 using TMPro;
@@ -17,7 +16,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
             var xSize = MathHelper.GetFloat(SizeX.text, 1);
             var ySize = MathHelper.GetFloat(SizeY.text, 1);
 
-            return new BoxColliderComponent(xSize, ySize);
+            return new BoxColliderComponent(xSize, ySize, counterScale);
         }
 
         public override void SetComponent(ColliderComponent data)

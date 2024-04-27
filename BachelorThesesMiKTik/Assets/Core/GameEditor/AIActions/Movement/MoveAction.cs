@@ -98,6 +98,13 @@ namespace Assets.Scripts.GameEditor.AI
             }
         }
 
+        public override void FinishAction() {}
+
+        public override bool ContainsActionCode(string code)
+        {
+            return ActionTypes.Contains(code);
+        }
+
         private Vector3 GetPositionFromParam(Vector3 position, string param)
         {
             var cellSize = map.GridLayout.cellSize;

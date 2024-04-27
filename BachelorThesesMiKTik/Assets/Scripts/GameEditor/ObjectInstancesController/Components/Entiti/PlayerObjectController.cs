@@ -43,10 +43,7 @@ namespace Assets.Scripts.GameEditor.Entiti
             IsPlaying = false;
         }
 
-        public void Enter()
-        {
-
-        }
+        public void Enter() {}
 
         public void Exit()
         {
@@ -84,9 +81,12 @@ namespace Assets.Scripts.GameEditor.Entiti
                 {
                     foreach (var action in actions)
                     {
-                        action.PerformAction(selectedAction.ActionType);
-                        if (!actionsFinishers.ContainsKey(selectedAction.Binding))
-                            actionsFinishers.Add(selectedAction.Binding, action.FinishAction);
+                        if (action.ContainsActionCode(selectedAction.ActionType))
+                        {
+                            action.PerformAction(selectedAction.ActionType);
+                            if (!actionsFinishers.ContainsKey(selectedAction.Binding))
+                                actionsFinishers.Add(selectedAction.Binding, action.FinishAction);
+                        }
                     }
                 }
             }
@@ -97,6 +97,7 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         private bool HandlePressedKeys(List<ActionBindDTO> bindings, out ActionBindDTO action)
         {
+            ActionBindDTO maxBinding = null;
             foreach (var actionBind in bindings)
             {
                 bool isEqual = true;
@@ -110,12 +111,20 @@ namespace Assets.Scripts.GameEditor.Entiti
                 }
                 if (isEqual)
                 {
-                    action = actionBind;
-                    return true;
+                    if (maxBinding == null)
+                        maxBinding = actionBind;
+                    else if (maxBinding.Binding.Count < actionBind.Binding.Count)
+                        maxBinding = actionBind;
                 }
             }
-            action = null;
-            return false;
+
+            if (maxBinding == null)
+            {
+                action = null;
+                return false;
+            }
+            action = maxBinding;
+            return true;
         }
 
         private void HandleReleasedKeys()
@@ -126,7 +135,7 @@ namespace Assets.Scripts.GameEditor.Entiti
                 bool isEqual = true;
                 foreach (var key in binding)
                 {
-                    if (!Input.GetKeyUp(key))
+                    if (Input.GetKey(key))
                     {
                         isEqual = false;
                         break;
@@ -140,7 +149,7 @@ namespace Assets.Scripts.GameEditor.Entiti
                 }
             }
 
-            foreach(var key in executed)
+            foreach (var key in executed)
                 actionsFinishers.Remove(key);
         }
         #endregion
