@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.GameEditor.Managers;
+﻿using Assets.Core.GameEditor.AIActions;
+using Assets.Scripts.GameEditor.Managers;
+using Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,7 +9,7 @@ namespace Assets.Scripts.GameEditor.AI
 {
     public class AIPanelController : MonoBehaviour
     {
-        private AIObjectController agent;
+        private ActionsAgent agent;
         private List<GameObject> markers;
         private EditorCanvas map;
 
@@ -27,10 +29,12 @@ namespace Assets.Scripts.GameEditor.AI
         {
             TryInitialize();
 
-            foreach (var action in agent.AI.Actions)
+            foreach (var action in agent.Actions)
             {
                 if (action is JumpAction)
-                    markers = ( (JumpAction) action ).PrintAllPossibleJumps(agent.transform.position);
+                    markers = ((JumpAction) action).PrintAllPossibleJumps(agent.transform.position);
+                else if(action is ChargeableJumpAction)
+                    markers = ((ChargeableJumpAction) action).PrintAllPossibleJumps(agent.transform.position);
             }
         }
 
@@ -39,7 +43,7 @@ namespace Assets.Scripts.GameEditor.AI
             if (!TryInitialize())
                 return;
 
-            if (TryFindEndPosition("SimulationEndpoint", out var endpoint))
+            if (TryFindEndPosition("Finish", out var endpoint))
                 markers = agent.PintMoveTo(endpoint);
         }
 
@@ -48,7 +52,7 @@ namespace Assets.Scripts.GameEditor.AI
             if (!TryInitialize())
                 return;
 
-            if(TryFindEndPosition("SimulationEndpoint", out var endpoint))
+            if(TryFindEndPosition("Finish", out var endpoint))
                 agent.MoveTo(endpoint);
         }
 
@@ -74,12 +78,12 @@ namespace Assets.Scripts.GameEditor.AI
             return false;
         }
 
-        private bool TryFindSelectedObject(out AIObjectController aIAgent)
+        private bool TryFindSelectedObject(out ActionsAgent aIAgent)
         {
             if (map.Selected.Count == 1)
             {
                 var selectedObject = map.GetObjectAtPosition(map.Selected.Keys.First());
-                if (selectedObject.TryGetComponent(out AIObjectController agent))
+                if (selectedObject.TryGetComponent(out ActionsAgent agent))
                 {
                     aIAgent = agent;
                     return true;

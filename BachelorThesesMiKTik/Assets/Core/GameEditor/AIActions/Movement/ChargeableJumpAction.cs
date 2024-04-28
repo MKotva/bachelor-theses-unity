@@ -4,7 +4,9 @@ using Assets.Scenes.GameEditor.Core.AIActions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Assets.Core.GameEditor.AIActions
 {
@@ -60,17 +62,17 @@ namespace Assets.Core.GameEditor.AIActions
             jumperDTO = new JumperDTO()
             {
                 ColliderSize = boxColliderSize,
-                GravityAcceleration = Physics2D.gravity * performerRigidbody.gravityScale * MathHelper.Pow(timeTick, 2),
-                Drag = 1f - timeTick * performerRigidbody.drag
+                GravityAcceleration = Physics2D.gravity * performerRigidbody.gravityScale * ( MathHelper.Pow(timeTick, 2) ),
+                Drag = 1f - timeTick * performerRigidbody.drag,
+                Mass = performerRigidbody.mass,
+                TimeTick = timeTick
             };
         }
 
         public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
         {
             var reacheablePositions = new List<AgentActionDTO>();
-
-            var trajectories = new List<TrajectoryDTO>(GetTrajectories(position, Vector2.right));
-            trajectories.ForEach(x => GetTrajectories(position, Vector2.left).Add(x));
+            var trajectories = GetAllPossibleTrajestories(position);
 
             foreach (var item in trajectories)
             {
@@ -121,9 +123,7 @@ namespace Assets.Core.GameEditor.AIActions
 
         public List<GameObject> PrintAllPossibleJumps(Vector3 position)
         {
-            var trajectories = new List<TrajectoryDTO>(GetTrajectories(position, Vector2.right));
-            trajectories.ForEach(x => GetTrajectories(position, Vector2.left).Add(x));
-
+            var trajectories = GetAllPossibleTrajestories(position);
             var markers = new List<GameObject>();
             foreach (var trajectory in trajectories)
             {
@@ -167,12 +167,23 @@ namespace Assets.Core.GameEditor.AIActions
         }
         #region PRIVATE
 
+        private List<TrajectoryDTO> GetAllPossibleTrajestories(Vector2 startPosition)
+        {
+            var trajectories = new List<TrajectoryDTO>();
+            foreach (var direction in actionTypes.Values)
+            {
+                GetTrajectories(startPosition, direction).ForEach(x => trajectories.Add(x));
+            }
+
+            return trajectories;
+        }
+
         private List<TrajectoryDTO> GetTrajectories(Vector2 startPosition, Vector2 jumpDirection)
         {
             var trajectories = new List<TrajectoryDTO>();
 
             var power = new Vector2(maxHorizontal, maxVertical);
-            var adjustment = new Vector2(maxHorizontal * 0.05f, maxVertical * 0.05f);
+            var adjustment = new Vector2(maxHorizontal * 0.1f, maxVertical * 0.1f);
 
             while (power.x > minHorizontal && power.y > minVertical)
             {

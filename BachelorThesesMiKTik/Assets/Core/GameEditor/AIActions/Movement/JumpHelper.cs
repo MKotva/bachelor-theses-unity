@@ -35,16 +35,16 @@ namespace Assets.Core.GameEditor.AIActions
             if(!CheckDependecies())
                 return null;
 
-            var trajectoryPoints = new List<Vector3>();
-
-            var actualDirection = jumpDirection;
             var position = startPos;
+            var trajectoryPoints = new List<Vector3>();
+            var actualDirection = (jumpDirection / jumper.Mass) * jumper.TimeTick;
+
             var previousPos = position;
             var previousDir = actualDirection;
 
             while (trajectoryPoints.Count < depth)
             {
-                actualDirection = (actualDirection + jumper.GravityAcceleration) * jumper.Drag;
+                actualDirection = (((actualDirection + jumper.GravityAcceleration) * jumper.Drag) / jumper.Mass) / jumper.TimeTick;
                 position = MathHelper.Add(position, actualDirection);
 
                 Vector2 previousHitPosition;

@@ -2,12 +2,14 @@
 using Assets.Core.GameEditor.DTOS.SourcePanels;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
+using Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.Entiti
 {
-    public class PlayerObjectController : MonoBehaviour, IObjectController
+    public class PlayerObjectController : ActionsAgent, IObjectController
     {
         private PlayerComponent playerSetting;
         private List<ActionBase> actions;
@@ -24,6 +26,8 @@ namespace Assets.Scripts.GameEditor.Entiti
             playerSetting = component;
             actions = component.Actions.GetAction(gameObject);
             actionsFinishers = new Dictionary<List<KeyCode>, ActionFinishHandler>();
+
+            Actions = playerSetting.Actions.GetAction(gameObject);
             IsInitDone = false;
         }
 
@@ -51,8 +55,9 @@ namespace Assets.Scripts.GameEditor.Entiti
         }
 
         #region PRIVATE
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             if (TryGetComponent<ObjectController>(out var controller))
             {
                 controller.Components.Add(typeof(PlayerObjectController), this);

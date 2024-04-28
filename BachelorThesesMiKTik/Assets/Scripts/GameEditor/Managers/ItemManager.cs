@@ -151,17 +151,17 @@ namespace Assets.Scripts.GameEditor.Managers
         /// </summary>
         /// <param name="itemName"></param>
         /// <param name="id">Out parameter with item id.</param>
-        /// <returns>True if </returns>
+        /// <returns>True if exists </returns>
         public bool TryFindIdByName(string itemName, out int id)
         {
             if (ItemsNameIdPair.ContainsKey(itemName))
             {
                 id = ItemsNameIdPair[itemName];
-                return false;
+                return true;
             }
 
-            id = ItemsNameIdPair[itemName];
-            return true;
+            id = 0;
+            return false;
         }
 
         protected override void Awake()

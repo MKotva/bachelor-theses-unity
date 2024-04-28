@@ -1,20 +1,11 @@
 ﻿using Assets.Core.GameEditor.Components;
-using Assets.Core.GameEditor.DTOS;
-using Assets.Scenes.GameEditor.Core.AIActions;
-using Assets.Scripts.GameEditor.AI.PathFind;
-using Assets.Scripts.GameEditor.Entiti;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
-using System.Collections.Generic;
-using UnityEngine;
+using Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti;
 
 namespace Assets.Scripts.GameEditor.AI
 {
-    public class AIObjectController : MonoBehaviour, IObjectController
+    public class AIObjectController : ActionsAgent, IObjectController
     {
-        public EditorCanvas map;
-        public AIObject AI;
-        public IAIPathFinder pathFinder;
-
         private AIComponent aiSetting;
         private bool wasPlayed;
         private bool isPlaying;
@@ -22,7 +13,7 @@ namespace Assets.Scripts.GameEditor.AI
         public void Initialize(AIComponent component)
         {
             aiSetting = component;
-            AI = new AIObject(gameObject, component.Action.GetAction(gameObject));
+            Actions = aiSetting.Action.GetAction(Performer);
         }
 
         public void Play()
@@ -47,62 +38,14 @@ namespace Assets.Scripts.GameEditor.AI
             isPlaying = false;
         }
 
-        public virtual void EnqueAction(List<AgentActionDTO> agentActions)
-        {
-            AI.AddActions(agentActions);
-        }
-
-        public virtual void ClearActions()
-        {
-            AI.Actions.Clear();
-        }
-
-        public void AddActionType(ActionBase actionBase)
-        {
-            AI.Actions.Add(actionBase);
-        }
-
-        public List<AgentActionDTO> FindPath(Vector3 endPosition)
-        {
-            return pathFinder.FindPath(gameObject.transform.position, endPosition, AI.Actions);
-        }
-
-        public void MoveTo(Vector3 endPosition)
-        {
-            ClearActions();
-            var path = pathFinder.FindPath(gameObject.transform.position, endPosition, AI.Actions);
-            if (path != null)
-            {
-                EnqueAction(path);
-            }
-        }
-
-        public List<GameObject> PintMoveTo(Vector3 endPosition)
-        {
-            var path = pathFinder.FindPath(gameObject.transform.position, endPosition, AI.Actions);
-            return AgentActionDTO.Print(path);
-        }
-
-        public List<GameObject> PrintPossibleActions()
-        {
-            List<GameObject> markers = new List<GameObject>();
-            foreach (var action in AI.Actions)
-            {
-                action.PrintReacheables(gameObject.transform.position).ForEach(x => markers.Add(x));
-            }
-            return markers;
-        }
-
         #region PRIVATE
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();         
             if (TryGetComponent<ObjectController>(out var controller))
             {
-                controller.Components.Add(typeof(ColliderController), this);
+                controller.Components.Add(typeof(AIObjectController), this);
             }
-
-            map = EditorCanvas.Instance;
-            pathFinder = new AStar();
         }
 
         private void FixedUpdate()
@@ -113,10 +56,7 @@ namespace Assets.Scripts.GameEditor.AI
             if (aiSetting.OnUpdateAction != null)
                 aiSetting.OnUpdateAction.Execute(gameObject);
 
-            if (AI != null)
-            {
-                AI.PerformActions();
-            }
+            PerformActions();
         }
         #endregion
     }
