@@ -7,6 +7,7 @@ public class PlayModePanelController : MonoBehaviour
 {
     [SerializeField] Button PlayButton;
     [SerializeField] TMP_Text ButtonText;
+    [SerializeField] TMP_Text OutputConsole;
 
     private bool IsPlaying;
 
@@ -28,6 +29,16 @@ public class PlayModePanelController : MonoBehaviour
         GameManager.Instance.ExitPlayMode();
     }
 
+    public void Initialize()
+    {
+        SwitchPlayPauseButton(true);
+        OutputConsole.text = "";
+
+        var outputManager = OutputManager.Instance;
+        if(outputManager != null)
+            outputManager.ClearMessages();
+    }
+
     private void SwitchPlayPauseButton(bool isPlaying)
     {
         if (isPlaying)
@@ -47,7 +58,7 @@ public class PlayModePanelController : MonoBehaviour
 
     private void OnDestroy()
     {
-        var instance = ErrorOutputManager.Instance;
+        var instance = OutputManager.Instance;
         if (instance != null)
             instance.RemoveListener("Debug panel");
     }

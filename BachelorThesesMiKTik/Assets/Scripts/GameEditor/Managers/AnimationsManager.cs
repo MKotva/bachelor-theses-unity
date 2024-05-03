@@ -49,7 +49,7 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 if (!( data is AnimationSourceDTO ))
                 {
-                    ErrorOutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!", "Animations Manager");
+                    OutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!", "Animations Manager");
                     continue;
                 }
                 tasks.Add(AddAnimation((AnimationSourceDTO) data));
@@ -70,7 +70,7 @@ namespace Assets.Scripts.GameEditor.Managers
             var name = animationData.Name;
             if(AnimationData.ContainsKey(name)) 
             {
-                ErrorOutputManager.Instance.ShowMessage($"Animation with given name: {name} already exists!", "Animations Manager");
+                OutputManager.Instance.ShowMessage($"Animation with given name: {name} already exists!", "Animations Manager");
                 return false;
             }
             
@@ -192,9 +192,10 @@ namespace Assets.Scripts.GameEditor.Managers
                 return;
 
             var sourceReference = controller.SourceReference;
-            if (sourceReference.Name != "")
+            if (sourceReference != null)
             {
-                RemoveActiveController(sourceReference.Name, controller);
+                if(sourceReference.Name != "")
+                    RemoveActiveController(sourceReference.Name, controller);
             }
 
             controller.SetCustomAnimation(Animations[source.Name], source, shouldLoop, onAwake);
@@ -253,6 +254,9 @@ namespace Assets.Scripts.GameEditor.Managers
         /// <returns></returns>
         public bool ContainsActiveController(string name, int instanceID) 
         {
+            if (!AnimationControllers.ContainsKey(name))
+                return false;
+
             if (AnimationControllers[name].ContainsKey(instanceID))
                 return true;
             return false;

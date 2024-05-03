@@ -1,4 +1,3 @@
-using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -141,7 +140,7 @@ public class ItemCreatorController : PopUpController
         if ((data.Name == "AI Control" && active.ContainsKey("Player Control")) ||
             (data.Name == "Player Control") && active.ContainsKey("AI Control"))
         {
-                ErrorOutputManager.Instance.ShowMessage("You can not add AI and Player components at the same time.");
+                OutputManager.Instance.ShowMessage("You can not add AI and Player components at the same time.");
                 return false;
         }
         return true;

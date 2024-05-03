@@ -5,6 +5,7 @@ using Assets.Core.GameEditor.DTOS;
 using Assets.Core.SimpleCompiler.Compilation;
 using Assets.Core.SimpleCompiler.Compilation.CodeBase;
 using Assets.Core.SimpleCompiler.Exceptions;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Assets.Core.SimpleCompiler
@@ -18,21 +19,6 @@ namespace Assets.Core.SimpleCompiler
         public string Code { get; set; }
 
         /// <summary>
-        /// Code text output
-        /// </summary>
-        public string Output { get; set; } = "";
-
-        /// <summary>
-        /// Code error output
-        /// </summary>
-        public string ErrorOutput { get; set; } = "";
-
-        /// <summary>
-        /// Sets maximum string capacity for output
-        /// </summary>
-        public uint OutputCapacity { get; private set; } = 1000000;
-
-        /// <summary>
         /// List of connected references to provided API.
         /// </summary>
         public List<EnviromentObjectDTO> EnviromentObjects { get; private set; }
@@ -43,33 +29,58 @@ namespace Assets.Core.SimpleCompiler
         public List<GlobalVariableDTO> GlobalVariables { get; private set; }
 
         /// <summary>
+        /// Code text output
+        /// </summary>
+        [JsonIgnore]
+        public string Output { get; set; } = "";
+
+        /// <summary>
+        /// Code error output
+        /// </summary>
+        [JsonIgnore]
+        public string ErrorOutput { get; set; } = "";
+
+        /// <summary>
+        /// Sets maximum string capacity for output
+        /// </summary>
+        [JsonIgnore]
+        public uint OutputCapacity { get; private set; } = 1000000;
+
+        /// <summary>
         /// Context for code, such as connected objects, global variables etc.
         /// </summary>
-        private CodeContext Context { get; set; }
+        [JsonIgnore]
+        private CodeContext Context;
 
         /// <summary>
         /// Compiled code
         /// </summary>
+        [JsonIgnore]
         private CodeBlock Main { get; set; }
-
 
         public SimpleCode(string code, List<EnviromentObjectDTO> enviroment, List<GlobalVariableDTO> globalVariables)
         {
             Code = code;
             EnviromentObjects = enviroment;
             GlobalVariables = globalVariables;
-            Context = new CodeContext(enviroment, globalVariables);
-            Compile();
+        }
+
+        [JsonConstructor]
+        private SimpleCode()
+        {
+            Code = "";
+            EnviromentObjects = new List<EnviromentObjectDTO>();
+            GlobalVariables = new List<GlobalVariableDTO>();
         }
 
         /// <summary>
         /// Compiles given test to SimpleCode.
         /// </summary>
-        private void Compile()
+        public void Compile()
         {
             try
             {
-                if(Context == null) 
+                if (Context == null)
                 {
                     LoadContext();
                 }
@@ -79,7 +90,7 @@ namespace Assets.Core.SimpleCompiler
             catch (CompilerException e)
             {
                 ErrorOutput = $"Error in section Main:\n {e.Message}!";
-                ErrorOutputManager.Instance.ShowMessage(Output);
+                OutputManager.Instance.ShowMessage(Output);
             }
         }
 
@@ -89,7 +100,7 @@ namespace Assets.Core.SimpleCompiler
         /// </summary>
         public void Execute(GameObject instance)
         {
-            ErrorOutputManager.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
+            OutputManager.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
             if (Main == null)
             {
                 Compile();
@@ -105,34 +116,10 @@ namespace Assets.Core.SimpleCompiler
                 catch (CompilerException e)
                 {
                     ErrorOutput += $"Error in section Main:\n {e.Message}!";
-                    ErrorOutputManager.Instance.ShowMessage(Output);
+                    OutputManager.Instance.ShowMessage(Output);
                 }
             }
-            ErrorOutputManager.Instance.RemoveListener("Compiler");
-        }
-
-        //TODO: Remove after finished
-        public void TestExecute()
-        {
-            ErrorOutputManager.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
-            if (Main == null)
-            {
-                ErrorOutput += "Code cant be executed because was not compiled!";
-            }
-            else
-            {
-                try
-                {
-                    Context.LocalVariables.Clear();
-                    Main.Execute();
-                }
-                catch (CompilerException e)
-                {
-                    ErrorOutput += $"Error in section Main:\n {e.Message}!";
-                    ErrorOutputManager.Instance.ShowMessage(Output);
-                }
-            }
-            ErrorOutputManager.Instance.RemoveListener("Compiler");
+            OutputManager.Instance.RemoveListener("Compiler");
         }
 
         /// <summary>
@@ -146,6 +133,10 @@ namespace Assets.Core.SimpleCompiler
             Output += $"{message}\n";
         }
 
+        /// <summary>
+        /// Sets GameObject instance to dependency class
+        /// </summary>
+        /// <param name="instance">Instance of gameobject</param>
         private void SetDependecies(GameObject instance)
         {
             foreach(var dependency in Context.EnviromentObjects)
@@ -159,13 +150,20 @@ namespace Assets.Core.SimpleCompiler
             }
         }
 
+        /// <summary>
+        /// Creates code context
+        /// </summary>
+        /// <exception cref="CompilationException"></exception>
         private void LoadContext()
         {
-            if (EnviromentObjects != null && GlobalVariables != null) 
+            if (EnviromentObjects != null && GlobalVariables != null)
             {
                 Context = new CodeContext(EnviromentObjects, GlobalVariables);
             }
-            throw new CompilationException("Context loading exception! Enviroment objects or Global variables missing!");
+            else
+            {
+                throw new CompilationException("Context loading exception! Enviroment objects or Global variables missing!");
+            }
         }
     }
 }

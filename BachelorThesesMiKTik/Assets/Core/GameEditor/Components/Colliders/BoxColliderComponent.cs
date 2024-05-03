@@ -18,6 +18,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
 
         public override void Set(ItemData item)
         {
+            base.Set(item);
             var collider = GetOrAddComponent<BoxCollider2D>(item.Prefab);
 
             var x = (XSize * Scale.x);
@@ -25,6 +26,19 @@ namespace Assets.Core.GameEditor.Components.Colliders
 
             collider.size = new Vector2(x, y);
             collider.enabled = true;
+
+            
+            foreach(var component in item.Components)
+            {
+                if (component.ComponentName == "Player Control" || component.ComponentName == "AI Control")
+                    return;
+            }
+
+            var rigid = item.Prefab.AddComponent<Rigidbody2D>();
+            rigid.isKinematic = true;
+
+            item.Prefab.AddComponent<CompositeCollider2D>();
+            collider.usedByComposite = true;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Assets.Scripts.GameEditor.OutputControllers
 
         private void Start()
         {
-            var errorOutputManager = ErrorOutputManager.Instance;
+            var errorOutputManager = OutputManager.Instance;
             if (errorOutputManager != null) 
             {
                 var instanceID = gameObject.GetInstanceID().ToString();
@@ -30,7 +30,7 @@ namespace Assets.Scripts.GameEditor.OutputControllers
 
         private void OnDestroy()
         {
-            var errorOutputManager = ErrorOutputManager.Instance;
+            var errorOutputManager = OutputManager.Instance;
             if (errorOutputManager != null)
             {
                 var instanceID = gameObject.GetInstanceID().ToString();

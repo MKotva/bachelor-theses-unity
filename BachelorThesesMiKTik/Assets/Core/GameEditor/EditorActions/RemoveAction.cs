@@ -140,7 +140,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         private bool Remove(Vector3 position, out int removedID)
         {
             position = map.GetCellCenterPosition(position);
-            if (map.ContainsObjectAtPosition(position, out var id))
+            if (map.ContainsObjectAtPosition(position, out int id))
             {
                 map.Erase(map.Data[id][position], position);
                 removedID = id;

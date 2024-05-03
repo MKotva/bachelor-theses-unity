@@ -59,7 +59,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage("General component parsing error!", "ObjectCreate");
+                OutputManager.Instance.ShowMessage("General component parsing error!", "ObjectCreate");
             }
         }
 

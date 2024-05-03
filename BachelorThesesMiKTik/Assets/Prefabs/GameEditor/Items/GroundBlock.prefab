@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4652379409545840915}
   - component: {fileID: 4652379409729646181}
   - component: {fileID: -4119390917875015544}
+  - component: {fileID: 4507894925909482161}
   m_Layer: 7
   m_Name: GroundBlock
   m_TagString: Box
@@ -97,7 +98,7 @@ BoxCollider2D:
   m_Material: {fileID: 6200000, guid: 0c582638b5110ee439fd24cd4c25e639, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_UsedByComposite: 1
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0.0075000003, y: 0, z: 0.015000001, w: 0.01500269}
@@ -111,3 +112,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
+--- !u!114 &4507894925909482161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4652379409729646180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a7e81d7e36520344a0e3aa04aeb2bb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Dirt
+  GroupName: Boxes

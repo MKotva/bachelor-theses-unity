@@ -4,13 +4,13 @@ using Assets.Scenes.GameEditor.Core.AIActions;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti;
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.Entiti
 {
     public class PlayerObjectController : ActionsAgent, IObjectController
     {
+        private GameManager gameManager;
         private PlayerComponent playerSetting;
         private List<ActionBase> actions;
 
@@ -31,6 +31,7 @@ namespace Assets.Scripts.GameEditor.Entiti
             IsInitDone = false;
         }
 
+        #region IObjectMethods
         public void Play()
         {
             if (!WasPlayed)
@@ -47,12 +48,19 @@ namespace Assets.Scripts.GameEditor.Entiti
             IsPlaying = false;
         }
 
-        public void Enter() {}
+        public void Enter() 
+        {
+            if(gameManager != null) 
+            {
+                gameManager.AddPlayer(gameObject.GetInstanceID(), gameObject);
+            }
+        }
 
         public void Exit()
         {
             IsPlaying = false;
         }
+        #endregion
 
         #region PRIVATE
         protected override void Awake()
@@ -62,6 +70,8 @@ namespace Assets.Scripts.GameEditor.Entiti
             {
                 controller.Components.Add(typeof(PlayerObjectController), this);
             }
+
+            gameManager = GameManager.Instance;
         }
 
         private void FixedUpdate()
@@ -98,8 +108,16 @@ namespace Assets.Scripts.GameEditor.Entiti
 
             if (playerSetting.OnUpdateAction != null)
                 playerSetting.OnUpdateAction.Execute(gameObject);
+
+            CheckFall();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bindings"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
         private bool HandlePressedKeys(List<ActionBindDTO> bindings, out ActionBindDTO action)
         {
             ActionBindDTO maxBinding = null;
@@ -156,6 +174,18 @@ namespace Assets.Scripts.GameEditor.Entiti
 
             foreach (var key in executed)
                 actionsFinishers.Remove(key);
+        }
+
+        private void CheckFall()
+        {
+            if(gameManager != null)
+            {
+                if (gameObject.transform.position.y < gameManager.LowestYPoint - 10)
+                {
+                    gameManager.RemovePlayer(gameObject.GetInstanceID());
+                    gameObject.SetActive(false);
+                }
+            }
         }
         #endregion
     }

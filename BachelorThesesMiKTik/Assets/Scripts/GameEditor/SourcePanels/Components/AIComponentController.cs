@@ -21,7 +21,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage("AI component parsing error!", "ObjectCreate");
+                OutputManager.Instance.ShowMessage("AI component parsing error!", "ObjectCreate");
             }
         }
 

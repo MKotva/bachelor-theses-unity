@@ -9,9 +9,8 @@ namespace Assets.Scripts.GameEditor.Entiti
         public string Name;
         public string GroupName;
 
-        private BoxCollider2D boxCollider;
+        private Collider2D objectCollider;
         private ColliderComponent colliderSettings;
-        private PolygonCollider2D polygonCollider;
 
         public void Initialize(string name, string groupName, ColliderComponent colliderSetting)
         {
@@ -20,22 +19,25 @@ namespace Assets.Scripts.GameEditor.Entiti
             colliderSettings = colliderSetting;
         }
 
+        #region IObjectMethods
         public void Play()
         {
-            boxCollider.enabled = true;
+            objectCollider.enabled = true;
         }
 
         public void Pause()
         {
-            boxCollider.enabled = false;
+            objectCollider.enabled = false;
         }
 
         public void Enter() {}
 
         public void Exit() 
         {
-            boxCollider.enabled = false;
+            objectCollider.enabled = false;
         }
+
+        #endregion
 
         //TODO: Consider construction of data structure for faster name check: MB: List<Dictionary<string, Code>>
         private void OnCollisionEnter2D(Collision2D collision)
@@ -58,12 +60,14 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         private void Awake()
         {
+            colliderSettings = new ColliderComponent();
+
             if (TryGetComponent<ObjectController>(out var controller))
             {
                 controller.Components.Add(typeof(ColliderController), this);
-                if (!TryGetComponent(out boxCollider))
-                    boxCollider = gameObject.AddComponent<BoxCollider2D>();
-                boxCollider.enabled = false;
+                if (!TryGetComponent(out objectCollider))
+                    objectCollider = gameObject.AddComponent<BoxCollider2D>();
+                objectCollider.enabled = false;
             }
         }
     }

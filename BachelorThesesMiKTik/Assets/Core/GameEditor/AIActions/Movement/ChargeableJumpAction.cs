@@ -4,9 +4,7 @@ using Assets.Scenes.GameEditor.Core.AIActions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Assets.Core.GameEditor.AIActions
 {
@@ -49,18 +47,19 @@ namespace Assets.Core.GameEditor.AIActions
             maxHorizontal = horizontalMax;
             chargeTimeMax = maxChargeTime;
 
-            var boxCollider = performer.GetComponent<BoxCollider2D>();
+            var collider = performer.GetComponent<Collider2D>();
 
-            if (!boxCollider.enabled)
-                boxCollider.enabled = true;
+            if (!collider.enabled)
+                collider.enabled = true;
 
-            var boxColliderSize = new Vector2(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
-            boxCollider.enabled = false;
+            var boxColliderSize = new Vector2(collider.bounds.extents.x, collider.bounds.extents.y);
+            collider.enabled = false;
 
 
             var timeTick = ( Time.fixedDeltaTime / Physics2D.velocityIterations ) * 10;
             jumperDTO = new JumperDTO()
             {
+                Performer = performer,
                 ColliderSize = boxColliderSize,
                 GravityAcceleration = Physics2D.gravity * performerRigidbody.gravityScale * ( MathHelper.Pow(timeTick, 2) ),
                 Drag = 1f - timeTick * performerRigidbody.drag,
@@ -69,7 +68,7 @@ namespace Assets.Core.GameEditor.AIActions
             };
         }
 
-        public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
+        public override List<AgentActionDTO> GetPossibleActions(Vector2 position)
         {
             var reacheablePositions = new List<AgentActionDTO>();
             var trajectories = GetAllPossibleTrajestories(position);
@@ -116,12 +115,12 @@ namespace Assets.Core.GameEditor.AIActions
             return true;
         }
 
-        public override List<GameObject> PrintReacheables(Vector3 startPosition)
+        public override List<GameObject> PrintReacheables(Vector2 startPosition)
         {
             return map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, GetReacheablePositions(startPosition));
         }
 
-        public List<GameObject> PrintAllPossibleJumps(Vector3 position)
+        public List<GameObject> PrintAllPossibleJumps(Vector2 position)
         {
             var trajectories = GetAllPossibleTrajestories(position);
             var markers = new List<GameObject>();
@@ -157,8 +156,6 @@ namespace Assets.Core.GameEditor.AIActions
             performerRigidbody.AddForce(jumpVector);
 
             isPerforming = false;
-            //var verticalForce = maxVertical * percent < minVertical ? maxVertical * percent : minVertical;
-            //var horiziontalForce = maxHorizontal * percent < minHorizontal ? maxHorizontal * percent : minHorizontal;
         }
 
         public override bool ContainsActionCode(string code)

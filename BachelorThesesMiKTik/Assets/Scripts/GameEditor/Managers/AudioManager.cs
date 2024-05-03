@@ -50,7 +50,7 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 if (!( data is AudioSourceDTO ))
                 {
-                    ErrorOutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!", "Audio manager");
+                    OutputManager.Instance.ShowMessage("Data loading error, data might be corrupted!", "Audio manager");
                     continue;
                 }
                 tasks.Add(AddAudioClip((AudioSourceDTO)data));
@@ -71,7 +71,7 @@ namespace Assets.Scripts.GameEditor.Managers
             var name = audioSourceDTO.Name;
             if (AudioData.ContainsKey(name))
             {
-                ErrorOutputManager.Instance.ShowMessage($"Audio clip with given name: {name} already exists!", "Audio manager");
+                OutputManager.Instance.ShowMessage($"Audio clip with given name: {name} already exists!", "Audio manager");
                 return false;
             }
 

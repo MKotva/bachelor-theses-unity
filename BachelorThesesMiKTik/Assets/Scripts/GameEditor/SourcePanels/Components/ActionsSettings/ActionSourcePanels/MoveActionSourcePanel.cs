@@ -11,7 +11,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
     {
         [SerializeField] TMP_InputField Speed;
         [SerializeField] TMP_InputField SpeedCap;
-        [SerializeField] Toggle CanFall;
+        [SerializeField] Toggle GroundedOnly;
 
         /// <summary>
         /// Retrievs data from source panel and saves them to corresponding ActionDTO.
@@ -24,16 +24,16 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             if (TryParse(Speed.text, out var sp))
                 speed = sp;
             else
-                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Speed was setted to 1");
+                OutputManager.Instance.ShowMessage("Move action parsing error! Speed was setted to 1");
 
             var speedCap = 1f;
             if (TryParse(SpeedCap.text, out var spCap))
                 speedCap = spCap;
             else
-                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Speed cap was setted to 1");
+                OutputManager.Instance.ShowMessage("Move action parsing error! Speed cap was setted to 1");
 
 
-            return new MoveActionDTO(speed, speedCap, CanFall.isOn);
+            return new MoveActionDTO(speed, speedCap, GroundedOnly.isOn);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 SpeedCap.text = moveAction.SpeedCap.ToString();
                 return;
             }
-            ErrorOutputManager.Instance.ShowMessage("Move action panel faield to set stored action setting! Parsing error", "ObjectCreate");
+            OutputManager.Instance.ShowMessage("Move action panel faield to set stored action setting! Parsing error", "ObjectCreate");
         }
 
         /// <summary>

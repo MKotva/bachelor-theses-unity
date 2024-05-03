@@ -55,7 +55,7 @@ namespace Assets.Scripts.Menu
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage("Unable to load selected file! Data might be corrupted.");
+                OutputManager.Instance.ShowMessage("Unable to load selected file! Data might be corrupted.");
             }
         }
 

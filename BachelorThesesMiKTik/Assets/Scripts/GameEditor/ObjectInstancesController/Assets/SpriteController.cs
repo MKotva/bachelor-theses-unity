@@ -9,7 +9,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
     public class SpriteController : MonoBehaviour, IObjectController
     {
         public  SourceReference SourceReference { get; private set; }
-        private SpriteRenderer spriteRendered;
+        public SpriteRenderer spriteRendered;
         private SpriteRendererSnapshot snapshot;
 
         public void SetSprite(Sprite sprite, SourceReference source)

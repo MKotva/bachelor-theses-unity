@@ -21,13 +21,13 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             if (TryParse(VerticalForce.text, out var vertForce))
                 verticalForce = vertForce;
             else
-                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Vertical force was setted to 1");
+                OutputManager.Instance.ShowMessage("Move action parsing error! Vertical force was setted to 1");
 
             float horizontalForce = 1;
             if (TryParse(HorizontalForce.text, out var horizForce))
                 horizontalForce = horizForce;
             else
-                ErrorOutputManager.Instance.ShowMessage("Move action parsing error! Horizontal force was setted to 1");
+                OutputManager.Instance.ShowMessage("Move action parsing error! Horizontal force was setted to 1");
 
             return new SimpleJumpActionDTO(verticalForce, horizontalForce);
         }
@@ -46,7 +46,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 HorizontalForce.text = simpleJumpAction.HorizontalForce.ToString();
                 return;
             }
-            ErrorOutputManager.Instance.ShowMessage("Simple jump action panel faield to set stored action setting! Parsing error", "ObjectCreate");
+            OutputManager.Instance.ShowMessage("Simple jump action panel faield to set stored action setting! Parsing error", "ObjectCreate");
         }
 
         /// <summary>

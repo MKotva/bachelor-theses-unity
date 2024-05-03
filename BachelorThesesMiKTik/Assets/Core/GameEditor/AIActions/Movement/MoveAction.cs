@@ -33,20 +33,20 @@ namespace Assets.Scripts.GameEditor.AI
             canFall = canFallOf;
         }
 
-        public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
+        public override List<AgentActionDTO> GetPossibleActions(Vector2 position)
         {
             var cellSize = map.GridLayout.cellSize;
 
             var reacheablePositions = new List<AgentActionDTO>();
-            var newPositions = new Vector3[]
+            var newPositions = new Vector2[]
             {
-                map.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y)), //Right
-                map.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y - cellSize.y)), //LowerRight
-                map.GetCellCenterPosition(new Vector3(position.x + cellSize.x, position.y + cellSize.y)), //UpperRight
-
-                map.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y)), //Left
-                map.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y - cellSize.y)), //LowerLeft;
-                map.GetCellCenterPosition(new Vector3(position.x - cellSize.x, position.y - cellSize.y)) //UpperLeft;
+                map.GetCellCenterPosition(new Vector2(position.x + cellSize.x, position.y)), //Right
+                map.GetCellCenterPosition(new Vector2(position.x + cellSize.x, position.y - cellSize.y)), //LowerRight
+                map.GetCellCenterPosition(new Vector2(position.x + cellSize.x, position.y + cellSize.y)), //UpperRight
+                                                    
+                map.GetCellCenterPosition(new Vector2(position.x - cellSize.x, position.y)), //Left
+                map.GetCellCenterPosition(new Vector2(position.x - cellSize.x, position.y - cellSize.y)), //LowerLeft;
+                map.GetCellCenterPosition(new Vector2(position.x - cellSize.x, position.y - cellSize.y)) //UpperLeft;
             };
 
             var newPositionsParams = new string[]

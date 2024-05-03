@@ -18,9 +18,9 @@ namespace Assets.Core.GameEditor.Serializers
         {
             var gameData = new GameDataDTO();
             gameData.Managers = GetManagers();
-            gameData.Items = GetItems();
+            gameData.Prototypes = GetItems();
             gameData.MapObjects = GetMapObjects();
-            gameData.BackgroundDTO = GetBackgroundSetting();
+            gameData.BackgroundSetting = GetBackgroundSetting();
             return gameData;
         }
 
@@ -32,9 +32,9 @@ namespace Assets.Core.GameEditor.Serializers
         public static async Task Deserialize(GameDataDTO gameData)
         {
             await SetManagers(gameData.Managers);
-            SetItems(gameData.Items);
+            SetItems(gameData.Prototypes);
             SetObjectToMap(gameData.MapObjects);
-            SetBackground(gameData.BackgroundDTO);
+            SetBackground(gameData.BackgroundSetting);
         }
 
         public static ManagersDTO GetManagers()
@@ -84,26 +84,16 @@ namespace Assets.Core.GameEditor.Serializers
             {
                 var newItem = new ItemData();
 
-                foreach (var component in item.Components)
+                newItem.Components = new List<CustomComponent>(item.Components);
+                foreach(var component in newItem.Components)
                 {
-                    SetComponent(component, newItem);
+                    component.Set(newItem);
                 }
 
                 ItemManager.Instance.AddItem(newItem);
             }
         }
 
-        /// <summary>
-        /// Sets components of newly created items.
-        /// </summary>
-        /// <param name="component"></param>
-        /// <param name="newItem"></param>
-        /// <returns></returns>
-        private static void SetComponent(CustomComponent component, ItemData newItem)
-        {
-            component.Set(newItem);
-            newItem.Components.Add(component);
-        }
 
         /// <summary>
         /// </summary>

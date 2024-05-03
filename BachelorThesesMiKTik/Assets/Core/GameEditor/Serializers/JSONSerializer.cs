@@ -34,7 +34,7 @@ namespace Assets.Core.GameEditor.Serializers
                 }
                 catch (Exception ex)
                 {
-                    ErrorOutputManager.Instance.ShowMessage($"JSON parsing error! Description: {ex.Message}");
+                    OutputManager.Instance.ShowMessage($"JSON parsing error! Description: {ex.Message}");
                 }
             }
             result = null;
@@ -64,7 +64,7 @@ namespace Assets.Core.GameEditor.Serializers
             }
             catch (Exception ex) 
             {
-                ErrorOutputManager.Instance.ShowMessage($"Error during saving procces! Description: {ex.Message}");
+                OutputManager.Instance.ShowMessage($"Error during saving procces! Description: {ex.Message}");
                 return false;
             }
         }
@@ -84,10 +84,10 @@ namespace Assets.Core.GameEditor.Serializers
                 }
                 catch (IOException ex)
                 {
-                    ErrorOutputManager.Instance.ShowMessage($"File loading error! Description: {ex}");
+                    OutputManager.Instance.ShowMessage($"File loading error! Description: {ex}");
                 }
             }
-            ErrorOutputManager.Instance.ShowMessage($"File loading error! Path does not exists!");
+            OutputManager.Instance.ShowMessage($"File loading error! Path does not exists!");
             return "";
         }
     }

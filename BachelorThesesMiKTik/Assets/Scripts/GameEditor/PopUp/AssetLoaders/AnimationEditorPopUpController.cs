@@ -1,7 +1,6 @@
 ﻿using Assets.Core.GameEditor.Animation;
 using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.OutputControllers;
 using Assets.Scripts.GameEditor.SourcePanels;
@@ -65,6 +64,9 @@ namespace Assets.Scripts.GameEditor.PopUp.AssetLoaders
             }
         }
 
+        /// <summary>
+        /// Shows animation preview in animation editor.
+        /// </summary>
         public async void OnPreviewClick()
         {
             var animationDTO = GetData();

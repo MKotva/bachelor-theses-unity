@@ -14,7 +14,6 @@ public class EditorCanvas : Singleton<EditorCanvas>
     [SerializeField] public Grid GridLayout;
     [SerializeField] public Marker Marker;
     [SerializeField] public bool IsRecording;
-    [SerializeField] private List<string> BlockingObjectTags;
     [SerializeField] private int JournalCapacity;
 
     public ItemData ActualPrefab
@@ -82,7 +81,7 @@ public class EditorCanvas : Singleton<EditorCanvas>
             if (groupMembers.ContainsKey(oldPosition))
             {
                 groupMembers.Remove(oldPosition);
-                if (ContainsObjectAtPosition(newPosition, out var id))
+                if (ContainsObjectAtPosition(newPosition, out int id))
                 {
                     Destroy(Data[id][newPosition]);
                     RemoveFromData(newPosition);
@@ -129,20 +128,18 @@ public class EditorCanvas : Singleton<EditorCanvas>
         return false;
     }
 
-    public bool ContainsObjectAtPosition(Vector3 position, int[] layers)
+    public bool ContainsObjectAtPosition(Vector3 position, out GameObject ob)
     {
         foreach (var group in Data.Values)
         {
             if (group.ContainsKey(position))
             {
-                var obj = group[position];
-                foreach (var layer in layers)
-                {
-                    if (obj.layer == layer)
-                        return true;
-                }
+                ob = group[position];
+                return true;             
             }
         }
+
+        ob = null;
         return false;
     }
 
@@ -154,7 +151,7 @@ public class EditorCanvas : Singleton<EditorCanvas>
         {
             if (group.ContainsKey(position))
             {
-                if (BlockingObjectTags.Contains(group[position].tag))
+                if (group[position].layer == LayerMask.GetMask("Box"))
                     return true;
             }
         }

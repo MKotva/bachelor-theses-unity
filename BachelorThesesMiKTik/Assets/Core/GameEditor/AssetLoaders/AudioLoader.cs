@@ -59,7 +59,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
                     request.result == UnityWebRequest.Result.ConnectionError ||
                     request.result == UnityWebRequest.Result.DataProcessingError)
                 {
-                    ErrorOutputManager.Instance.ShowMessage(request.error);
+                    OutputManager.Instance.ShowMessage(request.error);
                     return null;
                 }
 

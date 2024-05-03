@@ -22,7 +22,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage("General component parsing error!","ObjectCreate");
+                OutputManager.Instance.ShowMessage("General component parsing error!","ObjectCreate");
             }
         }
 
@@ -61,7 +61,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             var name = NameField.text;
             if (name == "")
             {
-                ErrorOutputManager.Instance.ShowMessage($"Invalid item name, name is empty!", "ObjectCreate");
+                OutputManager.Instance.ShowMessage($"Invalid item name, name is empty!", "ObjectCreate");
                 return null;
             }
 
@@ -74,7 +74,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             {
                 if (GroupField.text == "")
                 {
-                    ErrorOutputManager.Instance.ShowMessage($"Invalid group name, name is empty or Group! Please select or create group!", "ObjectCreate");
+                    OutputManager.Instance.ShowMessage($"Invalid group name, name is empty or Group! Please select or create group!", "ObjectCreate");
                     return null;
                 }
                 groupName = GroupField.text;

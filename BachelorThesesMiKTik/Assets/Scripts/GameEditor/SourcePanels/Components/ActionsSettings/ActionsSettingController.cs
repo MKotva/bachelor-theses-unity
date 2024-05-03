@@ -29,7 +29,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
                     continue;
                 if(i >= SettingPanels.Count)
                 {
-                    ErrorOutputManager.Instance.ShowMessage("Action setting parsing error!", "ObjectCreate");
+                    OutputManager.Instance.ShowMessage("Action setting parsing error!", "ObjectCreate");
                     return;
                 }
 

@@ -135,7 +135,7 @@ namespace Assets.Scripts.GameEditor.EditorPanels
             var selectedGroup = GroupViewSelector.options[value].text;
             
             if (!GroupViews.ContainsKey(selectedGroup))
-                ErrorOutputManager.Instance.ShowMessage("Group cannot be displayed! Invalid name!");
+                OutputManager.Instance.ShowMessage("Group cannot be displayed! Invalid name!");
             else
                 SetActiveGroupView(GroupViews[selectedGroup]);
         }

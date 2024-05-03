@@ -7,7 +7,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
     {
         private PhysicsComponent physicsSetting;
         private Rigidbody2D rigid;
-
+        private Vector2 velocity;
         public float GravityScale
         {
             get
@@ -172,19 +172,20 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             rigid.WakeUp();
             rigid.isKinematic = false;
+            //rigid.velocity = velocity;
         }
 
         public void Pause()
         {
             rigid.Sleep();
             rigid.isKinematic = true;
+            //velocity = rigid.velocity;
         }
 
         public void Enter() {}
 
         public void Exit()
         {
-            rigid.rotation = 0;
             rigid.Sleep();
             rigid.isKinematic = true;
 

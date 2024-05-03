@@ -28,6 +28,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         public void SetPanel(SimpleCode actionCode)
         {
             ActionCode = actionCode;
+            if(actionCode != null)
+                ActionSelection.value = 1;
         }
 
         #region PRIVATE
@@ -44,7 +46,9 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             if (ActionSelection.options[ActionSelection.value].text == "Create code")
             {
                 EditButton.gameObject.SetActive(true);
-                ShowEditor();
+                
+                if(ActionCode == null)
+                    ShowEditor();
             }
             else
             {

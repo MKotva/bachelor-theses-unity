@@ -26,7 +26,7 @@ public class ImageComponentController : ObjectComponent
         }
         else
         {
-            ErrorOutputManager.Instance.ShowMessage("Image component parsing error!", "ObjectCreate");
+            OutputManager.Instance.ShowMessage("Image component parsing error!", "ObjectCreate");
         }
     }
 

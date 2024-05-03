@@ -22,7 +22,7 @@ namespace Assets.Scripts.JumpSystem
             if (Loader.Data != null && instance != null)
             {
                 await GameDataSerializer.Deserialize(Loader.Data);
-                instance.IsInPlayMode = true;
+                instance.EnterGame();
                 instance.StartGame();
             }
 

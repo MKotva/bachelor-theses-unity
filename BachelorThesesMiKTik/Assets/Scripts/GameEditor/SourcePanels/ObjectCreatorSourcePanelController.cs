@@ -9,7 +9,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     private bool hasPassed;
     public bool CreateItem(List<ObjectComponent> components)
     {
-        ErrorOutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
+        OutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
         var newItem = CreateNewPrefab (components);
         if (hasPassed)
         {
@@ -17,13 +17,13 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
             return true;
         }
 
-        ErrorOutputManager.Instance.RemoveListener("ObjectCreate");
+        OutputManager.Instance.RemoveListener("ObjectCreate");
         return false;
     }
 
     public bool EditItem(List<ObjectComponent> components)
     {
-        ErrorOutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
+        OutputManager.Instance.AddOnAddListener("ObjectCreate", ErrorHandler, "ObjectCreate");
         var newItem = CreateEditingPrefab(components);
         if (hasPassed)
         {
@@ -31,7 +31,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
             return true;
         }  
 
-        ErrorOutputManager.Instance.RemoveListener("ObjectCreate");
+        OutputManager.Instance.RemoveListener("ObjectCreate");
         return false;
     }
 
@@ -91,7 +91,10 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     private void ApplyComponents(ItemData item, List<ObjectComponent> components)
     {
         foreach (var component in components)
-            ApplyComponent(item, component);     
+            GetComponent(item, component);
+
+        foreach (var component in item.Components)
+            component.Set(item);
     }
 
     /// <summary>
@@ -100,12 +103,11 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// <param name="item"></param>
     /// <param name="component"></param>
     /// <returns></returns>
-    private void ApplyComponent(ItemData item, ObjectComponent component)
+    private void GetComponent(ItemData item, ObjectComponent component)
     {
         var comp = component.GetComponent();
         if (comp != null) 
         {
-            comp.Set(item);
             item.Components.Add(comp);
         }
     }
@@ -119,7 +121,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     {
         if (ItemManager.Instance.ItemsNameIdPair.ContainsKey(item.ShownName))
         {
-            ErrorOutputManager.Instance.ShowMessage($"Invalid item name {item.ShownName}, name is already used!", "ObjectCreate");
+            OutputManager.Instance.ShowMessage($"Invalid item name {item.ShownName}, name is already used!", "ObjectCreate");
             return false;
         }
         return true;

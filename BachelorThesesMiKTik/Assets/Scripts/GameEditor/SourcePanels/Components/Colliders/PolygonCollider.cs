@@ -133,7 +133,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
                 {
                     if (sourcePanels.Count == 3)
                     {
-                        ErrorOutputManager.Instance.ShowMessage("You can not have polynom with less than three vertices!");
+                        OutputManager.Instance.ShowMessage("You can not have polynom with less than three vertices!");
                     }
                     else
                     {

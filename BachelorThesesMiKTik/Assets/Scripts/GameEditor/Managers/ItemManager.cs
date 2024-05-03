@@ -83,7 +83,7 @@ namespace Assets.Scripts.GameEditor.Managers
         {
             if (CheckIfItemIsDefault(oldItem.ShownName))
             {
-                ErrorOutputManager.Instance.ShowMessage("You cannot edit default item.");
+                OutputManager.Instance.ShowMessage("You cannot edit default item.");
                 return;
             }
 
@@ -115,7 +115,7 @@ namespace Assets.Scripts.GameEditor.Managers
         {
             if (CheckIfItemIsDefault(item.ShownName))
             {
-                ErrorOutputManager.Instance.ShowMessage("You cannot delete default item.");
+                OutputManager.Instance.ShowMessage("You cannot delete default item.");
                 return;
             }
 

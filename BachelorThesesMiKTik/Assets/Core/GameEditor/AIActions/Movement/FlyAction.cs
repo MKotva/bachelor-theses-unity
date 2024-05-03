@@ -16,7 +16,7 @@ namespace Assets.Core.GameEditor.AIActions
             {"Fly up-right", new Vector2(1, 1)},
             {"Fly right", Vector2.right},
             {"Fly down-right", new Vector2(1, -1)},
-            {"Fly down", Vector2.up},
+            {"Fly down", Vector2.down},
             {"Fly down-left", new Vector2(-1, -1)},
             {"Fly left", Vector2.left},
             {"Fly up-left", new Vector2(-1, 1)}
@@ -39,7 +39,7 @@ namespace Assets.Core.GameEditor.AIActions
         }
 
 
-        public override List<AgentActionDTO> GetPossibleActions(Vector3 position)
+        public override List<AgentActionDTO> GetPossibleActions(Vector2 position)
         {
             var reacheablePositions = new List<AgentActionDTO>();
 

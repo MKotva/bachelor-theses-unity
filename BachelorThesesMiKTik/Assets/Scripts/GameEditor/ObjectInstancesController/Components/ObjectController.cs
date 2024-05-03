@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.GameEditor.Audio;
+using Assets.Scripts.GameEditor.Controllers;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.ObjectInstancesController
@@ -6,9 +8,18 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
     public class ObjectController : MonoBehaviour, IObjectController
     {
         public string Name { get; private set; }
+
+        private float HP { get; set; }
+
         public Dictionary<System.Type, IObjectController> Components { get; private set; }
 
+        private GameManager gameManager;
         private Vector3 positon;
+        private Quaternion rotation;
+        private bool IsDying;
+
+        private AnimationsController animationsController;
+        private AudioController audioController;
 
         public void AddComponent(IObjectController component)
         {
@@ -26,7 +37,24 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         public void Kill(bool shouldFinishAnimation, bool shouldFinishAudio)
         {
+            IsDying = true;
+            if (shouldFinishAnimation)
+            {
+                if(gameObject.TryGetComponent(out AnimationsController controller))
+                {
+                    controller.StopAfterFinishingLoop();
+                    animationsController = controller;
+                }
+            }
 
+            if(shouldFinishAudio) 
+            {
+                if (gameObject.TryGetComponent(out AudioController controller))
+                {
+                    controller.StopAfterFinishingLoop();
+                    audioController = controller;
+                }
+            }
         }
 
         public void Play()
@@ -47,8 +75,15 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         public void Enter()
         {
+            HP = 100f;
             positon = gameObject.transform.position;
-            foreach(var component in Components.Values)
+            rotation = gameObject.transform.rotation;
+
+            animationsController = null;
+            audioController = null;
+            IsDying = false;
+
+            foreach (var component in Components.Values)
             {
                 component.Enter();
             }
@@ -56,7 +91,10 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         public void Exit()
         {
+            IsDying = false;
+            gameObject.SetActive(true);
             gameObject.transform.position = positon;
+            gameObject.transform.rotation = rotation;
             foreach(var component in Components.Values)
             {
                 component.Exit();
@@ -67,14 +105,38 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         private void Awake()
         {
             Components = new Dictionary<System.Type, IObjectController>();
-            GameManager.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
+            
+            gameManager = GameManager.Instance;
+            if(gameManager != null )
+                gameManager.AddActiveObject(gameObject.GetInstanceID(), this);
+        }
+
+        private void FixedUpdate()
+        {
+            if (IsDying == true)
+            {
+                if (animationsController != null)
+                {
+                    if (!animationsController.HasFinished())
+                        return;
+                }
+
+                if(audioController != null)
+                {
+                    if (!audioController.HasFinished())
+                        return;
+                }
+
+
+                gameObject.SetActive(false);
+                gameManager.RemovePlayer(gameObject.GetInstanceID());
+            }
         }
 
         private void OnDestroy()
         {
-            var editorInstance = GameManager.Instance;
-            if(editorInstance != null)
-                editorInstance.RemoveActiveObject(gameObject.GetInstanceID());
+            if(gameManager != null)
+                gameManager.RemoveActiveObject(gameObject.GetInstanceID());
         }
     }
 }

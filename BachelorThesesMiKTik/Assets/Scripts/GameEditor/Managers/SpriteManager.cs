@@ -50,7 +50,7 @@ namespace Assets.Scripts.GameEditor.Managers
             var name = spriteData.Name;
             if (SpriteData.ContainsKey(name))
             {
-                ErrorOutputManager.Instance.ShowMessage("Sprite with the same name already exists!", "Sprite manager");
+                OutputManager.Instance.ShowMessage("Sprite with the same name already exists!", "Sprite manager");
                 return false;
             }
 
@@ -61,7 +61,7 @@ namespace Assets.Scripts.GameEditor.Managers
                 SpriteData.Add(name, spriteData);
                 return true;
             }
-            ErrorOutputManager.Instance.ShowMessage($"Sprite with given name: {spriteData.Name} could not be loaded!", "Sprite manager");
+            OutputManager.Instance.ShowMessage($"Sprite with given name: {spriteData.Name} could not be loaded!", "Sprite manager");
             return false;
         }
 
@@ -70,7 +70,7 @@ namespace Assets.Scripts.GameEditor.Managers
             var name = spriteData.Name;
             if (!SpriteData.ContainsKey(name))
             {
-                ErrorOutputManager.Instance.ShowMessage("Sprite with given name does not exists!", "Sprite manager");
+                OutputManager.Instance.ShowMessage("Sprite with given name does not exists!", "Sprite manager");
                 return;
             }
 
@@ -93,7 +93,7 @@ namespace Assets.Scripts.GameEditor.Managers
         {
             if (!SpriteData.ContainsKey(name))
             {
-                ErrorOutputManager.Instance.ShowMessage("Sprite with given name does not exists!", "Sprite manager");
+                OutputManager.Instance.ShowMessage("Sprite with given name does not exists!", "Sprite manager");
                 return;
             }
 

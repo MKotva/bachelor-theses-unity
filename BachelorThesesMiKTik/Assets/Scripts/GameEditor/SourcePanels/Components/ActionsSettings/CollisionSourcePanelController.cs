@@ -5,7 +5,6 @@ using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.Toolkit;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
@@ -29,6 +28,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             ParentCanvas = GameManager.Instance.PopUpCanvas.gameObject;
         }
 
+        /// <summary>
+        /// Returs data from panel in COllisionDTO.
+        /// </summary>
+        /// <returns>If error, returns null</returns>
         public CollisionDTO Get()
         {
             var selected = MultiselectController.Get();
@@ -51,6 +54,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             return new CollisionDTO(selectedItems, selectedGroups, handler);
         }
 
+        /// <summary>
+        /// Sets collision panel with data from CollisionDTO.
+        /// </summary>
+        /// <param name="data"></param>
         public void Set(CollisionDTO data) 
         {
             var selected = new List<string>(data.ObjectsNames);
@@ -59,6 +66,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             handler = data.Handler;
         }
 
+        /// <summary>
+        /// Handles Edit Code click by displaying Code Editor panel. Also connects exit hadler,
+        /// which returns compiled code.
+        /// </summary>
         public void ShowEditor()
         {
             codeController = Instantiate(CodeEditor, ParentCanvas.transform).GetComponent<CodeEditorPopupController>(); //TODO: Check the transform.

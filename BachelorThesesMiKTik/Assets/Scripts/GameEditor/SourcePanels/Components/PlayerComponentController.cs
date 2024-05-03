@@ -32,7 +32,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage("Player component parsing error!", "ObjectCreate");
+                OutputManager.Instance.ShowMessage("Player component parsing error!", "ObjectCreate");
             }
         }
 

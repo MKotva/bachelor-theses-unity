@@ -17,14 +17,21 @@ namespace Assets.Scripts.GameSystem
         [SerializeField] public GameObject Slider;
 
         private Slider slider;
+
+        /// <summary>
+        /// Displayes Exit confirmation prefab and connects handler for exist confirmation.
+        /// </summary>
         public void OnExitClick()
         {
-            var instance = Instantiate(ConfirmationPrefab, GameManager.Instance.PopUpCanvas.transform);
+            var instance = Instantiate(ConfirmationPrefab, MenuCanvas.transform);
             var controller = instance.GetComponent<ExitConfirmationPopUp>();
             controller.ShowMessage("Exit confrimation", "Are you sure, that you want to leave?");
             controller.OnExit += ResultHandler;
         }
 
+        /// <summary>
+        /// Invokes resume of played game.
+        /// </summary>
         public void OnResumeClick()
         {
             var instance = GameManager.Instance;
@@ -34,12 +41,19 @@ namespace Assets.Scripts.GameSystem
             MenuCanvas.gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// Invokes restart of played game.
+        /// </summary>
         public async void OnRestartClick()
         {
             await LoaderController.Load();
             MenuCanvas.gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// Changes overall volume of game.
+        /// </summary>
+        /// <param name="volume"></param>
         public void OnVolumeChange(float volume)
         {
             MixerGroup.audioMixer.SetFloat("Volume", Mathf.Log10(volume) * 20);
@@ -63,6 +77,10 @@ namespace Assets.Scripts.GameSystem
             }
         }
 
+        /// <summary>
+        /// Loads Main Menu Scene.
+        /// </summary>
+        /// <param name="result"></param>
         private void ResultHandler(bool result)
         {
             if (result)

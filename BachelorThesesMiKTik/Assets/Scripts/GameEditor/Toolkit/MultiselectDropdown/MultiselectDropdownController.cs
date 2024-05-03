@@ -15,6 +15,10 @@ namespace Assets.Scripts.GameEditor.Toolkit
         private bool isPreviewActive;
         private List<SelectionPanelController> itemOptions = new ();
 
+        /// <summary>
+        /// Sets state of dropdown options with given data. Marks them as selected if exists.
+        /// </summary>
+        /// <param name="options">Selected options</param>
         public void SetSelected(List<string> options)
         {
             if (options.Count == 0)
@@ -25,12 +29,19 @@ namespace Assets.Scripts.GameEditor.Toolkit
                 item.SetState(false);
                 foreach (var option in options)
                 {
-                    if(item.Name == option)
+                    if (item.Name == option)
+                    {
                         item.SetState(true);
+                        PreviewButton.text = string.Join(", ", option);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Sets the set of options in dropdown menu.
+        /// </summary>
+        /// <param name="options"></param>
         public void SetOptions(List<string> options)
         {
             Clear();
@@ -44,6 +55,10 @@ namespace Assets.Scripts.GameEditor.Toolkit
             }
         }
 
+        /// <summary>
+        /// Returns selected options in dropown panel.
+        /// </summary>
+        /// <returns></returns>
         public List<string> Get()
         {
             var selected = new List<string>();
@@ -55,6 +70,9 @@ namespace Assets.Scripts.GameEditor.Toolkit
             return selected;
         }
 
+        /// <summary>
+        /// Gets all selected options and displays them in preview panel.
+        /// </summary>
         public void ShowPreview()
         {
             if(isPreviewActive)
@@ -70,6 +88,15 @@ namespace Assets.Scripts.GameEditor.Toolkit
             }
         }
 
+        private void Awake()
+        {
+            PreviewButton.text = "Items";
+        }
+
+        /// <summary>
+        /// Gets all selected options and displays them in preview panel. If no option
+        /// is selected, then the default text is displayed.
+        /// </summary>
         private void SetSelectButtonText()
         {
             var selected = Get();
@@ -79,6 +106,10 @@ namespace Assets.Scripts.GameEditor.Toolkit
                 PreviewButton.text = string.Join(", ", selected);
         }
 
+
+        /// <summary>
+        /// Clears all options in dropdown.
+        /// </summary>
         private void Clear()
         {
             if(itemOptions.Count > 0)

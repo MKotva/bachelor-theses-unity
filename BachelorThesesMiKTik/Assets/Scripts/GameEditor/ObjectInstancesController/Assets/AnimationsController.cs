@@ -25,10 +25,17 @@ namespace Assets.Scripts.GameEditor.Controllers
             if (!Animator.Animating())
                 return;
 
-            if (!Animator.HasFinished())
+            if (!HasFinished())
                 Animator.Animate(Time.deltaTime);
         }
 
+        /// <summary>
+        /// Sets given animation to created Animatior for this object. Also stores reference to used animation.
+        /// </summary>
+        /// <param name="animation">Animation to be set.</param>
+        /// <param name="source">Reference to animation</param>
+        /// <param name="loop">Decides if Animator should play animation in loop.</param>
+        /// <param name="playOnAwake">Decides if Animator should play animation right after applying.</param>
         public void SetCustomAnimation(CustomAnimation animation, SourceReference source, bool loop = true, bool playOnAwake = true)
         {
             if (TryGetComponent(out SpriteRenderer spriteRenderer))
@@ -49,6 +56,11 @@ namespace Assets.Scripts.GameEditor.Controllers
             SourceReference = source;
         }
 
+        /// <summary>
+        /// Changes actual animation to given one. Reference is same, because animation edit does not
+        /// change name.
+        /// </summary>
+        /// <param name="animation"></param>
         public void EditCutomAnimation(CustomAnimation animation)
         {
             if (Animator == null)
@@ -56,11 +68,43 @@ namespace Assets.Scripts.GameEditor.Controllers
             Animator.EditAnimation(animation);
         }
 
+        /// <summary>
+        /// Removes actual animation and its reference.
+        /// </summary>
         public void RemoveAnimation()
         {
             Animator.RemoveAnimation();
+            SourceReference = null;
         }
 
+        /// <summary>
+        /// Resets actual animation, if exists.
+        /// </summary>
+        public void ResetClip()
+        {
+            if (Animator != null)
+                Animator.ResetAnimation();
+        }
+
+        /// <summary>
+        /// Stops actual animation, after finishing the loop.
+        /// </summary>
+        public void StopAfterFinishingLoop()
+        {
+            ShouldLoop = false;
+        }
+
+        /// <summary>
+        /// Checks if animation is finished. Always False animation is in loop.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasFinished()
+        {
+            if (Animator != null && !ShouldLoop)
+                return Animator.HasFinished();
+            return false;
+        }
+        #region IObjectMethods
         public void Play()
         {
             if (Animator != null)
@@ -91,24 +135,7 @@ namespace Assets.Scripts.GameEditor.Controllers
         {
             Animator.Stop();
         }
-
-        public void ResetClip()
-        {
-            if (Animator != null)
-                Animator.ResetAnimation();
-        }
-
-        public void StopAfterFinishingLoop()
-        {
-            ShouldLoop = false;
-        }
-
-        public bool CheckIfIsFinished()
-        {
-            if (Animator != null && !ShouldLoop)
-                return Animator.HasFinished();
-            return false;
-        }
+        #endregion
 
         private void Awake()
         {

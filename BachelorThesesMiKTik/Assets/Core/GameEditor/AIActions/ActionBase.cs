@@ -27,15 +27,15 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
         public abstract bool IsPerforming();
         public abstract Task PerformAgentActionAsync(AgentActionDTO action);
         public abstract Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action);
-        public abstract List<AgentActionDTO> GetPossibleActions(Vector3 position);
+        public abstract List<AgentActionDTO> GetPossibleActions(Vector2 position);
         public abstract void PerformAction(string action);
         public abstract void FinishAction();
 
         public virtual bool ContainsActionCode(string code) { return false; }
 
-        public virtual List<Vector3> GetReacheablePositions(Vector3 position)
+        public virtual List<Vector2> GetReacheablePositions(Vector2 position)
         {
-            var positions = new List<Vector3>();
+            var positions = new List<Vector2>();
             foreach (var action in GetPossibleActions(position))
             {
                 positions.Add(action.EndPosition);
@@ -43,7 +43,7 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             return positions;
         }
 
-        public virtual List<GameObject> PrintReacheables(Vector3 startPosition) 
+        public virtual List<GameObject> PrintReacheables(Vector2 startPosition) 
         {
             List<GameObject> markers = new List<GameObject>();
 
@@ -56,13 +56,13 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
             return markers;
         }
 
-        internal bool IsWalkable(Vector3 position)
+        internal bool IsWalkable(Vector2 position)
         {
             if (map.ContainsBlockingObjectAtPosition(position))
                 return false;
 
             var _cellSize = map.GridLayout.cellSize;
-            var lowerNeighbourPosition = map.GetCellCenterPosition(new Vector3(position.x, position.y - _cellSize.y));
+            var lowerNeighbourPosition = map.GetCellCenterPosition(new Vector2(position.x, position.y - _cellSize.y));
             if (!map.ContainsObjectAtPosition(lowerNeighbourPosition))
                 return false;
 

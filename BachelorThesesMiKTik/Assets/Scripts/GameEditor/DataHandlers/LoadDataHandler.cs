@@ -28,7 +28,7 @@ public class LoadDataHandler : MonoBehaviour
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public async Task LoadMap(string path)
+    public static async Task LoadMap(string path)
     {
         if (JSONSerializer.Deserialize(path, out var gameData))
         {

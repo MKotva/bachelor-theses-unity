@@ -34,7 +34,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage("Physics component parsing error!", "ObjectCreate");
+                OutputManager.Instance.ShowMessage("Physics component parsing error!", "ObjectCreate");
             }
         }
 

@@ -8,14 +8,10 @@ namespace Assets.Core.GameEditor.DTOS
     public class AnimationSourceDTO : AssetSourceDTO
     {
         public List<AnimationFrameDTO> AnimationData {get; set;}
-        public bool Loop { get; set; }
 
-        public bool OnAwake { get; set; }
-        public AnimationSourceDTO(List<AnimationFrameDTO> data, string name, bool loop = true, bool onAwake = true) : base(name, "")
+        public AnimationSourceDTO(List<AnimationFrameDTO> data, string name) : base(name, "")
         {
             AnimationData = data;
-            Loop = loop;
-            OnAwake = onAwake;
         }
     }
 }

@@ -45,6 +45,10 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             lines.Add(AddLine());
         }
 
+        /// <summary>
+        /// Adds new evniroment class panel to view.
+        /// </summary>
+        /// <returns></returns>
         private EnviromentSourcePanelController AddLine()
         {
             var line = Instantiate(SourceLinePrefab, ContentView.transform);
@@ -52,6 +56,10 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             return line.GetComponent<EnviromentSourcePanelController>();
         }
 
+        /// <summary>
+        /// Destroyes enviroment panel based on given instance id.
+        /// </summary>
+        /// <param name="id"></param>
         private void DestroyPanel(int id)
         {
             for (int i = 0; i < lines.Count; i++)

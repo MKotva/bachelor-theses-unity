@@ -9,16 +9,16 @@ namespace Assets.Scenes.GameEditor.Core.DTOS
     public class GameDataDTO
     {
         public ManagersDTO Managers;
-        public List<ItemDTO> Items;
+        public List<ItemDTO> Prototypes;
         public List<MapObjectDTO> MapObjects;
-        public BackgroundDTO BackgroundDTO;
+        public BackgroundDTO BackgroundSetting;
 
         public GameDataDTO() 
         {
             Managers = new ManagersDTO();
-            Items = new List<ItemDTO>();
+            Prototypes = new List<ItemDTO>();
             MapObjects = new List<MapObjectDTO>();
-            BackgroundDTO = new BackgroundDTO();
+            BackgroundSetting = new BackgroundDTO();
         }
     }
 }

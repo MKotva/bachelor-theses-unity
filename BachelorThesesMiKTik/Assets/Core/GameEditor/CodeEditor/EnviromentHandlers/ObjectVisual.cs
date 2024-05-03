@@ -27,7 +27,6 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             if (!instance.TryGetComponent(out animationController))
             {
                 animationController = instance.AddComponent<AnimationsController>();
-                return false;
             }
 
             animationsManager = AnimationsManager.Instance;
@@ -42,7 +41,6 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             if (!instance.TryGetComponent(out spriteController))
             {
                 spriteController = instance.AddComponent<SpriteController>();
-                return false;
             }
 
             spriteManager = SpriteManager.Instance;
@@ -58,7 +56,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             "method will always return false.", "(string nameOfAnimation, bool shouldAnimationLoop, bool playAfterSet)")]
         public bool CheckIfIsFinished()
         {
-            return animationController.CheckIfIsFinished();
+            return animationController.HasFinished();
         }
 
         [CodeEditorAttribute("Finds created animation by given name and sets it for this object. If there was previous " +
@@ -197,5 +195,17 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             spriteController.ChangeColor(r, g, b);
         }
         #endregion
+
+        [CodeEditorAttribute("Flips actual orientation of image by vertical axis")]
+        public void FlipYVisual()
+        {
+            if (spriteController == null)
+                return;
+            spriteController.spriteRendered.flipX = !spriteController.spriteRendered.flipX;
+        }
+
+        public void RotateVisual(float angle)
+        {
+        }
     }
 }

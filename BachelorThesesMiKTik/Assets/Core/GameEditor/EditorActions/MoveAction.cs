@@ -185,7 +185,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
 
                     if (!objectInfo.Item2)
                     {
-                        if (map.ContainsObjectAtPosition(newPosition, out var id))
+                        if (map.ContainsObjectAtPosition(newPosition, out int id))
                         {
                             removedObjects.Add(newPosition, id);
                         }

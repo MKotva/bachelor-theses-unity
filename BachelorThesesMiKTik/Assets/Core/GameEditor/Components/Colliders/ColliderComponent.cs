@@ -33,10 +33,9 @@ namespace Assets.Core.GameEditor.Components.Colliders
             Scale = scale;
         }
 
-        public override void Set(ItemData item)
+        public override void Set(ItemData item) 
         {
-            var collider = GetOrAddComponent<BoxCollider2D>(item.Prefab);
-            collider.enabled = true;
+            item.Prefab.layer = LayerMask.NameToLayer("Box");
         }
 
         public override void SetInstance(ItemData item, GameObject instance)

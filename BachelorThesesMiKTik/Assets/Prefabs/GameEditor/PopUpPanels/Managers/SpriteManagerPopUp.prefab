@@ -979,7 +979,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4941828989119019639, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_text
-      value: Spite Manager
+      value: Sprite Manager
       objectReference: {fileID: 0}
     - target: {fileID: 6910260077308043047, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_SizeDelta.x
@@ -991,7 +991,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6910260077308043047, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.0002797528
+      value: 0.0009643575
       objectReference: {fileID: 0}
     - target: {fileID: 7306426747812089388, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchorMax.y

@@ -18,6 +18,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
 
         public override void Set(ItemData item)
         {
+            base.Set(item);
             var collider = GetOrAddComponent<CircleCollider2D>(item.Prefab);
             collider.transform.position = Center;
             collider.radius = Radius * Scale.x;

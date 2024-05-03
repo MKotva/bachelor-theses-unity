@@ -30,39 +30,55 @@ namespace Assets.Core.GameEditor.AIActions
             return new Vector2(direction.x * horizontalForce, direction.y * verticalForce);
         }
 
-        public static TrajectoryDTO GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 jumpDirection, int depth = 40)
+        public static TrajectoryDTO GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 jumpDirection, int depth = 20) 
+        {
+            var velocity = jumpDirection.magnitude / jumper.Mass * Time.fixedDeltaTime;
+            var normalizedDirection = jumpDirection.normalized;
+            var trajectoryPoints = GetTrajectory(jumper, startPos, normalizedDirection, velocity, depth);
+
+            if( trajectoryPoints.Count != 0) 
+            {
+                return new TrajectoryDTO(trajectoryPoints, startPos, jumpDirection, trajectoryPoints.Last());
+            }
+
+            return new TrajectoryDTO(trajectoryPoints, startPos, jumpDirection, startPos);
+        }
+
+        private static List<Vector2> GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 direction, float velocity, int depth = 20)
         {
             if(!CheckDependecies())
                 return null;
 
-            var position = startPos;
-            var trajectoryPoints = new List<Vector3>();
-            var actualDirection = (jumpDirection / jumper.Mass) * jumper.TimeTick;
-
-            var previousPos = position;
-            var previousDir = actualDirection;
+            var trajectoryPoints = new List<Vector2>();
+            var previousPos = startPos;
 
             while (trajectoryPoints.Count < depth)
             {
-                actualDirection = (((actualDirection + jumper.GravityAcceleration) * jumper.Drag) / jumper.Mass) / jumper.TimeTick;
-                position = MathHelper.Add(position, actualDirection);
+                Vector2 calculatedPosition = startPos + direction * velocity * trajectoryPoints.Count * jumper.TimeTick; //Move both X and Y at a constant speed per Interval
+                calculatedPosition.y += Physics2D.gravity.y / 2 * Mathf.Pow(trajectoryPoints.Count * jumper.TimeTick, 2);
 
-                Vector2 previousHitPosition;
-                GameObject hittedObject;
-                if (CheckCollision(position, previousPos, jumper.ColliderSize, out previousHitPosition, out hittedObject)) //TODO: For every ai object, have list of layers.
+                if (CheckCollision(calculatedPosition, previousPos, jumper.ColliderSize, out var previousHitPosition, out var hittedObject)) //TODO: For every ai object, have list of layers.
                 {
-                    bool hasLanded;
-                    actualDirection = HandleCollision(hittedObject, previousHitPosition, previousDir, out hasLanded);
-                    if (hasLanded)
-                        return new TrajectoryDTO(trajectoryPoints, startPos, jumpDirection, map.GetCellCenterPosition(trajectoryPoints.Last()));
+                    if(hittedObject.GetInstanceID() != jumper.Performer.GetInstanceID())
+                    {
+                        var hitDirection = (calculatedPosition - previousPos).normalized;
+                        var newDirection = Bounce(previousPos, hitDirection, out var hasLanded);
+
+                        if (!hasLanded && newDirection != Vector2.zero)
+                        {
+                            velocity = AdjustVelocity(hittedObject, velocity * trajectoryPoints.Count * jumper.TimeTick);  
+                            trajectoryPoints.AddRange(GetTrajectory(jumper, previousPos, newDirection, velocity));   
+                        }
+                     
+                        return trajectoryPoints;
+                    }
                 }
 
-                trajectoryPoints.Add(position);
-
-                previousDir = actualDirection;
-                previousPos = position;
+                previousPos = calculatedPosition;
+                trajectoryPoints.Add(calculatedPosition);
             }
-            return new TrajectoryDTO(trajectoryPoints, startPos, jumpDirection, map.GetCellCenterPosition(trajectoryPoints.Last()));
+
+            return trajectoryPoints;
         }
 
         private static bool CheckCollision(Vector2 position, Vector2 PreviousPostion, Vector2 colliderSize, out Vector2 preHitPositions, out GameObject hittedObject)
@@ -73,11 +89,13 @@ namespace Assets.Core.GameEditor.AIActions
             for (int i = 0; i < actualPositionCorners.Length; i++)
             {
                 var centered = map.GetCellCenterPosition(actualPositionCorners[i]);
-                if (map.ContainsObjectAtPosition(centered, new int[] { 7, 8 })) //TODO: For every ai object, have list of layers.
+                if (map.ContainsObjectAtPosition(centered, out hittedObject))
                 {
-                    hittedObject = map.GetObjectAtPosition(centered);
-                    preHitPositions = previousPositionCorners[i];
-                    return true;
+                    if (hittedObject.TryGetComponent(out Collider2D collider))
+                    {
+                        preHitPositions = previousPositionCorners[i];
+                        return true;
+                    }
                 }
             }
             hittedObject = null;
@@ -98,31 +116,11 @@ namespace Assets.Core.GameEditor.AIActions
             };
         }
 
-        private static Vector2 HandleCollision(GameObject hittedObject, Vector2 startPos, Vector2 motionDirection, out bool isLandingPossible)
-        {
-            var bounceDirection = Bounce(startPos, motionDirection, out isLandingPossible);
-
-            BoxCollider2D collider2D;
-            if (hittedObject.TryGetComponent(out collider2D))
-            {
-                if (!isLandingPossible)
-                {
-                    bounceDirection *= collider2D.sharedMaterial.bounciness + 1.1f;
-                    isLandingPossible = false;
-                }
-            }
-            else
-            {
-                bounceDirection *= 0.1f; //Default bounce force.
-                isLandingPossible = false;
-            }
-            return bounceDirection;
-        }
-
         private static Vector2 Bounce(Vector2 startPosition, Vector2 motionDirection, out bool isLandPossible)
         {
             isLandPossible = false;
-            RaycastHit2D hit = Physics2D.Raycast(startPosition, motionDirection, 1, LayerMask.GetMask("Box"));
+            RaycastHit2D hit = Physics2D.Raycast(startPosition, motionDirection, 5, LayerMask.GetMask("Box"));
+         
             if (hit.collider != null)
             {
                 var normal = hit.normal;
@@ -135,7 +133,8 @@ namespace Assets.Core.GameEditor.AIActions
                         normal = Vector2.down;
                 }
 
-                if (hit.normal == Vector2.up)
+                //This is necessary fix, because unity hit.normal, does not return 0 but value, smaller than Epsilon.
+                if (hit.normal.x < float.Epsilon && hit.normal.y == 1)
                     isLandPossible = true;
 
                 if (hit.normal == Vector2.zero)
@@ -143,9 +142,20 @@ namespace Assets.Core.GameEditor.AIActions
                     isLandPossible = true;
                 }
 
-                return Vector2.Reflect(motionDirection, normal);
+                return Vector2.Reflect(motionDirection, normal).normalized;
             }
             return Vector2.zero;
+        }
+
+        private static float AdjustVelocity(GameObject hittedObject, float velocity)
+        {
+            BoxCollider2D collider2D;
+            if (hittedObject.TryGetComponent(out collider2D))
+            {
+                if(collider2D.sharedMaterial != null) 
+                    return velocity * collider2D.sharedMaterial.bounciness;
+            }
+            return velocity * 0.1f;
         }
 
         private static bool CheckDependecies()

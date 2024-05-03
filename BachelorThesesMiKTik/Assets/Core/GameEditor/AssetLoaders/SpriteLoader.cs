@@ -21,7 +21,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
 
             if (texture == null)
             {
-                ErrorOutputManager.Instance.ShowMessage($"Sprite with given name: {source.Name} could not be loaded!", "Sprite loader");
+                OutputManager.Instance.ShowMessage($"Sprite with given name: {source.Name} could not be loaded!", "Sprite loader");
                 return null;
             }
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
@@ -51,7 +51,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
                     request.result == UnityWebRequest.Result.ConnectionError ||
                     request.result == UnityWebRequest.Result.DataProcessingError)
                 {
-                    ErrorOutputManager.Instance.ShowMessage(request.error);
+                    OutputManager.Instance.ShowMessage(request.error);
                     return null;
                 }
 
@@ -73,7 +73,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
         {
             if (ob == null || source.URL == string.Empty)
             {
-                ErrorOutputManager.Instance.ShowMessage($"Unable to set sprite to an object! Object or URL: {source.URL} is empty!");
+                OutputManager.Instance.ShowMessage($"Unable to set sprite to an object! Object or URL: {source.URL} is empty!");
                 return;
             }
 
@@ -86,7 +86,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
                 }
                 else
                 {
-                    ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
+                    OutputManager.Instance.ShowMessage("Unable to set sprite to an object! Scale size is equal to Zero");
                     return;
                 }
             }
@@ -101,7 +101,7 @@ namespace Assets.Core.GameEditor.AssetLoaders
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage("Unable to set sprite to an object! Object does not contain sprite renderer.");
+                OutputManager.Instance.ShowMessage("Unable to set sprite to an object! Object does not contain sprite renderer.");
             }
         }
 

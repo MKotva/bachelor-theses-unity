@@ -63,25 +63,21 @@ namespace Assets.Core.GameEditor
             if(value == "")
                 return defaultValue;
 
-            value.Replace('.', ',');
+            value.Replace(',', '.');
 
             var result = defaultValue;
             if (!float.TryParse(value, out result))
             {
-                ErrorOutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
                 return 1;
             }
             if(float.IsNaN(result))
             {
-                ErrorOutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
                 return 1;
             }
 
             return result;
-        }
-        public static float GetPositiveFloat(string text, string name = "", string author = "")
-        {
-            return GetPositiveFloat(text, 1f, name, author);
         }
 
         public static float GetPositiveFloat(string value, float defaultValue = 1f, string name = "", string author = "")
@@ -94,12 +90,12 @@ namespace Assets.Core.GameEditor
             var result = defaultValue;
             if (!float.TryParse(value, out result))
             {
-                ErrorOutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
                 return defaultValue;
             }
             if (result < 0f || float.IsNaN(result))
             {
-                ErrorOutputManager.Instance.ShowMessage($"{name} parsing error, value is below 0! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error, value is below 0! {name} was setted to 1", author);
                 return defaultValue;
             }
             return result;
@@ -113,7 +109,7 @@ namespace Assets.Core.GameEditor
             }
             else
             {
-                ErrorOutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to {defaultValue}", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to {defaultValue}", author);
                 return defaultValue;
             }
         }

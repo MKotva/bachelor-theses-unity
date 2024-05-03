@@ -1,5 +1,4 @@
 ﻿using Assets.Core.GameEditor.DTOS;
-using Assets.Core.SimpleCompiler.Compilation.ExpressionItems;
 using Assets.Core.SimpleCompiler.Enums;
 using Assets.Core.SimpleCompiler.Exceptions;
 using System.Collections.Generic;
@@ -33,8 +32,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         /// <param name="obj"></param>
         public void Set(GlobalVariableDTO variable)
         {
-            NameField.text = name;
-            TypeDropDown.value = (int)variable.Type;
+            NameField.text = variable.Alias;
+            TypeDropDown.value = SetValueType(variable.Type);
             ValueField.text = variable.Value;
         }
 
@@ -72,6 +71,24 @@ namespace Assets.Scripts.GameEditor.SourcePanels
                 case 1: return ValueType.Boolean;
                 default: return ValueType.Numeric;
             }
+        }
+
+        /// <summary>
+        /// Parses ValueType to dropdown option value
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private int SetValueType(ValueType type)
+        {
+            switch(type) 
+            {
+                case ValueType.String:
+                    return 0;
+                case ValueType.Boolean: 
+                    return 1;
+                default: 
+                    return 2;
+            } 
         }
     }
 }

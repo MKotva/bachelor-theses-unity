@@ -18,7 +18,7 @@ namespace Assets.Scripts.GameEditor.PopUp
             var actual = ItemManager.Instance.ActualSelectedItem;
             if (ItemManager.Instance.CheckIfItemIsDefault(actual.ShownName))
             {
-                ErrorOutputManager.Instance.ShowMessage($"You can not edit item {actual.ShownName} because it is default item.");
+                OutputManager.Instance.ShowMessage($"You can not edit item {actual.ShownName} because it is default item.");
                 return;
             }
 

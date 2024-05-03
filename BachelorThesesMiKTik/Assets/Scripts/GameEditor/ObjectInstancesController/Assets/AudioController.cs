@@ -78,6 +78,10 @@ namespace Assets.Scripts.GameEditor.Audio
             audioSource.loop = false;
         }
 
+        public bool HasFinished()
+        {
+            return !audioSource.isPlaying;
+        }
         public void Enter() {}
 
         public void Exit() {}

@@ -16,6 +16,8 @@ namespace Assets.Core.GameEditor.Components.Colliders
 
         public override void Set(ItemData item)
         {
+            base.Set(item);
+
             var collider = GetOrAddComponent<PolygonCollider2D>(item.Prefab);
             
             var scaledPoints = new List<Vector2>();
@@ -25,6 +27,18 @@ namespace Assets.Core.GameEditor.Components.Colliders
             }
             collider.SetPath(0, scaledPoints);
             collider.enabled = true;
+
+            foreach (var component in item.Components)
+            {
+                if (component.ComponentName == "Player Control" || component.ComponentName == "AI Control")
+                    return;
+            }
+
+            var rigid = item.Prefab.AddComponent<Rigidbody2D>();
+            rigid.isKinematic = true;
+
+            item.Prefab.AddComponent<CompositeCollider2D>();
+            collider.usedByComposite = true;
         }
     }
 }

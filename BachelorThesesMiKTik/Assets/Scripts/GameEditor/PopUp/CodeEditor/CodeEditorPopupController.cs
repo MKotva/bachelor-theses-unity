@@ -21,9 +21,6 @@ namespace Assets.Scripts.GameEditor.CodeEditor
 
         public SimpleCode CompilationCode { get; private set; }
 
-        //public delegate void ExitHandler();
-        //public event ExitHandler onExit;
-
         private List<EnviromentObjectDTO> enviromentObjects;
         private List<GlobalVariableDTO> globalVariables;
         private GameObject intelisenceInstance;
@@ -46,6 +43,10 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             globalVarController.Set(code.GlobalVariables);
         }
 
+        /// <summary>
+        /// Handles Save button click by returning storing last succesfull build to CompilationCode
+        /// property, if exists. 
+        /// </summary>
         public void OnSaveClick()
         {
             if (lastCompilation == null)
@@ -56,31 +57,39 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             CompilationCode = lastCompilation;
         }
 
+        /// <summary>
+        /// Handles Build button click by compiling the code. 
+        /// </summary>
         public void OnBuildClick()
         {
             if (TryCompile(out var code))
                 lastCompilation = code;
         }
 
+        /// <summary>
+        /// Tryes to compile actual code in editor.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public bool TryCompile(out SimpleCode code)
         {
             ClearConsole();
             if (LoadDependencies())
             {
                 var compilaton = new SimpleCode(Code.text, enviromentObjects, globalVariables);
+                compilaton.Compile();
+
                 if (compilaton.ErrorOutput != "")
                 {
                     LogErrorConsole(compilaton.ErrorOutput);
                 }
                 else
                 {
-                    compilaton.TestExecute();
                     LogOutPut(compilaton.Output);
                     LogErrorConsole(compilaton.ErrorOutput);
 
                     code = compilaton;
                     return true;
-                    //return true;
                 }
             }
             code = null;
@@ -189,6 +198,9 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             IsInvokedByMethod = false;
         }
 
+        /// <summary>
+        /// Disposes intelicense panel.
+        /// </summary>
         private void DestroyIntelisence()
         {
             if (intelisenceInstance != null)
@@ -198,6 +210,10 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             }
         }
 
+        /// <summary>
+        /// Loads enviroment object for code context.
+        /// </summary>
+        /// <returns></returns>
         private List<EnviromentObjectDTO> GetEnviroment()
         {
             try

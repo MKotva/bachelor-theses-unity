@@ -12,12 +12,12 @@ namespace Assets.Scripts.GameEditor.Map
 
         public Color originalColor = Color.white;
 
-        public GameObject CreateMarkAtPosition(Vector3 position)
+        public GameObject CreateMarkAtPosition(Vector2 position)
         {
             return TileBase.Instantiate(MarkerPrefab, position, Quaternion.identity, Parent);
         }
 
-        public List<GameObject> CreateMarkAtPosition(List<Vector3> positions)
+        public List<GameObject> CreateMarkAtPosition(List<Vector2> positions)
         {
             var markers = new List<GameObject>();
             foreach (Vector3 position in positions)
@@ -26,21 +26,21 @@ namespace Assets.Scripts.GameEditor.Map
             return markers;
         }
 
-        public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector3 position)
+        public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector2 position)
         {
             return TileBase.Instantiate(markerPrefab, position, Quaternion.identity, Parent);
         }
 
-        public List<GameObject> CreateMarkAtPosition(GameObject markerPrefab, List<Vector3> positions)
+        public List<GameObject> CreateMarkAtPosition(GameObject markerPrefab, List<Vector2> positions)
         {
             var markers = new List<GameObject>();
-            foreach (Vector3 position in positions)
+            foreach (Vector2 position in positions)
                 markers.Add(CreateMarkAtPosition(markerPrefab, position));
 
             return markers;
         }
 
-        public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector3 position, Color color)
+        public GameObject CreateMarkAtPosition(GameObject markerPrefab, Vector2 position, Color color)
         {
             var marker = TileBase.Instantiate(markerPrefab, position, Quaternion.identity, Parent);
             marker.GetComponent<Renderer>().material.color = color;

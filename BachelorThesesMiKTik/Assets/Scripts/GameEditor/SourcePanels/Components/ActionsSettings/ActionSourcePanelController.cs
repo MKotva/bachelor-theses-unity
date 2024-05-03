@@ -18,7 +18,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
                 return true;
             }
 
-            ErrorOutputManager.Instance.ShowMessage("Invalid input type in actionsParsing!");
+            OutputManager.Instance.ShowMessage("Invalid input type in actionsParsing!");
             return false;
         }
     }

@@ -1,3 +1,4 @@
+using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.Animation;
 using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.DTOS;
@@ -138,9 +139,7 @@ public class AnimationCreatorPopUpController : PopUpController
         {
             var displayTime = line.transform.GetChild(1).GetComponent<TMP_InputField>().text;
             var URL = line.transform.GetChild(2).GetComponent<TMP_InputField>().text;
-
-            if (double.TryParse(displayTime, out var time))
-                data.Add(new AnimationFrameDTO(time, URL));
+            data.Add(new AnimationFrameDTO((double)MathHelper.GetPositiveFloat(displayTime), URL));
         }
 
         return new AnimationSourceDTO(data, NameField.text);

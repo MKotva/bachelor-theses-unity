@@ -13,7 +13,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
         public GameObject Performer { get; set; }
         public List<ActionBase> Actions { get; internal set; }
         public EditorCanvas Map { get; internal set; }
-        
+
         internal IAIPathFinder pathFinder;
         internal Queue<AgentActionDTO> actionsToPerform;
         internal Task performingTask;
@@ -67,7 +67,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
             }
         }
 
-        public List<GameObject> PintMoveTo(Vector3 endPosition)
+        public List<GameObject> PrintMoveTo(Vector3 endPosition)
         {
             var path = pathFinder.FindPath(gameObject.transform.position, endPosition, Actions);
             return AgentActionDTO.Print(path);
@@ -88,6 +88,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
             Performer = gameObject;
             Map = EditorCanvas.Instance;
             pathFinder = new AStar();
+            actionsToPerform = new Queue<AgentActionDTO>();
 
             if (Actions == null)
                 Actions = new List<ActionBase>();
