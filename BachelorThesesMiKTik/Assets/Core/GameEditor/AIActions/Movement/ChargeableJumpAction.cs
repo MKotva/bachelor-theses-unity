@@ -1,4 +1,5 @@
-﻿using Assets.Core.GameEditor.DTOS;
+﻿using Assets.Core.GameEditor.AIActions.Movement;
+using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Action;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using System.Collections.Generic;
@@ -34,11 +35,12 @@ namespace Assets.Core.GameEditor.AIActions
         private Vector2 chargeJumpDirection;
 
         private bool isPerforming;
+        private bool OnlyGrounded;
 
         private JumperDTO jumperDTO;
 
 
-        public ChargeableJumpAction(GameObject jumpingObject, float verticalMin = 1, float verticalMax = 1, float horizontalMin = 1, float horizontalMax = 1, float maxChargeTime = 1) : base(jumpingObject, 50)
+        public ChargeableJumpAction(GameObject jumpingObject, float verticalMin = 1, float verticalMax = 1, float horizontalMin = 1, float horizontalMax = 1, float maxChargeTime = 1, bool onlyGrounded = false) : base(jumpingObject, 50)
         {
             performer = jumpingObject;
             minVertical = verticalMin;
@@ -46,6 +48,7 @@ namespace Assets.Core.GameEditor.AIActions
             minHorizontal = horizontalMin;
             maxHorizontal = horizontalMax;
             chargeTimeMax = maxChargeTime;
+            OnlyGrounded = onlyGrounded;
 
             var collider = performer.GetComponent<Collider2D>();
 
@@ -75,9 +78,10 @@ namespace Assets.Core.GameEditor.AIActions
 
             foreach (var item in trajectories)
             {
-                if (IsWalkable(item.EndPosition))
+                var centertedEndPoition = map.GetCellCenterPosition(item.EndPosition);
+                if (IsWalkable(centertedEndPoition))
                 {
-                    var action = new AgentActionDTO(position, item.EndPosition, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAgentActionAsync, PrintAgentActionAsync);
+                    var action = new AgentActionDTO(position, centertedEndPoition, $"{item.MotionDirection.x}:{item.MotionDirection.y}", 50, PerformAgentActionAsync, PrintAgentActionAsync);
                     reacheablePositions.Add(action);
                 }
             }
@@ -85,24 +89,32 @@ namespace Assets.Core.GameEditor.AIActions
             return reacheablePositions;
         }
 
-        public override async Task PerformAgentActionAsync(AgentActionDTO action)
+        public override bool PerformAgentActionAsync(AgentActionDTO action, Queue<AgentActionDTO> actions, float deltaTime)
         {
             var jumpDirection = MathHelper.GetVector3FromString(action.ActionParameters);
             performerRigidbody.AddForce(jumpDirection * 50);
 
-            await Task.Delay(100);
             while (IsPerforming())
             {
-                await Task.Delay(100);
+                return false;
             }
 
             performer.transform.position = map.GetCellCenterPosition(action.EndPosition);
-            await Task.Delay(1000);
+            return true;
+        }
+
+        public override AgentActionDTO GetRandomAction(Vector2 lastPosition)
+        {
+            var actions = GetPossibleActions(lastPosition);
+            if(actions.Count == 0)
+                return null;
+
+            return actions[(int) random.Next(0, actions.Count)];
         }
 
         public override async Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
         {
-            var trajectory = JumpHelper.GetTrajectory(jumperDTO ,action.StartPosition, MathHelper.GetVector3FromString(action.ActionParameters));
+            var trajectory = TrajectoryCalculator.GetTrajectory(jumperDTO ,action.StartPosition, MathHelper.GetVector3FromString(action.ActionParameters));
             var result = map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, trajectory.Path);
             return await Task.FromResult(result);
         }
@@ -137,7 +149,7 @@ namespace Assets.Core.GameEditor.AIActions
             if (!actionTypes.ContainsKey(action) || isPerforming)
                 return;
 
-            if (JumpHelper.CheckIfStaysOnGround(performer))
+            if (MoveHelper.CheckIfStaysOnGround(performer))
             {
                 chargeTimeStart = Time.time;
                 chargeJumpDirection = actionTypes[action];
@@ -152,7 +164,7 @@ namespace Assets.Core.GameEditor.AIActions
             var additionVertical = ( maxVertical - minVertical ) * ( percent / 100 );
             var additionHorizontal = ( maxHorizontal - minHorizontal ) * ( percent / 100 );
 
-            var jumpVector = JumpHelper.GetJumpVector(chargeJumpDirection, minVertical + additionVertical, minHorizontal + additionHorizontal);
+            var jumpVector = TrajectoryCalculator.GetJumpVector(chargeJumpDirection, minVertical + additionVertical, minHorizontal + additionHorizontal);
             performerRigidbody.AddForce(jumpVector);
 
             isPerforming = false;
@@ -180,11 +192,15 @@ namespace Assets.Core.GameEditor.AIActions
             var trajectories = new List<TrajectoryDTO>();
 
             var power = new Vector2(maxHorizontal, maxVertical);
-            var adjustment = new Vector2(maxHorizontal * 0.1f, maxVertical * 0.1f);
+            var adjustment = new Vector2(maxHorizontal * 0.05f, maxVertical * 0.05f);
 
             while (power.x > minHorizontal && power.y > minVertical)
             {
-                trajectories.Add(JumpHelper.GetTrajectory(jumperDTO, startPosition, JumpHelper.GetJumpVector(jumpDirection, power.y, power.x)));
+                var trajectory = TrajectoryCalculator.GetTrajectory(jumperDTO, startPosition, TrajectoryCalculator.GetJumpVector(jumpDirection, power.y, power.x));
+                
+                if(trajectory != null)
+                    trajectories.Add(trajectory);
+                
                 power = power - adjustment;
             }
 

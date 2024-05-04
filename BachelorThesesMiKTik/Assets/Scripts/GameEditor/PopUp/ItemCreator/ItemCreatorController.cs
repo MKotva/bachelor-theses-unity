@@ -90,8 +90,9 @@ public class ItemCreatorController : PopUpController
     }
 
     #region PRIVATE
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         DropDownSet(ComponentsData);
         active = new Dictionary<string, ObjectComponent>();
         AddComponent(StaticComponent);

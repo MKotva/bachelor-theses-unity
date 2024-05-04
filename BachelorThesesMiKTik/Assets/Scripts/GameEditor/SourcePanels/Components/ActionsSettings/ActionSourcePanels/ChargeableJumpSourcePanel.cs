@@ -3,11 +3,13 @@ using Assets.Core.GameEditor.DTOS.Action;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
 {
     public class ChargeableJumpSourcePanel : ActionSourcePanelController
     {
+        [SerializeField] Toggle GroundedOnly;
         [SerializeField] TMP_InputField VerticalForceMin;
         [SerializeField] TMP_InputField VerticalForceMax;
         [SerializeField] TMP_InputField HorizontalForceMin;
@@ -70,7 +72,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 OutputManager.Instance.ShowMessage("Invalid setting of horizontal min and max. Min > Max! Setted to default.");
             }
 
-            return new ChargeJumpDTO(verticalForceMin, verticalForceMax, horizontalForceMin, horizontalForceMax, jumpTimeCap);
+            return new ChargeJumpDTO(verticalForceMin, verticalForceMax, horizontalForceMin, horizontalForceMax, jumpTimeCap, GroundedOnly.isOn);
 
         }
 

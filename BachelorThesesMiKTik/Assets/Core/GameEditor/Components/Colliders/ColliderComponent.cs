@@ -11,12 +11,14 @@ namespace Assets.Core.GameEditor.Components.Colliders
     {
         public List<CollisionDTO> Colliders;
         public Vector2 Scale;
+        public bool IsTrigger;
 
         public ColliderComponent() 
         {
             ComponentName = "Collider";
             Colliders = new List<CollisionDTO>();
             Scale = new Vector2(1f / 100f, 1f / 100f);
+            IsTrigger = false;
         }
 
         public ColliderComponent(Vector2 scale)
@@ -24,6 +26,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
             ComponentName = "Collider";
             Colliders = new List<CollisionDTO>();
             Scale = scale;
+            IsTrigger = false;
         }
 
         public ColliderComponent(List<CollisionDTO> colliders, Vector2 scale) 
@@ -31,6 +34,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
             ComponentName = "Collider";
             Colliders = colliders;
             Scale = scale;
+            IsTrigger = false;
         }
 
         public override void Set(ItemData item) 

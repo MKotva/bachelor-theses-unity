@@ -60,8 +60,9 @@ namespace Assets.Scripts.GameEditor.PopUp
         }
 
         #region PRIVATE
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             callbacks = new List<OnCreateCall>();
         }
 

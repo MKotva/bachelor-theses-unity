@@ -1,5 +1,6 @@
 ﻿using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.AIActions;
+using Assets.Core.GameEditor.AIActions.Movement;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Action;
 using Assets.Scenes.GameEditor.Core.AIActions;
@@ -31,15 +32,16 @@ namespace Assets.Scripts.GameEditor.AI
 
         private float forceUp;
         private float forceInDirection;
+        private bool onlyGrounded;
 
-        public JumpAction(GameObject jumpingObject, float jumpForce = 5, float moveSpeed = 2) : base(jumpingObject, 50)
+        public JumpAction(GameObject jumpingObject, float jumpForce = 5, float moveSpeed = 2, bool onlyGrounded = false) : base(jumpingObject, 50)
         {
             performer = jumpingObject;
             forceUp = jumpForce;
             forceInDirection = moveSpeed;
+            this.onlyGrounded = onlyGrounded;
 
             var collider = performer.GetComponent<Collider2D>();
-
             if (!collider.enabled)
                 collider.enabled = true;
 
@@ -64,35 +66,44 @@ namespace Assets.Scripts.GameEditor.AI
 
             foreach (TrajectoryDTO trajectory in GetTrajectories(position))
             {
-                if (IsWalkable(trajectory.EndPosition))
+                var centertedEndPoition = map.GetCellCenterPosition(trajectory.EndPosition);
+                if (IsWalkable(centertedEndPoition))
                 {
-                    var action = new AgentActionDTO(position, trajectory.EndPosition, $"{trajectory.MotionDirection.x}:{trajectory.MotionDirection.y}", 50, PerformAgentActionAsync, PrintAgentActionAsync);
+                    var action = new AgentActionDTO(position, centertedEndPoition, $"{trajectory.MotionDirection.x}:{trajectory.MotionDirection.y}", 50, PerformAgentActionAsync, PrintAgentActionAsync);
                     reacheablePositions.Add(action);
                 }
             }
             return reacheablePositions;
         }
 
-        public override async Task PerformAgentActionAsync(AgentActionDTO action)
+        public override bool PerformAgentActionAsync(AgentActionDTO action, Queue<AgentActionDTO> actions, float f)
         {
             var jumpDirection = MathHelper.GetVector3FromString(action.ActionParameters);
             performerRigidbody.AddForce(jumpDirection);
 
-            await Task.Delay(100);
-            while (IsPerforming())
+            if(IsPerforming())
             {
-                await Task.Delay(100);
+                return false;
             }
 
             performer.transform.position = map.GetCellCenterPosition(action.EndPosition);
-            await Task.Delay(1000);
+            return true;
         }
 
         public override async Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
         {
-            var trajectory = JumpHelper.GetTrajectory(jumperDTO, action.StartPosition, MathHelper.GetVector3FromString(action.ActionParameters));
+            var trajectory = TrajectoryCalculator.GetTrajectory(jumperDTO, action.StartPosition, MathHelper.GetVector3FromString(action.ActionParameters));
             var result = map.Marker.CreateMarkAtPosition(map.Marker.MarkerDotPrefab, trajectory.Path);
             return await Task.FromResult(result);
+        }
+
+        public override AgentActionDTO GetRandomAction(Vector2 lastPosition)
+        {
+            var actions = GetPossibleActions(lastPosition);
+            if (actions.Count == 0)
+                return null;
+
+            return actions[(int) random.Next(0, actions.Count)];
         }
 
         public override bool IsPerforming()
@@ -124,9 +135,9 @@ namespace Assets.Scripts.GameEditor.AI
             if (!actionTypes.ContainsKey(action)) 
                 return;
 
-            if(JumpHelper.CheckIfStaysOnGround(performer))
+            if(MoveHelper.CheckIfStaysOnGround(performer))
             {
-                performerRigidbody.AddForce(JumpHelper.GetJumpVector(actionTypes[action], forceUp, forceInDirection));
+                performerRigidbody.AddForce(TrajectoryCalculator.GetJumpVector(actionTypes[action], forceUp, forceInDirection));
                 Vector2.ClampMagnitude(performerRigidbody.velocity, 50);
             }
         }
@@ -142,8 +153,8 @@ namespace Assets.Scripts.GameEditor.AI
         {
             return new List<TrajectoryDTO>
             {
-                JumpHelper.GetTrajectory(jumperDTO, position, JumpHelper.GetJumpVector(Vector2.left, forceUp, forceInDirection)),
-                JumpHelper.GetTrajectory(jumperDTO, position, JumpHelper.GetJumpVector(Vector2.right, forceUp, forceInDirection))
+                TrajectoryCalculator.GetTrajectory(jumperDTO, position, TrajectoryCalculator.GetJumpVector(Vector2.left, forceUp, forceInDirection)),
+                TrajectoryCalculator.GetTrajectory(jumperDTO, position, TrajectoryCalculator.GetJumpVector(Vector2.right, forceUp, forceInDirection))
             };
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Scripts.GameEditor.Managers;
+using JetBrains.Annotations;
 using UnityEngine;
 
 
@@ -111,6 +112,8 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             renderer.sprite = OriginalSprite;
             renderer.color = OriginalColor;
             renderer.transform.localScale = OriginalScale;
+            renderer.flipX = false;
+            renderer.flipY = false;
         }
     }
 }

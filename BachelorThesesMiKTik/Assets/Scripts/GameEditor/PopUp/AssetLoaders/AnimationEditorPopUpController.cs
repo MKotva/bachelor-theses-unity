@@ -103,8 +103,9 @@ namespace Assets.Scripts.GameEditor.PopUp.AssetLoaders
         }
         #region PRIVATE
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             lines = new List<GameObject>();
         }
 

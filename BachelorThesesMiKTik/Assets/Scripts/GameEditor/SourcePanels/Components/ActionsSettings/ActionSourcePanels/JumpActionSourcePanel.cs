@@ -9,7 +9,6 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
     public class JumpActionSourcePanel : ActionSourcePanelController
     {
         [SerializeField] Toggle IsChargeable;
-        [SerializeField] Toggle GroundedOnly;
         [SerializeField] SimpleJumpActionSourcePanel SimpleJump;
         [SerializeField] ChargeableJumpSourcePanel ChargeableJump;
 

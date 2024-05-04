@@ -14,18 +14,18 @@ namespace Assets.Core.GameEditor.DTOS.Action
     {
         public float Speed;
         public float SpeedCap;
-        public bool CanFall;
+        public bool OnlyGrounded;
 
-        public MoveActionDTO(float speed, float cap, bool canFall) 
+        public MoveActionDTO(float speed, float cap, bool onlyGrounded) 
         {
             Speed = speed;
             SpeedCap = cap;
-            CanFall = canFall;
+            OnlyGrounded = onlyGrounded;
         }
 
         public override List<ActionBase> GetAction(GameObject instance)
         {
-            return new List<ActionBase> { new MoveAction(instance, Speed, SpeedCap, CanFall) };
+            return new List<ActionBase> { new MoveAction(instance, Speed, SpeedCap, OnlyGrounded) };
         }
     }
 }

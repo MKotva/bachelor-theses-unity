@@ -20,6 +20,8 @@ namespace Assets.Core.GameEditor.Components.Colliders
         {
             base.Set(item);
             var collider = GetOrAddComponent<CircleCollider2D>(item.Prefab);
+            collider.isTrigger = IsTrigger;
+
             collider.transform.position = Center;
             collider.radius = Radius * Scale.x;
             collider.enabled = true;

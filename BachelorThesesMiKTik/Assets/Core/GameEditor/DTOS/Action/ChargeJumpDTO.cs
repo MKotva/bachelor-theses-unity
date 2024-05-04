@@ -15,24 +15,28 @@ namespace Assets.Core.GameEditor.DTOS.Action
         public float HorizontalForceMax;
         public float JumpTimeCap;
 
-        public ChargeJumpDTO(float vMin, float vMax, float hMin, float hMax, float timeCap)
+        public bool OnlyGrounded;
+
+        public ChargeJumpDTO(float vMin, float vMax, float hMin, float hMax, float timeCap, bool onlyGrounded)
         {
             VerticalForceMin = vMin;
             VerticalForceMax = vMax;
             HorizontalForceMin = hMin;
             HorizontalForceMax = hMax;
             JumpTimeCap = timeCap;
+            OnlyGrounded = onlyGrounded;
         }
         public override List<ActionBase> GetAction(GameObject instance)
         {
-            return new List<ActionBase> { 
+            return new List<ActionBase> {
                 new ChargeableJumpAction(
                         instance,
                         VerticalForceMin,
                         VerticalForceMax,
                         HorizontalForceMin,
                         HorizontalForceMax,
-                        JumpTimeCap
+                        JumpTimeCap,
+                        OnlyGrounded
                     )};
         }
     }

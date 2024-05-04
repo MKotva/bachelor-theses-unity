@@ -39,7 +39,16 @@ namespace Assets.Core.GameEditor.Components
 
         public override void Set(ItemData item)
         {
-            GetOrAddComponent<Rigidbody2D>(item.Prefab);
+            var rigid = GetOrAddComponent<Rigidbody2D>(item.Prefab);
+
+            foreach (var component in item.Components)
+            {
+                if (component.ComponentName == "Player Control" || component.ComponentName == "AI Control")
+                {
+                    rigid.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+                    return;
+                }
+            }
         }
 
         public override void SetInstance(ItemData item, GameObject instance)

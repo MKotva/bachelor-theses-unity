@@ -97,8 +97,9 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         }
 
         #region PRIVATE
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Code.onValueChanged.AddListener(OnTextChanged);
         }
 

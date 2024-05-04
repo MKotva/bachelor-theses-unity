@@ -27,7 +27,7 @@ namespace Assets.Scripts.GameEditor.Entiti
             actions = component.Actions.GetAction(gameObject);
             actionsFinishers = new Dictionary<List<KeyCode>, ActionFinishHandler>();
 
-            Actions = playerSetting.Actions.GetAction(gameObject);
+            ActionPerformers = playerSetting.Actions.GetAction(gameObject);
             IsInitDone = false;
         }
 
@@ -59,6 +59,7 @@ namespace Assets.Scripts.GameEditor.Entiti
         public void Exit()
         {
             IsPlaying = false;
+            ActionsToPerform.Clear();
         }
         #endregion
 
@@ -84,6 +85,12 @@ namespace Assets.Scripts.GameEditor.Entiti
             if (!IsInitDone && playerSetting.OnCreateAction != null)
             {
                 playerSetting.OnCreateAction.Execute(gameObject);
+            }
+
+            if(ActionsToPerform.Count > 0) 
+            {
+                PerformActions();
+                return;
             }
 
             HandleReleasedKeys();

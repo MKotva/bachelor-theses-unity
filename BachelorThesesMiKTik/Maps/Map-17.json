@@ -264,6 +264,7 @@
               "HorizontalForceMin": 20.0,
               "HorizontalForceMax": 250.0,
               "JumpTimeCap": 2.0,
+	      "OnlyGrounded" : true,
               "Name": null
             },
             "Name": "Move + Jump"

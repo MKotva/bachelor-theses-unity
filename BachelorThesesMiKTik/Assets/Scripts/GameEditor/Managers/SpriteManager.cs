@@ -29,10 +29,14 @@ namespace Assets.Scripts.GameEditor.Managers
 
         public async Task Set(ManagerDTO managerDTO)
         {
-            var names = SpriteData.Keys.ToList();
-            foreach(var name in names) 
+            if (SpriteData != null)
             {
-                RemoveSprite(name);
+                var names = SpriteData.Keys.ToList();
+                foreach (var name in names)
+                {
+                    RemoveSprite(name);
+                }
+
             }
 
             var tasks = new List<Task<bool>>();

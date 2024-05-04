@@ -19,7 +19,8 @@ namespace Assets.Core.GameEditor.Components.Colliders
             base.Set(item);
 
             var collider = GetOrAddComponent<PolygonCollider2D>(item.Prefab);
-            
+            collider.isTrigger = IsTrigger;
+
             var scaledPoints = new List<Vector2>();
             foreach(var point in Points)
             {

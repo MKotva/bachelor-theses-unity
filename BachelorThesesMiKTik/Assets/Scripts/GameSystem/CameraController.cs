@@ -22,11 +22,10 @@ public class CameraController : MonoBehaviour, IObjectController
     public void Pause() {}
 
     public void Enter()
-    {
+    { 
+        SetFollowTransform();
         IsEnabled = true;
         startPosition = transform.position;
-
-        SetFollowTransform();
     }
 
     public void Exit()
@@ -39,10 +38,10 @@ public class CameraController : MonoBehaviour, IObjectController
     {
         manager = GameManager.Instance; 
         if(manager != null)
-            manager.AddActiveObject(gameObject.GetInstanceID(), this);
+            manager.Camera = this;
     }
 
-    private bool SetFollowTransform()
+    public bool SetFollowTransform()
     {
         if (manager != null)
         {
@@ -54,6 +53,7 @@ public class CameraController : MonoBehaviour, IObjectController
             }
         }
 
+        IsEnabled = false;
         return false;
     }
 
@@ -76,6 +76,8 @@ public class CameraController : MonoBehaviour, IObjectController
             if (!CheckFollowTransform())
                 return;
 
+            if (FollowTransform == null)
+                return;
 
             transform.position = new Vector3(FollowTransform.position.x, FollowTransform.position.y, transform.position.z);
         }

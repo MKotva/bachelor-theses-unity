@@ -1,6 +1,6 @@
-﻿using Assets.Core.GameEditor.DTOS;
+﻿using Assets.Core.GameEditor.AIActions.Movement;
+using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,13 +13,13 @@ namespace Assets.Core.GameEditor.AIActions
         private static Dictionary<string, Vector2> actionTypes = new Dictionary<string, Vector2>
         {
             {"Fly up", Vector2.up},
-            {"Fly up-right", new Vector2(1, 1)},
             {"Fly right", Vector2.right},
-            {"Fly down-right", new Vector2(1, -1)},
             {"Fly down", Vector2.down},
-            {"Fly down-left", new Vector2(-1, -1)},
             {"Fly left", Vector2.left},
-            {"Fly up-left", new Vector2(-1, 1)}
+            {"Fly down-left", new Vector2(-1, -1)},
+            {"Fly down-right", new Vector2(1, -1)},
+            {"Fly up-left", new Vector2(-1, 1)},
+            {"Fly up-right", new Vector2(1, 1)}
         };
         public static List<string> ActionTypes
         {
@@ -31,6 +31,7 @@ namespace Assets.Core.GameEditor.AIActions
 
         private float speed;
         private float speedCap;
+        private MoveHelper moveHelper;
 
         public FlyAction(GameObject performer, float speed, float speedCap) : base(performer)
         {
@@ -43,9 +44,10 @@ namespace Assets.Core.GameEditor.AIActions
         {
             var reacheablePositions = new List<AgentActionDTO>();
 
-            foreach (var actionKey in actionTypes.Keys)
+            var keys = actionTypes.Keys.ToList();
+            for (int i = 0; i < 4; i++ )
             {
-                var translation = GetPositionFromParam(actionKey);
+                var translation = GetPositionFromParam(keys[i]);
                 var translatedPosition = new Vector2
                 {
                     x = translation.x + position.x,
@@ -53,26 +55,29 @@ namespace Assets.Core.GameEditor.AIActions
                 };
 
                 var centeredPositon = map.GetCellCenterPosition(translatedPosition);
-                if (IsWalkable(centeredPositon))
+                if (!ContainsBlockingObjectAtPosition(centeredPositon))
                 {
-                    reacheablePositions.Add(new AgentActionDTO(position, centeredPositon, actionKey, 1f, PerformAgentActionAsync, PrintAgentActionAsync));
+                    reacheablePositions.Add(new AgentActionDTO(position, centeredPositon, keys[i], 1f, PerformAgentActionAsync, PrintAgentActionAsync));
                 }
             }
 
             return reacheablePositions;
         }
 
-        public override async Task PerformAgentActionAsync(AgentActionDTO action)
+        public override bool PerformAgentActionAsync(AgentActionDTO action, Queue<AgentActionDTO> actions, float deltaTime)
         {
-            var position = performer.transform.position;
-            var translation = GetPositionFromParam(action.ActionParameters);
-            performer.transform.position = new Vector2
+            if(moveHelper == null)
             {
-                x = translation.x + position.x,
-                y = translation.y + position.y
-            };
+                moveHelper = new MoveHelper(performerRigidbody, speed, action.StartPosition, map.GetCellCenterPosition(MoveHelper.FindContinuousPath(action, actions)));
+            }
 
-            await Task.Delay(1000);
+            if(!moveHelper.TranslationTick(performer, map, deltaTime))
+            {
+                return false;
+            }
+
+            moveHelper = null;
+            return true;
         }
 
         public override async Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
@@ -91,11 +96,48 @@ namespace Assets.Core.GameEditor.AIActions
             performerRigidbody.velocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
         }
 
+        public override AgentActionDTO GetRandomAction(Vector2 lastPosition)
+        {
+            var initActions = GetPossibleActions(lastPosition);
+            if (initActions.Count == 0)
+                return null;
+
+            var action = initActions[random.Next(0, initActions.Count)];
+
+            var newAction = action;
+            while (newAction.ActionParameters == action.ActionParameters)
+            {
+                var actions = GetPossibleActions(newAction.EndPosition);
+                if (random.Next(0, 1000) % 13 == 0)
+                    break;
+
+                AgentActionDTO selectedAction = null;
+                foreach (var generatedFunction in actions)
+                {
+                    if (generatedFunction.ActionParameters == newAction.ActionParameters)
+                    {
+                        selectedAction = generatedFunction;
+                        break;
+                    }
+                }
+                
+                if(selectedAction != null)
+                {
+                    newAction = selectedAction;
+                    continue;
+                }
+                break;
+            }
+
+            action.EndPosition = newAction.EndPosition;
+            return action;
+        }
+
         public override void FinishAction() { }
 
         public override bool IsPerforming()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override bool ContainsActionCode(string code)

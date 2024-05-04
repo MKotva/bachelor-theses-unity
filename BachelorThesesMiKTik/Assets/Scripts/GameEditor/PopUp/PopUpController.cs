@@ -5,7 +5,7 @@ public class PopUpController : MonoBehaviour
     public delegate void ExitHandler();
     public event ExitHandler onExit;
 
-    private void Start()
+    protected virtual void Awake()
     {
         EditorCanvas.Instance.OnDisable();
     }

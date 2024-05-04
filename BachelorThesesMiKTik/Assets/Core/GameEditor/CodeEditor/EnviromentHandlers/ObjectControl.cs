@@ -1,6 +1,7 @@
 ﻿using Assets.Core.GameEditor.Attributes;
 using Assets.Core.SimpleCompiler.Exceptions;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
+using System;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
@@ -10,8 +11,12 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         private Rigidbody2D rigid;
         private ObjectController controller;
 
-        public int HP { get; set; }
-        public int Score { get; set; }
+
+        [CodeEditorAttribute("Returns value, which represents actual object velocity in horizontal direction.")]
+        public float HP { get; set; }
+
+        [CodeEditorAttribute("Returns value, which represents actual object velocity in horizontal direction.")]
+        public float Score { get; set; }
 
         public override bool SetInstance(GameObject instance) 
         {

@@ -6,7 +6,7 @@ using Assets.Scripts.GameEditor.SourcePanels.Components.Colliders;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.UI;
 using BoxCollider = Assets.Scripts.GameEditor.SourcePanels.Components.Colliders.BoxCollider;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
@@ -17,6 +17,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         [SerializeField] BoxCollider BoxColliderMenu;
         [SerializeField] CircularCollider CircularMenu;
         [SerializeField] PolygonCollider PolygonMenu;
+        [SerializeField] Toggle IsTrigger;
 
         [SerializeField] GameObject ContentView;
         [SerializeField] GameObject CollisionSourcePanel;
@@ -56,6 +57,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
                     ColliderType.value = 1;
                     CircularMenu.SetComponent(boxCollider);
                 }
+                IsTrigger.isOn = boxCollider.IsTrigger;
             }
             else
             {
@@ -132,6 +134,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
             }
 
             component.Colliders = colliders;
+            component.IsTrigger = IsTrigger.isOn;
 
             return component;
         }

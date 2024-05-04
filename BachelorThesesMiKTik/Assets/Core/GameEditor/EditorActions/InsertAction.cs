@@ -205,8 +205,12 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                     map.Erase(map.Selected[position].Item1);
 
                     var newObject = map.Paint(prototype, position);
-                    map.Marker.MarkObject(newObject);
-                    map.Selected[position] = (newObject, false);
+
+                    if (newObject != null)
+                    {
+                        map.Marker.MarkObject(newObject);
+                        map.Selected[position] = (newObject, false);
+                    }
                 }
             }
 
@@ -230,8 +234,11 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 map.Erase(map.Selected[position].Item1);
 
                 var newObject = map.Paint(prototype, position);
-                map.Marker.MarkObject(newObject);
-                map.Selected[position] = (newObject, false);
+                if (newObject != null)
+                {
+                    map.Marker.MarkObject(newObject);
+                    map.Selected[position] = (newObject, false);
+                }
             }
         }
         #endregion

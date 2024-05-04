@@ -10,11 +10,27 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 {
     public class AIControl : EnviromentObject
     {
-        public AIObjectController Agent { get; set; }
+        private AIObjectController agent;
         private ItemManager itemManager;
         private EditorCanvas editor;
 
-        public override bool SetInstance(GameObject instance) { return true; }
+        public override bool SetInstance(GameObject instance) 
+        { 
+            if(!instance.TryGetComponent(out agent))
+            {
+                return false;
+            }
+
+            itemManager = ItemManager.Instance;
+            if(itemManager == null)
+                return false;
+
+            editor = EditorCanvas.Instance;
+            if (editor == null)
+                return false;
+
+            return true;
+        }
 
         public AIControl()
         {
@@ -27,7 +43,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         {
             var itemInstances = GetElementInstances(name);
             var minPos = GetClosestPos(itemInstances);
-            Agent.MoveTo(minPos);
+            agent.MoveTo(minPos);
         }
 
         [CodeEditorAttribute("Moves actual object to n-th object with given name(objectName), if its possible, with use of given actions.", "( string objectName)")]
@@ -35,7 +51,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         {
             var itemInstances = GetElementInstances(name);
             var maxPos = GetNthPos(itemInstances, n);
-            Agent.MoveTo(maxPos);
+            agent.MoveTo(maxPos);
 
         }
 
@@ -44,19 +60,19 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         {
             var itemInstances = GetElementInstances(name);
             var maxPos = GetFarestPos(itemInstances);
-            Agent.MoveTo(maxPos);
+            agent.MoveTo(maxPos);
         }
 
         [CodeEditorAttribute("Moves actual object to given position(xPos, yPos), if its possible, with use of given actions.", "(num xPos, num YPos)")]
         public void MoveToPosition(float x, float y)
         {
-            Agent.MoveTo(new Vector3(x, y)); //TODO: Check if possition is valid! Like not in the wall
+            agent.MoveTo(new Vector3(x, y)); //TODO: Check if possition is valid! Like not in the wall
         }
 
         [CodeEditorAttribute("Checks if object with given name(objectName) is in given range(distance)", "(string objectName, num distance)")]
         public bool IsInRange(string name, float distance)
         {
-            var agentPos = Agent.transform.position;
+            var agentPos = agent.transform.position;
             if(itemManager.TryFindIdByName(name, out var endpointId))
                 return editor.Data[endpointId].Any(x => Vector3.Distance(agentPos, x.Key) < distance);
             return false;
@@ -69,7 +85,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             var itemInstances = GetElementInstances(name);
             var inRange = GetElementsInRange(itemInstances, distance);
             var minPos = GetClosestPos(inRange);
-            Agent.MoveTo(minPos);
+            agent.MoveTo(minPos);
         }
 
         [CodeEditorAttribute("Moves actual object to n-th object with given name(objectName)" +
@@ -79,7 +95,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             var itemInstances = GetElementInstances(name);
             var inRange = GetElementsInRange(itemInstances, distance);
             var nthPos = GetNthPos(inRange, n);
-            Agent.MoveTo(nthPos);
+            agent.MoveTo(nthPos);
         }
 
         [CodeEditorAttribute("Moves actual object to farest object with given name(objectName)" +
@@ -89,25 +105,32 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             var itemInstances = GetElementInstances(name);
             var inRange = GetElementsInRange(itemInstances, distance);
             var maxPos = GetFarestPos(inRange);
-            Agent.MoveTo(maxPos);
+            agent.MoveTo(maxPos);
         }
 
-        public void UseWeapon(string name, string target)
+        [CodeEditorAttribute("Based on motion actions on this object, performs random action.")]
+        public void PerformRandomAction()
         {
+            agent.PerformRandomAction();
+        }
 
+        [CodeEditorAttribute("Returns number of queued actions.")]
+        public float ActualQueuedActionsCount()
+        {
+            return agent.ActionsToPerform.Count();
         }
 
         #region PRIVATE
         private Vector3 GetClosestPos(Dictionary<Vector3, GameObject> data)
         {
-            var agentPos = Agent.transform.position;
+            var agentPos = agent.transform.position;
             //Due to lazy evaluation, the orderby will be O(n)
             return data.OrderByDescending(x => Vector3.Distance(agentPos, x.Key)).First().Key; //TODO: Check if possition is valid! Like not in the wall
         }
 
         private Vector3 GetNthPos(Dictionary<Vector3, GameObject> data, int n)
         {
-            var agentPos = Agent.transform.position;
+            var agentPos = agent.transform.position;
             //Due to lazy evaluation, the orderby will be O(n)
             var maxPos = data.OrderBy(x => Vector3.Distance(agentPos, x.Key)); //TODO: Check if possition is valid! Like not in the wall
 
@@ -120,7 +143,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 
         private Vector3 GetFarestPos(Dictionary<Vector3, GameObject> data)
         {
-            var agentPos = Agent.transform.position;
+            var agentPos = agent.transform.position;
             //Due to lazy evaluation, the orderby will be O(n)
             return data.OrderByDescending(x => Vector3.Distance(agentPos, x.Key)).First().Key; //TODO: Check if possition is valid! Like not in the wall
         }
@@ -137,7 +160,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 
         private Dictionary<Vector3, GameObject> GetElementsInRange(Dictionary<Vector3, GameObject> instances, float distance)
         {
-            var agentPos = Agent.transform.position;
+            var agentPos = agent.transform.position;
             return (Dictionary<Vector3, GameObject>)instances.Where(x => Vector3.Distance(agentPos, x.Key) < distance);
         }
         #endregion

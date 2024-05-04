@@ -30,7 +30,7 @@ namespace Assets.Scripts.GameEditor.AI
             if (!TryInitialize())
                 return;
 
-            foreach (var action in agent.Actions)
+            foreach (var action in agent.ActionPerformers)
             {
                 if (action is JumpAction)
                     markers = ((JumpAction) action).PrintAllPossibleJumps(agent.transform.position);

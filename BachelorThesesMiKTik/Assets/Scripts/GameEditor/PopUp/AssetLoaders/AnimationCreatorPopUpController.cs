@@ -106,8 +106,9 @@ public class AnimationCreatorPopUpController : PopUpController
 
     #region PRIVATE
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         lines = new List<GameObject>();
         callbacks = new List<OnCreateCall>();
     }

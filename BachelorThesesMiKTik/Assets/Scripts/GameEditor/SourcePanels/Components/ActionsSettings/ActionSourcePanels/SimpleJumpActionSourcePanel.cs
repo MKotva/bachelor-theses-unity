@@ -3,11 +3,13 @@ using Assets.Scripts.GameEditor.AI;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
 {
     public class SimpleJumpActionSourcePanel : ActionSourcePanelController
     {
+        [SerializeField] Toggle GroundedOnly;
         [SerializeField] TMP_InputField VerticalForce;
         [SerializeField] TMP_InputField HorizontalForce;
         /// <summary>
@@ -29,7 +31,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
             else
                 OutputManager.Instance.ShowMessage("Move action parsing error! Horizontal force was setted to 1");
 
-            return new SimpleJumpActionDTO(verticalForce, horizontalForce);
+            return new SimpleJumpActionDTO(verticalForce, horizontalForce, GroundedOnly.isOn);
         }
 
         /// <summary>

@@ -31,6 +31,9 @@ namespace Assets.Scripts.GameEditor.AI
                     return BackTrackActions(actualNode);
                 }
 
+                if (_activeNodes.Count > 10000)
+                    return null;
+
                 _closedNodes.Add(actualNode.Position, actualNode);
                 var reacheableNodes = GetWalkableNodes(actualNode);
 

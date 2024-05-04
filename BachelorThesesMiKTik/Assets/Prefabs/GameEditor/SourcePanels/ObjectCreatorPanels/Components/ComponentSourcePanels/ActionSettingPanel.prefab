@@ -1397,7 +1397,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsChargeable: {fileID: 6499904672491370667}
-  GroundedOnly: {fileID: 534907989417340535}
   SimpleJump: {fileID: 4626695161375741061}
   ChargeableJump: {fileID: 7660262452430479578}
 --- !u!1 &786868922302723516
@@ -4595,6 +4594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 405f28d96f38d0c4b954c628879285f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GroundedOnly: {fileID: 665387409752334194}
   VerticalForce: {fileID: 392641981883554507}
   HorizontalForce: {fileID: 730091392066180949}
 --- !u!1 &1930933092315884818
@@ -7988,6 +7988,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 405f28d96f38d0c4b954c628879285f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GroundedOnly: {fileID: 534907989417340535}
   VerticalForce: {fileID: 986230094035125391}
   HorizontalForce: {fileID: 6149606692622025939}
 --- !u!1 &3526356300855112635
@@ -10942,6 +10943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd0810b652b14c4d8fb92f362c16807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GroundedOnly: {fileID: 665387409752334194}
   VerticalForceMin: {fileID: 7217440216317498931}
   VerticalForceMax: {fileID: 2978178424415594113}
   HorizontalForceMin: {fileID: 5892839837966140008}
@@ -11538,6 +11540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd0810b652b14c4d8fb92f362c16807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GroundedOnly: {fileID: 534907989417340535}
   VerticalForceMin: {fileID: 831581980324066170}
   VerticalForceMax: {fileID: 6539315646653209793}
   HorizontalForceMin: {fileID: 4700817221704884093}
@@ -16068,7 +16071,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsChargeable: {fileID: 8987095349460728999}
-  GroundedOnly: {fileID: 665387409752334194}
   SimpleJump: {fileID: 1845181418057057412}
   ChargeableJump: {fileID: 6330370626152466957}
 --- !u!1 &7983185501903406367

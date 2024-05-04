@@ -1,58 +1,113 @@
 ﻿using Assets.Core.GameEditor.Components.Colliders;
+using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 namespace Assets.Scripts.GameEditor.Entiti
 {
     public class ColliderController : MonoBehaviour, IObjectController
     {
-        public string Name;
-        public string GroupName;
+        public string Name { get; private set; }
+        public string GroupName { get; private set; }
+        public Collider2D ObjectCollider { get; private set; }
+        public ColliderComponent ColliderSettings { get; private set; }
 
-        private Collider2D objectCollider;
-        private ColliderComponent colliderSettings;
+        private List<(HashSet<string>, HashSet<string>, SimpleCode)> handlers;
 
         public void Initialize(string name, string groupName, ColliderComponent colliderSetting)
         {
             Name = name;
             GroupName = groupName;
-            colliderSettings = colliderSetting;
+            ColliderSettings = colliderSetting;
+
+            foreach (var handler in ColliderSettings.Colliders)
+            {
+                var namesSet = new HashSet<string>();
+                var groupSet = new HashSet<string>();
+
+                foreach (var names in handler.ObjectsNames)
+                {
+                    namesSet.Add(names);
+                }
+                foreach(var group in handler.GroupsNames)
+                {
+                    groupSet.Add(group);
+                }
+
+                handlers.Add((namesSet, groupSet, handler.Handler));
+            }
         }
 
         #region IObjectMethods
         public void Play()
         {
-            objectCollider.enabled = true;
+            ObjectCollider.enabled = true;
         }
 
         public void Pause()
         {
-            objectCollider.enabled = false;
+            ObjectCollider.enabled = false;
         }
 
         public void Enter() {}
 
         public void Exit() 
         {
-            objectCollider.enabled = false;
+            ObjectCollider.enabled = false;
         }
 
         #endregion
+
+        public bool ContainsHandler(string name)
+        {
+            foreach (var handler in handlers)
+            {
+                if (handler.Item1.Contains(name))
+                {
+                    return true;
+                }
+                else if (handler.Item2.Contains(name))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         //TODO: Consider construction of data structure for faster name check: MB: List<Dictionary<string, Code>>
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.gameObject.TryGetComponent<ColliderController>(out var controller))
             {
-                foreach (var handler in colliderSettings.Colliders)
+                foreach (var handler in handlers)
                 {
-                    if(handler.ObjectsNames.Contains(controller.Name)) 
+                    if (handler.Item1.Contains(controller.Name))
                     {
-                        handler.Handler.Execute(gameObject);
+                        handler.Item3.Execute(gameObject);
                     }
-                    else if(handler.GroupsNames.Contains(controller.GroupName))
+                    else if (handler.Item2.Contains(controller.Name))
                     {
-                        handler.Handler.Execute(gameObject);
+                        handler.Item3.Execute(gameObject);
+                    }
+                }
+            }
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.gameObject.TryGetComponent<ColliderController>(out var controller))
+            {
+                foreach (var handler in handlers)
+                {
+                    if (handler.Item1.Contains(controller.Name))
+                    {
+                        handler.Item3.Execute(gameObject);
+                    }
+                    else if (handler.Item2.Contains(controller.Name))
+                    {
+                        handler.Item3.Execute(gameObject);
                     }
                 }
             }
@@ -60,15 +115,23 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         private void Awake()
         {
-            colliderSettings = new ColliderComponent();
+            ColliderSettings = new ColliderComponent();
+            handlers = new List<(HashSet<string>, HashSet<string>, SimpleCode)>();
 
             if (TryGetComponent<ObjectController>(out var controller))
             {
                 controller.Components.Add(typeof(ColliderController), this);
-                if (!TryGetComponent(out objectCollider))
-                    objectCollider = gameObject.AddComponent<BoxCollider2D>();
-                objectCollider.enabled = false;
             }
+
+            Collider2D collider;
+            if (!TryGetComponent(out collider))
+            {
+                collider = gameObject.AddComponent<BoxCollider2D>();
+                ObjectCollider.isTrigger = false;
+            }
+
+            ObjectCollider = collider;
+            ObjectCollider.enabled = false;
         }
     }
 }

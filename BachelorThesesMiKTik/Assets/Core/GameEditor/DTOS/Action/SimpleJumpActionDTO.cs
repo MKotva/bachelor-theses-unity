@@ -14,16 +14,18 @@ namespace Assets.Core.GameEditor.DTOS.Action
     {
         public float VerticalForce;
         public float HorizontalForce;
+        public bool OnlyGrounded;
 
-        public SimpleJumpActionDTO(float verticalForce, float horizontalForce)
+        public SimpleJumpActionDTO(float verticalForce, float horizontalForce, bool onlyGrounded)
         {
             VerticalForce = verticalForce;
             HorizontalForce = horizontalForce;
+            OnlyGrounded = onlyGrounded;
         }
 
         public override List<ActionBase> GetAction(GameObject instance)
         {
-            return new List<ActionBase> { new JumpAction(instance, VerticalForce, HorizontalForce) };
+            return new List<ActionBase> { new JumpAction(instance, VerticalForce, HorizontalForce, OnlyGrounded) };
         }
     }
 }

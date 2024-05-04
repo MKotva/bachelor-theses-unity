@@ -13,6 +13,7 @@ namespace Assets.Scripts.GameEditor
         [SerializeField] public Canvas PopUpCanvas;
         [SerializeField] public Canvas PlayModeCanvas;
 
+        public CameraController Camera { get; set; }
         public Dictionary<int, IObjectController> ActiveObjects { get; set; }
         public Dictionary<int, GameObject> ActivePlayers { get; set; }
         public bool IsInPlayMode { get; set; }
@@ -42,6 +43,8 @@ namespace Assets.Scripts.GameEditor
             if (ActiveObjects.ContainsKey(id))
             {
                 ActivePlayers.Remove(id);
+                Camera.SetFollowTransform();
+
                 if (ActivePlayers.Count == 0)
                 {
                     ShowGameFail();
@@ -128,6 +131,8 @@ namespace Assets.Scripts.GameEditor
         {
             foreach (var obj in ActiveObjects.Values)
                 obj.Enter();
+
+            Camera.Enter();
         }
 
         public void StartGame()
@@ -149,10 +154,13 @@ namespace Assets.Scripts.GameEditor
 
         public void ExitGame()
         {
+            Camera.Exit();
+
             foreach (var obj in ActiveObjects.Values)
                 obj.Exit();
 
             ActivePlayers.Clear();
+            OutputManager.Instance.ClearMessages();
         }
 
         public void ShowGameFail()
@@ -167,6 +175,12 @@ namespace Assets.Scripts.GameEditor
             Instantiate(SuccesPanel, PopUpCanvas.transform);
         }
 
+        public void Clear()
+        {
+            ActiveObjects = new Dictionary<int, IObjectController>();
+            ActivePlayers = new Dictionary<int, GameObject> { };
+        }
+
         #region Private
 
         /// <summary>
@@ -175,22 +189,26 @@ namespace Assets.Scripts.GameEditor
         private void FindLowestPoint()
         {
             var editorCanvas = EditorCanvas.Instance;
-            if (editorCanvas != null)
+            if (editorCanvas == null)
             {
-                var fistGroup = editorCanvas.Data.Keys.First();
-                LowestYPoint = editorCanvas.Data[fistGroup].Keys.First().y;
-                foreach(var ob in editorCanvas.Data.Values)
-                {
-                    foreach(var position in ob.Keys)
-                    {
-                        if(position.y < LowestYPoint)
-                            LowestYPoint = position.y;
-                    }
-                }
+                LowestYPoint = -1000;
+            }
+            else if (editorCanvas.Data.Count == 0)
+            {
+                LowestYPoint = -1000;
             }
             else
             {
-                LowestYPoint = -1000;
+                var fistGroup = editorCanvas.Data.Keys.First();
+                LowestYPoint = editorCanvas.Data[fistGroup].Keys.First().y;
+                foreach (var ob in editorCanvas.Data.Values)
+                {
+                    foreach (var position in ob.Keys)
+                    {
+                        if (position.y < LowestYPoint)
+                            LowestYPoint = position.y;
+                    }
+                }
             }
         }
 

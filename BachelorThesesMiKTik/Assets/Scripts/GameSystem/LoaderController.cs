@@ -21,6 +21,7 @@ namespace Assets.Scripts.JumpSystem
             var instance = GameManager.Instance;
             if (Loader.Data != null && instance != null)
             {
+                instance.Clear();
                 await GameDataSerializer.Deserialize(Loader.Data);
                 instance.EnterGame();
                 instance.StartGame();

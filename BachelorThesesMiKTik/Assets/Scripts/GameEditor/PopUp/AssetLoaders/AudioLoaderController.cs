@@ -84,8 +84,9 @@ namespace Assets.Scripts.GameEditor.Audio
             }
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             AudioSource = GetComponent<AudioSource>();
         }
 

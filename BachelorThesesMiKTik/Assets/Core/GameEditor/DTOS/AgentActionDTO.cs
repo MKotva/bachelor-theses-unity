@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ namespace Assets.Core.GameEditor.DTOS
 {
     public class AgentActionDTO
     {
-        public delegate Task ActionPerformer(AgentActionDTO action);
+        public delegate bool ActionPerformer(AgentActionDTO action, Queue<AgentActionDTO> actions, float deltaTime);
         public delegate Task<List<GameObject>> ActionPrintingPerformer(AgentActionDTO action);
 
         public Vector3 StartPosition {get; set;}

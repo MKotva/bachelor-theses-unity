@@ -20,6 +20,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
         {
             base.Set(item);
             var collider = GetOrAddComponent<BoxCollider2D>(item.Prefab);
+            collider.isTrigger = IsTrigger;
 
             var x = (XSize * Scale.x);
             var y = (YSize * Scale.y);
@@ -32,6 +33,11 @@ namespace Assets.Core.GameEditor.Components.Colliders
             {
                 if (component.ComponentName == "Player Control" || component.ComponentName == "AI Control")
                     return;
+            }
+
+            if(Colliders.Count != 0) 
+            {
+                return;
             }
 
             var rigid = item.Prefab.AddComponent<Rigidbody2D>();

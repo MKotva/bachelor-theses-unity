@@ -144,20 +144,6 @@ public class EditorCanvas : Singleton<EditorCanvas>
     }
 
 
-    //TODO: Rework this, make with layers.
-    public bool ContainsBlockingObjectAtPosition(Vector3 position)
-    {
-        foreach (var group in Data.Values)
-        {
-            if (group.ContainsKey(position))
-            {
-                if (group[position].layer == LayerMask.GetMask("Box"))
-                    return true;
-            }
-        }
-        return false;
-    }
-
     public void RemoveFromData(Vector3 position)
     {
         foreach(var id in Data.Keys)
@@ -217,8 +203,14 @@ public class EditorCanvas : Singleton<EditorCanvas>
 
     public GameObject Paint(ItemData item, Vector3 position)
     {
-        var newInstance = CreateInstance(item, position);
-        InsertToData(item, newInstance, position);
+        var centeredPosition = GetCellCenterPosition(position);
+        if (ContainsObjectAtPosition(centeredPosition))
+        {
+            return null;
+        }
+
+        var newInstance = CreateInstance(item, centeredPosition);
+        InsertToData(item, newInstance, centeredPosition);
         return newInstance;
     }
 
@@ -255,13 +247,13 @@ public class EditorCanvas : Singleton<EditorCanvas>
         return null;
     }
 
-    public Vector3 GetWorldMousePosition()
+    public Vector2 GetWorldMousePosition()
     {
         Vector2 worldMousePos = CameraObj.ScreenToWorldPoint(Input.mousePosition);
         return new Vector3(worldMousePos.x, worldMousePos.y);
     }
 
-    public Vector3 GetCellCenterPosition(Vector3 mousePosition)
+    public Vector2 GetCellCenterPosition(Vector2 mousePosition)
     {
         return GridLayout.GetCellCenterWorld(GridLayout.WorldToCell(mousePosition));
     }

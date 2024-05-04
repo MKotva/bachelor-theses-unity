@@ -1,4 +1,5 @@
-﻿using Assets.Core.GameEditor.DTOS;
+﻿using Assets.Core.GameEditor.AIActions.Movement;
+using Assets.Core.GameEditor.DTOS;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,57 +25,53 @@ namespace Assets.Scripts.GameEditor.AI
 
         private float speed;
         private float speedCap;
-        private bool canFall;
+        private bool GroundedOnly;
+        private MoveHelper moveHelper;
 
         public MoveAction(GameObject gameObject, float moveSpeed = 1, float moveSpeedCap = 1, bool canFallOf = false) : base(gameObject)
         {
             speed = moveSpeed;
             speedCap = moveSpeedCap;
-            canFall = canFallOf;
+            GroundedOnly = canFallOf;
         }
 
         public override List<AgentActionDTO> GetPossibleActions(Vector2 position)
         {
             var cellSize = map.GridLayout.cellSize;
-
-            var reacheablePositions = new List<AgentActionDTO>();
             var newPositions = new Vector2[]
             {
-                map.GetCellCenterPosition(new Vector2(position.x + cellSize.x, position.y)), //Right
-                map.GetCellCenterPosition(new Vector2(position.x + cellSize.x, position.y - cellSize.y)), //LowerRight
-                map.GetCellCenterPosition(new Vector2(position.x + cellSize.x, position.y + cellSize.y)), //UpperRight
-                                                    
                 map.GetCellCenterPosition(new Vector2(position.x - cellSize.x, position.y)), //Left
-                map.GetCellCenterPosition(new Vector2(position.x - cellSize.x, position.y - cellSize.y)), //LowerLeft;
-                map.GetCellCenterPosition(new Vector2(position.x - cellSize.x, position.y - cellSize.y)) //UpperLeft;
+                map.GetCellCenterPosition(new Vector2(position.x + cellSize.x, position.y)), //Right
             };
 
-            var newPositionsParams = new string[]
+            var reacheablePositions = new List<AgentActionDTO>();
+            if (IsWalkable(newPositions[0]))
             {
-                "M;1:0", //Right
-                "M;1:-1", //LowerRight
-                "M;1:1", //UpperRight
+                reacheablePositions.Add(new AgentActionDTO(position, newPositions[0], "Move left", 1f, PerformAgentActionAsync, PrintAgentActionAsync));
+            }
 
-                "M;-1:0", //Left
-                "M;-1:-1", //LowerLeft;
-                "M;-1:1" //UpperLeft;
-            };
-
-            for (int i = 0; i < newPositions.Length; i++)
+            if (IsWalkable(newPositions[1]))
             {
-                if (IsWalkable(newPositions[i]))
-                {
-                    reacheablePositions.Add(new AgentActionDTO(position, newPositions[i], newPositionsParams[i], 1f, PerformAgentActionAsync, PrintAgentActionAsync));
-                }
+                reacheablePositions.Add(new AgentActionDTO(position, newPositions[1], "Move right", 1f, PerformAgentActionAsync, PrintAgentActionAsync));
             }
 
             return reacheablePositions;
         }
 
-        public override async Task PerformAgentActionAsync(AgentActionDTO action)
+        public override bool PerformAgentActionAsync(AgentActionDTO action, Queue<AgentActionDTO> actions, float deltaTime)
         {
-            performer.transform.position = GetPositionFromParam(action.StartPosition, action.ActionParameters);
-            await Task.Delay(1000);
+            if (moveHelper == null)
+            {
+                moveHelper = new MoveHelper(performerRigidbody, speed, action.StartPosition, map.GetCellCenterPosition(MoveHelper.FindContinuousPath(action, actions)));
+            }
+
+            if (!moveHelper.TranslationTick(performer, map, deltaTime))
+            {
+                return false;
+            }
+
+            moveHelper = null;
+            return true;
         }
 
         public override async Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
@@ -83,43 +80,66 @@ namespace Assets.Scripts.GameEditor.AI
             return await Task.FromResult(result);
         }
 
-        public override bool IsPerforming()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void PerformAction(string action)
         {
             if (actionTypes.ContainsKey(action))
             {
-                var direction = actionTypes[action];
-                performerRigidbody.AddForce(direction * speed);
-                performerRigidbody.velocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
+                if (MoveHelper.CheckIfStaysOnGround(performer))
+                {
+                    var direction = actionTypes[action];
+                    performerRigidbody.AddForce(direction * speed);
+                    performerRigidbody.velocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
+                }
             }
         }
 
-        public override void FinishAction() {}
+        public override AgentActionDTO GetRandomAction(Vector2 lastPosition)
+        {
+            var initActions = GetPossibleActions(lastPosition);
+            if (initActions.Count == 0)
+                return null;
+
+            var action = initActions[random.Next(0, initActions.Count)];
+
+            var newAction = action;
+            while (newAction.ActionParameters == action.ActionParameters)
+            {
+                var actions = GetPossibleActions(newAction.EndPosition);
+                if (random.Next(0, 1000) % 9 == 0)
+                    break;
+
+                AgentActionDTO selectedAction = null;
+                foreach (var generatedFunction in actions)
+                {
+                    if (generatedFunction.ActionParameters == newAction.ActionParameters)
+                    {
+                        selectedAction = generatedFunction;
+                        break;
+                    }
+                }
+
+                if (selectedAction != null)
+                {
+                    newAction = selectedAction;
+                    continue;
+                }
+                break;
+            }
+
+            action.EndPosition = newAction.EndPosition;
+            return action;
+        }
+
+        public override bool IsPerforming()
+        {
+            return false;
+        }
+
+        public override void FinishAction() { }
 
         public override bool ContainsActionCode(string code)
         {
             return ActionTypes.Contains(code);
-        }
-
-        private Vector3 GetPositionFromParam(Vector3 position, string param)
-        {
-            var cellSize = map.GridLayout.cellSize;
-
-            switch (param)
-            {
-                case "M;1:0": return new Vector3(position.x + cellSize.x, position.y); //Right
-                case "M;1:-1": return new Vector3(position.x + cellSize.x, position.y - cellSize.y); //LowerRight
-                case "M;1:1": return new Vector3(position.x + cellSize.x, position.y + cellSize.y); //UpperRight
-
-                case "M;-1:0": return new Vector3(position.x - cellSize.x, position.y); //Left
-                case "M;-1:-1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //LowerLeft;
-                case "M;-1:1": return new Vector3(position.x - cellSize.x, position.y - cellSize.y); //UpperLeft;
-            }
-            return map.GetCellCenterPosition(position);
         }
     }
 }

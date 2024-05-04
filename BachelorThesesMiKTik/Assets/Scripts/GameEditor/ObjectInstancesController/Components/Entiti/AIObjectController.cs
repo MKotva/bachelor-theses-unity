@@ -13,12 +13,12 @@ namespace Assets.Scripts.GameEditor.AI
         public void Initialize(AIComponent component)
         {
             aiSetting = component;
-            Actions = aiSetting.Action.GetAction(Performer);
+            ActionPerformers = aiSetting.Action.GetAction(Performer);
         }
 
         public void Play()
         {
-            if (!wasPlayed)
+            if (!wasPlayed && aiSetting.OnCreateAction != null)
             {
                 aiSetting.OnCreateAction.Execute(gameObject);
                 wasPlayed = true;
@@ -36,6 +36,7 @@ namespace Assets.Scripts.GameEditor.AI
         public void Exit()
         {
             isPlaying = false;
+            ActionsToPerform.Clear();
         }
 
         #region PRIVATE

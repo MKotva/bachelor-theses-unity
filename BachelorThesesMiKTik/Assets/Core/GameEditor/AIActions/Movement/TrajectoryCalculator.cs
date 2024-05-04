@@ -6,31 +6,16 @@ using UnityEngine;
 
 namespace Assets.Core.GameEditor.AIActions
 {
-    public class JumpHelper
+    public class TrajectoryCalculator
     {
         private static EditorCanvas map;
-
-        public static bool CheckIfStaysOnGround(GameObject gameObject)
-        {
-             var position = (Vector2)gameObject.transform.position;
-            var collider = gameObject.GetComponent<Collider2D>();
-            var colliderSize = collider.bounds.size.y;
-     
-            var hits = Physics2D.RaycastAll(position, Vector2.down, colliderSize);
-            foreach ( var hit in hits ) 
-            {
-                if(hit.collider.gameObject.GetInstanceID() != gameObject.GetInstanceID())
-                    return true;
-            }
-            return false;
-        }
 
         public static Vector2 GetJumpVector(Vector2 direction, float verticalForce, float horizontalForce)
         {
             return new Vector2(direction.x * horizontalForce, direction.y * verticalForce);
         }
 
-        public static TrajectoryDTO GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 jumpDirection, int depth = 20) 
+        public static TrajectoryDTO GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 jumpDirection, int depth = 100) 
         {
             var velocity = jumpDirection.magnitude / jumper.Mass * Time.fixedDeltaTime;
             var normalizedDirection = jumpDirection.normalized;
@@ -41,44 +26,44 @@ namespace Assets.Core.GameEditor.AIActions
                 return new TrajectoryDTO(trajectoryPoints, startPos, jumpDirection, trajectoryPoints.Last());
             }
 
-            return new TrajectoryDTO(trajectoryPoints, startPos, jumpDirection, startPos);
+            return null;
         }
 
-        private static List<Vector2> GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 direction, float velocity, int depth = 20)
+        private static List<Vector2> GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 direction, float velocity, int depth)
         {
             if(!CheckDependecies())
                 return null;
 
-            var trajectoryPoints = new List<Vector2>();
+            var trajectory = new List<Vector2>();
             var previousPos = startPos;
 
-            while (trajectoryPoints.Count < depth)
+            while (trajectory.Count < depth)
             {
-                Vector2 calculatedPosition = startPos + direction * velocity * trajectoryPoints.Count * jumper.TimeTick; //Move both X and Y at a constant speed per Interval
-                calculatedPosition.y += Physics2D.gravity.y / 2 * Mathf.Pow(trajectoryPoints.Count * jumper.TimeTick, 2);
+                Vector2 calculatedPosition = startPos + direction * velocity * trajectory.Count * jumper.TimeTick; //Move both X and Y at a constant speed per Interval
+                calculatedPosition.y += Physics2D.gravity.y / 2 * Mathf.Pow(trajectory.Count * jumper.TimeTick, 2);
 
                 if (CheckCollision(calculatedPosition, previousPos, jumper.ColliderSize, out var previousHitPosition, out var hittedObject)) //TODO: For every ai object, have list of layers.
                 {
                     if(hittedObject.GetInstanceID() != jumper.Performer.GetInstanceID())
                     {
                         var hitDirection = (calculatedPosition - previousPos).normalized;
-                        var newDirection = Bounce(previousPos, hitDirection, out var hasLanded);
+                        var newDirection = Bounce(previousHitPosition, hitDirection, out var hasLanded);
 
                         if (!hasLanded && newDirection != Vector2.zero)
                         {
-                            velocity = AdjustVelocity(hittedObject, velocity * trajectoryPoints.Count * jumper.TimeTick);  
-                            trajectoryPoints.AddRange(GetTrajectory(jumper, previousPos, newDirection, velocity));   
+                            velocity = AdjustVelocity(hittedObject, velocity * trajectory.Count * jumper.TimeTick);  
+                            trajectory.AddRange(GetTrajectory(jumper, previousPos, newDirection, velocity, depth - 10));   
                         }
                      
-                        return trajectoryPoints;
+                        return trajectory;
                     }
                 }
 
                 previousPos = calculatedPosition;
-                trajectoryPoints.Add(calculatedPosition);
+                trajectory.Add(calculatedPosition);
             }
 
-            return trajectoryPoints;
+            return trajectory;
         }
 
         private static bool CheckCollision(Vector2 position, Vector2 PreviousPostion, Vector2 colliderSize, out Vector2 preHitPositions, out GameObject hittedObject)
