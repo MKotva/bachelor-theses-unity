@@ -2,6 +2,7 @@
 using Assets.Scripts.GameEditor.Entiti;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components.Colliders
@@ -35,6 +36,17 @@ namespace Assets.Core.GameEditor.Components.Colliders
             Colliders = colliders;
             Scale = scale;
             IsTrigger = false;
+        }
+
+        public override async Task Initialize()
+        {
+            var tasks = new List<Task>();
+            foreach (var collider in Colliders) 
+            {
+                if(collider.Handler != null)
+                    tasks.Add(collider.Handler.CompileAsync());
+            }
+            await Task.WhenAll(tasks);
         }
 
         public override void Set(ItemData item) 

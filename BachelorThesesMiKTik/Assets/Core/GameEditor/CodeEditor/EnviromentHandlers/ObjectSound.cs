@@ -19,7 +19,6 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             if (!instance.TryGetComponent(out audioController))
             {
                 audioController = instance.AddComponent<AudioController>();
-                return false;
             }
 
             audioManager = AudioManager.Instance;

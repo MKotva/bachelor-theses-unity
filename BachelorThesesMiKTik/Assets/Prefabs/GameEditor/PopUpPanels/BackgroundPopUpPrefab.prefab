@@ -806,7 +806,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -245.17058, y: 305}
+  m_AnchoredPosition: {x: -245.00003, y: 305}
   m_SizeDelta: {x: 486, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &211302061386244880
@@ -3041,8 +3041,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6640517898184755901}
   m_HandleRect: {fileID: 4681904886381621584}
   m_Direction: 0
-  m_Value: 1.0426642
-  m_Size: 0.9903011
+  m_Value: 1
+  m_Size: 0.991765
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3520,7 +3520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ContentView: {fileID: 1529148851482857697}
-  LinePrefab: {fileID: 9087608782439955012, guid: 4314c29538320aa4a822424b2a600d0f, type: 3}
+  LinePrefab: {fileID: 7545247428728941317, guid: ccfee9eb21186d54ca1a5707d4ccc57d, type: 3}
   AudioLoader: {fileID: 6927040693936404543, guid: 9a9289db83794a442865ebd7b58a9520, type: 3}
   AudioDropDown: {fileID: 838328847601786016}
 --- !u!224 &6448830397000735644 stripped

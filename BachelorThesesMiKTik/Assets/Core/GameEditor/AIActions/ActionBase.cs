@@ -37,6 +37,7 @@ namespace Assets.Scenes.GameEditor.Core.AIActions
         public abstract void PerformAction(string action);
         public abstract AgentActionDTO GetRandomAction(Vector2 lastPosition);
         public abstract void FinishAction();
+        public virtual void ClearAction() { }
 
         public virtual bool ContainsActionCode(string code) { return false; }
 

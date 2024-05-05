@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Core.GameEditor.AIActions.Movement
 {
-    public class MoveHelper
+    public class LinearTranslator
     {
         private float sin;
         private float iterations;
@@ -14,7 +14,7 @@ namespace Assets.Core.GameEditor.AIActions.Movement
         private Vector2 startPosition;
         private Vector2 endPosition;
 
-        public MoveHelper(Rigidbody2D rigid, float speed, Vector2 startPosition, Vector2 endPosition) 
+        public LinearTranslator(Rigidbody2D rigid, float speed, Vector2 startPosition, Vector2 endPosition) 
         {
             sin = 0;
             iterations = 0;
@@ -43,21 +43,6 @@ namespace Assets.Core.GameEditor.AIActions.Movement
                 return false;
             }
             return true;
-        }
-
-        public static bool CheckIfStaysOnGround(GameObject gameObject)
-        {
-            var position = (Vector2) gameObject.transform.position;
-            var collider = gameObject.GetComponent<Collider2D>();
-            var colliderSize = collider.bounds.size.y;
-
-            var hits = Physics2D.RaycastAll(position, Vector2.down, colliderSize);
-            foreach (var hit in hits)
-            {
-                if (hit.collider.gameObject.GetInstanceID() != gameObject.GetInstanceID())
-                    return true;
-            }
-            return false;
         }
 
         public static Vector2 FindContinuousPath(AgentActionDTO firstAction, Queue<AgentActionDTO> actions)

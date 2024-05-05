@@ -6,6 +6,7 @@ using UnityEngine;
 public class LoadDataHandler : MonoBehaviour
 {
     [SerializeField] string DefaultPath;
+    [SerializeField] GameObject LoadingScreen;
 
     private EditorCanvas map;
 
@@ -31,7 +32,7 @@ public class LoadDataHandler : MonoBehaviour
     public static async Task LoadMap(string path)
     {
         if (JSONSerializer.Deserialize(path, out var gameData))
-        {
+        { 
             await GameDataSerializer.Deserialize(gameData);
         }
     }
@@ -49,8 +50,11 @@ public class LoadDataHandler : MonoBehaviour
     /// <param name="path"></param>
     private async void OnSucces(string path)
     {
-        map.OnEnable();
+        LoadingScreen.SetActive(true);
         await LoadMap(path);
+        LoadingScreen.SetActive(false);
+        
+        map.OnEnable();
     }
 
     /// <summary>

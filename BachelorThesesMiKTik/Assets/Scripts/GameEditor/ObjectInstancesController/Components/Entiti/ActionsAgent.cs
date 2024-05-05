@@ -26,7 +26,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
 
         public virtual void PerformActions()
         {
-            if (ActionsToPerform.Count > 0 && performingTask == null)
+            if (ActionsToPerform.Count > 0 && performingTask == null && isPerforming)
             {
                 performingTask = ActionsToPerform.Dequeue();
             }
@@ -48,6 +48,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
         public virtual void ClearActions()
         {
             ActionsToPerform.Clear();
+            performingTask = null;
         }
 
         public void MoveTo(Vector3 endPosition)

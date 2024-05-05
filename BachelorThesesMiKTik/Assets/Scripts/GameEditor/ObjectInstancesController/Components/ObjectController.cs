@@ -13,7 +13,6 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         public Dictionary<System.Type, IObjectController> Components { get; private set; }
 
-        private GameManager gameManager;
         private Vector3 positon;
         private Quaternion rotation;
         private bool IsDying;
@@ -91,14 +90,15 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         public void Exit()
         {
+            foreach (var component in Components.Values)
+            {
+                component.Exit();
+            }
+
             IsDying = false;
             gameObject.SetActive(true);
             gameObject.transform.position = positon;
             gameObject.transform.rotation = rotation;
-            foreach(var component in Components.Values)
-            {
-                component.Exit();
-            }
         }
 
 
@@ -106,7 +106,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             Components = new Dictionary<System.Type, IObjectController>();
             
-            gameManager = GameManager.Instance;
+            var gameManager = GameManager.Instance;
             if(gameManager != null )
                 gameManager.AddActiveObject(gameObject.GetInstanceID(), this);
         }
@@ -129,14 +129,20 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
 
                 gameObject.SetActive(false);
-                gameManager.RemovePlayer(gameObject.GetInstanceID());
+
+                var gameManager = GameManager.Instance;
+                if (gameManager != null)
+                    gameManager.RemovePlayer(gameObject.GetInstanceID());
             }
         }
 
         private void OnDestroy()
         {
-            if(gameManager != null)
+            var gameManager = GameManager.Instance;
+            if (gameManager != null)
+            {
                 gameManager.RemoveActiveObject(gameObject.GetInstanceID());
+            }
         }
     }
 }

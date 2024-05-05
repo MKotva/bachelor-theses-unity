@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Assets.Core.SimpleCompiler.Compilation.CodeBase;
 using Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator;
 using Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator.Nodes;
@@ -29,10 +30,10 @@ namespace Assets.Core.SimpleCompiler.Compilation
         /// <param name="textLines"></param>
         /// <returns></returns>
         /// <exception cref="CompilationException"> If there was any error during the compilation</exception>
-        public List<ICodeLine> CompileCode(CodeContext codeContext, string[] textLines)
+        public async Task<List<ICodeLine>> CompileCodeAsync(CodeContext codeContext, string[] textLines)
         {
             context = codeContext;
-            var lines = interpreter.AnalyzeCode(textLines);
+            var lines = await interpreter.AnalyzeCodeAsync(textLines);
 
             var code = new List<ICodeLine>();
             for (int index = 0; index < lines.Length; index++)
@@ -77,7 +78,7 @@ namespace Assets.Core.SimpleCompiler.Compilation
 
             switch(line.ActionType)
             {
-                case ActionType.Assign : return new AssignLine(context, ParseExpression(line), line.Variable, line.VariableType);
+                case ActionType.Assign : return new AssignLine(context, ParseExpression(line), line.Variable, line.VariableType, line.AsignOperator);
                 case ActionType.SimpleLine : return new SimpleLine(context, ParseExpression(line));
                 case ActionType.If : return ParseIfElse(lines, index, out endIndex);
                 case ActionType.While : return ParseWhile(lines, index, out endIndex);

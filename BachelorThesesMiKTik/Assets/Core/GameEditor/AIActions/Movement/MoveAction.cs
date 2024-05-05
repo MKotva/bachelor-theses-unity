@@ -26,7 +26,7 @@ namespace Assets.Scripts.GameEditor.AI
         private float speed;
         private float speedCap;
         private bool GroundedOnly;
-        private MoveHelper moveHelper;
+        private LinearTranslator moveHelper;
 
         public MoveAction(GameObject gameObject, float moveSpeed = 1, float moveSpeedCap = 1, bool canFallOf = false) : base(gameObject)
         {
@@ -62,7 +62,7 @@ namespace Assets.Scripts.GameEditor.AI
         {
             if (moveHelper == null)
             {
-                moveHelper = new MoveHelper(performerRigidbody, speed, action.StartPosition, map.GetCellCenterPosition(MoveHelper.FindContinuousPath(action, actions)));
+                moveHelper = new LinearTranslator(performerRigidbody, speed, action.StartPosition, map.GetCellCenterPosition(LinearTranslator.FindContinuousPath(action, actions)));
             }
 
             if (!moveHelper.TranslationTick(performer, map, deltaTime))
@@ -84,7 +84,7 @@ namespace Assets.Scripts.GameEditor.AI
         {
             if (actionTypes.ContainsKey(action))
             {
-                if (MoveHelper.CheckIfStaysOnGround(performer))
+                if (MotionHelper.CheckIfStaysOnGround(performer))
                 {
                     var direction = actionTypes[action];
                     performerRigidbody.AddForce(direction * speed);
@@ -133,6 +133,11 @@ namespace Assets.Scripts.GameEditor.AI
         public override bool IsPerforming()
         {
             return false;
+        }
+
+        public override void ClearAction()
+        {
+            moveHelper = null;
         }
 
         public override void FinishAction() { }

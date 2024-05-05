@@ -23,20 +23,35 @@ namespace Assets.Scripts.GameEditor.AI
                 aiSetting.OnCreateAction.Execute(gameObject);
                 wasPlayed = true;
             }
+
             isPlaying = true;
+            isPerforming = true;
         }
 
         public void Pause()
         {
             isPlaying = false;
+            isPerforming = false;
         }
 
-        public void Enter() {}
+        public void Enter() 
+        {
+            if (aiSetting.OnCreateAction != null)
+            {
+                aiSetting.OnCreateAction.ResetContext();
+            }
+
+            if (aiSetting.OnUpdateAction != null)
+            {
+                aiSetting.OnUpdateAction.ResetContext();
+            }
+        }
 
         public void Exit()
         {
             isPlaying = false;
-            ActionsToPerform.Clear();
+            isPerforming = false;
+            ClearActions();
         }
 
         #region PRIVATE

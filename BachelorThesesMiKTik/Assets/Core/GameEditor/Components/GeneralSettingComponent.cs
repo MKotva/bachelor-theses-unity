@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components
@@ -16,6 +17,8 @@ namespace Assets.Core.GameEditor.Components
             Name = name;
             Group = group;
         }
+
+        public override Task Initialize() { return Task.CompletedTask; }
 
         public override void Set(ItemData item)
         {

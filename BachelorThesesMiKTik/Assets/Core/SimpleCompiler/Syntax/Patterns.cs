@@ -10,7 +10,7 @@ namespace Assets.Core.SimpleCompiler.Syntax
         ////// language=regex
         //private static readonly string function = $"((?<![^\\s+*\\/\\-\\(\\)])\\w+\\s*(\\((\\s*{funcArgument}\\s*,)*(\\s*{funcArgument}\\s*)\\)|\\(\\s*\\)(?![^\\s+*\\/-])))";
         // language=regex
-        private static readonly string variable = @"((?<![^\s+*\/\-\(\)])(\w*[a-zA-Z]\w*\.)*(\w*[a-zA-Z]\w*)(?![^\s+*\/-]))";
+        private static readonly string variable = @"((?<![^\s+*\/\-\(\)])(\w*[a-zA-Z]\w*\.)*(\w*[a-zA-Z]\w*)(?![^\s+*\/\-\(\)]))";
         //// language=regex
         //private static readonly string variable = @"((\w*[a-zA-Z]\w*\.)*(\w*[a-zA-Z]\w*))";
         // language=regex
@@ -25,6 +25,8 @@ namespace Assets.Core.SimpleCompiler.Syntax
         private static readonly string boolOperator = @"(\!|\<\=|\>\=|\=\=|\!\=|\|\||\&\&|\>|\<)";
         // language=regex
         private static readonly string aritmeticOperator = @"(\+|\-|\*|\/|\%|\||\&|\^|\>\>|\<\<)";
+        // language=regex
+        private static readonly string assignOperator = @"(\=|\+\=|\-\=|\*\=|\/\=)";
         // language=regex
         private static readonly string type = @"(num|bool)";
         // language=regex
@@ -46,7 +48,7 @@ namespace Assets.Core.SimpleCompiler.Syntax
         // language=regex
         private static readonly string fiPattern = "^fi$";
         // language=regex
-        private static readonly string assignLinePattern = $"^\\s*((?<assignValue_type>{type})\\s*)?(?<assignValue_variable>{variable})\\s*=\\s*(?<assignValue_expression>{expression})\\s*$";
+        private static readonly string assignLinePattern = $"^\\s*((?<assignValue_type>{type})\\s*)?(?<assignValue_variable>{variable})\\s*(?<assignValue_operator>{assignOperator})\\s*(?<assignValue_expression>{expression})\\s*$";
         // language=regex
         private static readonly string simpleLinePattern = $"^\\s*(?<assignValue_expression>{expression})\\s*$";
         // language=regex

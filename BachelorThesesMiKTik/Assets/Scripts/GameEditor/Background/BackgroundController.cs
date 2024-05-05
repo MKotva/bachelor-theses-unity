@@ -1,8 +1,10 @@
 using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Assets;
+using Assets.Core.GameEditor.DTOS.Background;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor;
 using Assets.Scripts.GameEditor.Audio;
+using Assets.Scripts.GameEditor.Background;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     [SerializeField] public AudioController AudioController;
 
     public List<GameObject> BackgroundLayers { get; private set; }
-    public List<SourceReference> Sources { get; private set; }
+    public List<BackgroundReference> Sources { get; private set; }
     public SourceReference AudioSource { get; private set; }
 
     #region PUBLIC
@@ -25,7 +27,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     /// back -> source on index 0 == the most distant layer.
     /// </summary>
     /// <param name="sources"></param>
-    public void SetBackground(List<SourceReference> sources)
+    public void SetBackground(List<BackgroundReference> sources)
     {
         if (sources.Count == 1)
         {
@@ -63,9 +65,10 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     /// <param name="source"></param>
     /// <param name="xSize"></param>
     /// <param name="ySize"></param>
-    public void AppendLayer(SourceReference source)
+    public void AppendLayer(BackgroundReference source)
     {
         var layer = AppendBackgroundLayer();
+        layer.GetComponent<BackgroundParalax>().speed = source.ParalaxSpeed;
         SetLayer(layer, source);
         Sources.Add(source);
     }
@@ -77,7 +80,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     /// <param name="layerId"></param>
     /// <param name="xSize"></param>
     /// <param name="ySize"></param>
-    public void SetLayer(SourceReference source, int layerId)
+    public void SetLayer(BackgroundReference source, int layerId)
     {
         SetLayer(BackgroundLayers[layerId], source);
         Sources[layerId] = source;
@@ -93,7 +96,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
         {
             BackgroundLayers.Add(Instantiate(defaultLayer, transform));
         }
-        Sources.Add(new SourceReference(null, SourceType.Image));
+        Sources.Add(new BackgroundReference(null, SourceType.Image));
     }
 
     /// <summary>
@@ -170,7 +173,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     private void Start()
     {
         BackgroundLayers = new List<GameObject>();
-        Sources = new List<SourceReference>();
+        Sources = new List<BackgroundReference>();
         SetDefault();
         GameManager.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
     }

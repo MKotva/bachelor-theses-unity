@@ -11491,7 +11491,8 @@
     "$type": "Assets.Core.GameEditor.DTOS.BackgroundDTO, Assembly-CSharp",
     "LayersSources": [
       {
-        "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+        "$type": "Assets.Core.GameEditor.DTOS.Background.BackgroundReference, Assembly-CSharp",
+	"ParalaxSpeed": 0.0,
         "Name": null,
         "Type": 1,
         "XSize": 30.0,

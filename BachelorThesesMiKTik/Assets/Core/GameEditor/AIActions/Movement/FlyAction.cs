@@ -31,7 +31,7 @@ namespace Assets.Core.GameEditor.AIActions
 
         private float speed;
         private float speedCap;
-        private MoveHelper moveHelper;
+        private LinearTranslator moveHelper;
 
         public FlyAction(GameObject performer, float speed, float speedCap) : base(performer)
         {
@@ -68,7 +68,7 @@ namespace Assets.Core.GameEditor.AIActions
         {
             if(moveHelper == null)
             {
-                moveHelper = new MoveHelper(performerRigidbody, speed, action.StartPosition, map.GetCellCenterPosition(MoveHelper.FindContinuousPath(action, actions)));
+                moveHelper = new LinearTranslator(performerRigidbody, speed, action.StartPosition, map.GetCellCenterPosition(LinearTranslator.FindContinuousPath(action, actions)));
             }
 
             if(!moveHelper.TranslationTick(performer, map, deltaTime))
@@ -138,6 +138,11 @@ namespace Assets.Core.GameEditor.AIActions
         public override bool IsPerforming()
         {
             return false;
+        }
+
+        public override void ClearAction()
+        {
+            moveHelper = null;
         }
 
         public override bool ContainsActionCode(string code)

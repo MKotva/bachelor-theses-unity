@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scenes.GameEditor.Core.AIActions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -13,7 +14,8 @@ namespace Assets.Core.GameEditor.DTOS
         public Vector3 EndPosition { get; set;}
         public bool IsDone { get; set; }
         public string ActionParameters { get; set;}
-        public float Cost { get; set;}
+        public float Cost { get; set; }
+        public ActionBase Action { get; set;}
         public ActionPerformer Performer { get; set;}
         public ActionPrintingPerformer PrintingPerformer { get; set;}
 

@@ -32,7 +32,7 @@ namespace Assets.Core.GameEditor.Serializers
         public static async Task Deserialize(GameDataDTO gameData)
         {
             await SetManagers(gameData.Managers);
-            SetItems(gameData.Prototypes);
+            await SetItems(gameData.Prototypes);
             SetObjectToMap(gameData.MapObjects);
             SetBackground(gameData.BackgroundSetting);
         }
@@ -77,7 +77,7 @@ namespace Assets.Core.GameEditor.Serializers
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        private static void SetItems(List<ItemDTO> items)
+        private static async Task SetItems(List<ItemDTO> items)
         {
             ItemManager.Instance.ClearItems();
             foreach (var item in items)
@@ -85,11 +85,14 @@ namespace Assets.Core.GameEditor.Serializers
                 var newItem = new ItemData();
 
                 newItem.Components = new List<CustomComponent>(item.Components);
+
+                var tasks = new List<Task>();
                 foreach(var component in newItem.Components)
                 {
                     component.Set(newItem);
+                    tasks.Add(component.Initialize());
                 }
-
+                await Task.WhenAll(tasks);
                 ItemManager.Instance.AddItem(newItem);
             }
         }

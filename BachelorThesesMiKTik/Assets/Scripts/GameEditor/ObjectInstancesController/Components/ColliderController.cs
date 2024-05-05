@@ -3,7 +3,6 @@ using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 namespace Assets.Scripts.GameEditor.Entiti
 {
@@ -51,7 +50,18 @@ namespace Assets.Scripts.GameEditor.Entiti
             ObjectCollider.enabled = false;
         }
 
-        public void Enter() {}
+        public void Enter() 
+        {
+            ObjectCollider.enabled = true;
+
+            foreach (var handler in handlers)
+            {
+                if(handler.Item3 != null)
+                {
+                    handler.Item3.ResetContext();
+                }
+            }
+        }
 
         public void Exit() 
         {
@@ -129,9 +139,7 @@ namespace Assets.Scripts.GameEditor.Entiti
                 collider = gameObject.AddComponent<BoxCollider2D>();
                 ObjectCollider.isTrigger = false;
             }
-
             ObjectCollider = collider;
-            ObjectCollider.enabled = false;
         }
     }
 }

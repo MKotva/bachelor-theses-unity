@@ -135,7 +135,7 @@ namespace Assets.Scripts.GameEditor.AI
             if (!actionTypes.ContainsKey(action)) 
                 return;
 
-            if(MoveHelper.CheckIfStaysOnGround(performer))
+            if(MotionHelper.CheckIfStaysOnGround(performer))
             {
                 performerRigidbody.AddForce(TrajectoryCalculator.GetJumpVector(actionTypes[action], forceUp, forceInDirection));
                 Vector2.ClampMagnitude(performerRigidbody.velocity, 50);

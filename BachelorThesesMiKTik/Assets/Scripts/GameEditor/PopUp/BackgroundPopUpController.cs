@@ -1,4 +1,5 @@
 using Assets.Core.GameEditor.DTOS.Assets;
+using Assets.Core.GameEditor.DTOS.Background;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Audio;
 using Assets.Scripts.GameEditor.Managers;
@@ -16,8 +17,8 @@ public class BackgroundPopUpController : PopUpController
     [SerializeField] TMP_Dropdown AudioDropDown;
 
     private BackgroundController backgroundController;
-    private List<AssetPanelController> lineControllers;
-    private List<SourceReference> assetSources;
+    private List<BackgroundLayerPanelController> lineControllers;
+    private List<BackgroundReference> assetSources;
 
     #region PUBLIC
     /// <summary>
@@ -86,8 +87,8 @@ public class BackgroundPopUpController : PopUpController
     private void Start()
     {
         backgroundController = BackgroundController.Instance;
-        lineControllers = new List<AssetPanelController>();
-        assetSources = new List<SourceReference>();
+        lineControllers = new List<BackgroundLayerPanelController>();
+        assetSources = new List<BackgroundReference>();
 
         AudioDropDown.onValueChanged.AddListener(AudioDropDownChange);
         var names = AudioManager.Instance.AudioClips.Keys.ToArray();
@@ -108,10 +109,10 @@ public class BackgroundPopUpController : PopUpController
         }
     }
 
-    private AssetPanelController AddLine()
+    private BackgroundLayerPanelController AddLine()
     {
         var controller = Instantiate(LinePrefab, ContentView.transform)
-                    .GetComponent<AssetPanelController>();
+                    .GetComponent<BackgroundLayerPanelController>();
         controller.GetComponent<SourcePanelController>().onDestroyClick += DestroyPanel;
         lineControllers.Add(controller);
         return controller;

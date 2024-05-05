@@ -2,6 +2,7 @@
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Managers;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components
@@ -20,6 +21,11 @@ namespace Assets.Core.GameEditor.Components
         {
             ComponentName = "Image/Animation";
             Data = data;
+        }
+
+        public override Task Initialize()
+        {
+            return Task.CompletedTask;
         }
 
         public override void Set(ItemData item)

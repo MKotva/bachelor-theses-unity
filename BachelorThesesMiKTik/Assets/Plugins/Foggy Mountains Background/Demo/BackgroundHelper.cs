@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Reference: This code was obtained with background assets from Unity asset Store
+/// </summary>
 public class BackgroundHelper : MonoBehaviour
 {
     public float speed = 0;

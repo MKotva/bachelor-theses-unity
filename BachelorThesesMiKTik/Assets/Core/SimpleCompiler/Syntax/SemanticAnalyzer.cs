@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Assets.Core.SimpleCompiler.Enums;
 
 
@@ -12,17 +13,32 @@ namespace Assets.Core.SimpleCompiler.Syntax
         /// </summary>
         /// <param name="lines">Text splitted to lines</param>
         /// <returns></returns>
-        public ActionItem[] AnalyzeCode(string[] lines)
+        public async Task<ActionItem[]> AnalyzeCodeAsync(string[] lines)
         {
             var result = new List<ActionItem>();
+
+            var tasks = new List<Task<ActionItem>>();
             foreach (var line in lines)
             {
-                var action = AnalyzeLine(line.Trim());
+                tasks.Add(AnalyzeLineAsync(line.Trim()));
+            }
+            
+            await Task.WhenAll(tasks);
+
+            foreach(var task in tasks)
+            {
+                var action = task.Result;
                 if (action.ActionType == ActionType.EMPTY)
                     continue;
                 result.Add(action);
             }
+
             return result.ToArray();
+        }
+
+        private async Task<ActionItem> AnalyzeLineAsync(string line) 
+        {
+            return await Task.Run<ActionItem>(() => { return  AnalyzeLine(line); });
         }
 
         /// <summary>
@@ -71,6 +87,7 @@ namespace Assets.Core.SimpleCompiler.Syntax
                 result.VariableType = ValueTypeParser.GetFromName(match.Groups["assignValue_type"].Value);
                 result.Expression = Expression.ParseExpression(match.Groups["assignValue_expression"].Value);
                 result.Variable = match.Groups["assignValue_variable"].Value;
+                result.AsignOperator = match.Groups["assignValue_operator"].Value;
             }
             else if (match.Groups["end"].Success)
             {

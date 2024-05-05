@@ -7,6 +7,8 @@ using UnityEngine.EventSystems;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Core.SimpleCompiler.Exceptions;
 using Assets.Scripts.GameEditor.PopUp.CodeEditor;
+using System.Collections;
+using System;
 
 namespace Assets.Scripts.GameEditor.CodeEditor
 {
@@ -25,9 +27,10 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         private List<GlobalVariableDTO> globalVariables;
         private GameObject intelisenceInstance;
         private bool IsInvokedByMethod; //This indicates if OnTextChange event was raised by user or method.
+        private bool IsCompilationRunning;
+
         private uint lastUpdate = 0;
         private SimpleCode lastCompilation;
-
 
         public void Initialize(SimpleCode code)
         {
@@ -49,12 +52,24 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         /// </summary>
         public void OnSaveClick()
         {
+            if (IsCompilationRunning)
+                return;
+
             if (lastCompilation == null)
             {
-                if (TryCompile(out var code))
-                    lastCompilation = code;
+                StartCoroutine(TryCompile((succes, code) => 
+                {
+                    if(succes)
+                    {
+                        lastCompilation = code;
+                    }
+
+                    LogOutPut("Compilation finished");
+                }));
             }
+
             CompilationCode = lastCompilation;
+            LogOutPut("Code saved");
         }
 
         /// <summary>
@@ -62,8 +77,18 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         /// </summary>
         public void OnBuildClick()
         {
-            if (TryCompile(out var code))
-                lastCompilation = code;
+            if (IsCompilationRunning)
+                return;
+
+            StartCoroutine(TryCompile((succes, code) =>
+            {
+                if (succes)
+                {
+                    lastCompilation = code;
+                }
+
+                LogOutPut("Compilation finished");
+            }));
         }
 
         /// <summary>
@@ -71,13 +96,18 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public bool TryCompile(out SimpleCode code)
+        public IEnumerator TryCompile(Action<bool, SimpleCode> onComplete)
         {
+            IsCompilationRunning = true;
+
             ClearConsole();
+            LogOutPut("Compiling...");
+
             if (LoadDependencies())
             {
                 var compilaton = new SimpleCode(Code.text, enviromentObjects, globalVariables);
-                compilaton.Compile();
+                var task = compilaton.CompileAsync();
+                yield return new WaitUntil(() => task.IsCompleted);
 
                 if (compilaton.ErrorOutput != "")
                 {
@@ -88,12 +118,15 @@ namespace Assets.Scripts.GameEditor.CodeEditor
                     LogOutPut(compilaton.Output);
                     LogErrorConsole(compilaton.ErrorOutput);
 
-                    code = compilaton;
-                    return true;
+                    onComplete.Invoke(true, compilaton);
+                    IsCompilationRunning = false;
+                    yield break;
                 }
             }
-            code = null;
-            return true;
+
+            onComplete.Invoke(true, null);
+            IsCompilationRunning = false;
+            yield break;
         }
 
         #region PRIVATE

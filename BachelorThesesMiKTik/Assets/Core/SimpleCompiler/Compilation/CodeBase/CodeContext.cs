@@ -51,7 +51,7 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
         /// </summary>
         /// <param name="path"></param>
         /// <returns>Property info and instance in Property class</returns>
-        public  Property GetProperty(string path)
+        public Property GetProperty(string path)
         {
             var pathMembers = SplitPath(path);
             var propName = pathMembers.Last();
@@ -60,6 +60,58 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
             var actingObject = FindActingObject(objectPath);
             var propInfo = GetProperty(actingObject.Type, propName);
             return new Property(propInfo, actingObject.Instance);
+        }
+
+        /// <summary>
+        /// Reesets global variables to initialstate.
+        /// </summary>
+        public void ResetGlobalVariables(List<GlobalVariableDTO> globalVarDTOS)
+        {
+            GlobalVariables = GetGlobalVariableContext(globalVarDTOS);
+        }
+
+        /// <summary>
+        /// Creates EnvirtomentObjects from EnviromentConstextDTO.
+        /// </summary>
+        /// <param name="enviromentDTOS"></param>
+        /// <returns></returns>
+        /// <exception cref="CompilationException"></exception>
+        private Dictionary<string, EnviromentContextDTO> GetEnviromentContext(List<EnviromentObjectDTO> enviromentDTOS)
+        {
+            var enviromentObjects = new Dictionary<string, EnviromentContextDTO>();
+            foreach (var env in enviromentDTOS)
+            {
+                if (enviromentObjects.ContainsKey(env.Alias))
+                {
+                    throw new CompilationException($"Dependency with name {env.Alias} already exists!");
+                }
+
+                if (EnviromentController.TryGetInstance(env.TypeName, out object instace))
+                    enviromentObjects.Add(env.Alias, new EnviromentContextDTO(instace, instace.GetType()));
+            }
+            return enviromentObjects;
+        }
+
+        /// <summary>
+        /// Creates global variables from GlobalVariableDTO.
+        /// </summary>
+        /// <param name="enviromentDTOS"></param>
+        /// <returns></returns>
+        /// <exception cref="CompilationException"></exception>
+        private Dictionary<string, Operand> GetGlobalVariableContext(List<GlobalVariableDTO> globalVarDTOS)
+        {
+            var globalVariables = new Dictionary<string, Operand>();
+            foreach (var globalVar in globalVarDTOS)
+            {
+                if (globalVariables.ContainsKey(globalVar.Alias))
+                {
+                    throw new CompilationException($"Global variable with name {globalVar.Alias} already exists!");
+                }
+
+                var operand = new Operand(ParseValue(globalVar.Type, globalVar.Value), globalVar.Type);
+                globalVariables.Add(globalVar.Alias, operand);
+            }
+            return globalVariables;
         }
 
         /// <summary>
@@ -158,38 +210,6 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
             if (pathMembers.Length < 2)
                 throw new CompilationException($"Non existing object: {path}");
             return pathMembers;
-        }
-
-        private Dictionary<string, EnviromentContextDTO> GetEnviromentContext(List<EnviromentObjectDTO> enviromentDTOS)
-        {
-            var enviromentObjects = new Dictionary<string, EnviromentContextDTO>();
-            foreach(var env in  enviromentDTOS)
-            {
-                if (enviromentObjects.ContainsKey(env.Alias))
-                {
-                    throw new CompilationException($"Dependency with name {env.Alias} already exists!");
-                }
-
-                if (EnviromentController.TryGetInstance(env.TypeName, out object instace))
-                    enviromentObjects.Add(env.Alias, new EnviromentContextDTO(instace, instace.GetType()));
-            }
-            return enviromentObjects;
-        }
-
-        private Dictionary<string, Operand> GetGlobalVariableContext(List<GlobalVariableDTO> globalVarDTOS)
-        {
-            var globalVariables = new Dictionary<string, Operand>();
-            foreach(var globalVar in globalVarDTOS)
-            {
-                if(globalVariables.ContainsKey(globalVar.Alias))
-                {
-                    throw new CompilationException($"Global variable with name {globalVar.Alias} already exists!");
-                }
-
-                var operand = new Operand(ParseValue(globalVar.Type, globalVar.Value), globalVar.Type);
-                globalVariables.Add(globalVar.Alias, operand);
-            }
-            return globalVariables;
         }
 
         /// <summary>

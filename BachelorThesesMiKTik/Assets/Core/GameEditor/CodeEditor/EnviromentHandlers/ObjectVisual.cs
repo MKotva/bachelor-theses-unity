@@ -70,27 +70,27 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
                 SetAnimation(name, shouldLoop, playAfterSet, reference.XSize, reference.YSize);
                 return;
             }
-            else if(animationController.gameObject.TryGetComponent(out SpriteController spriteController))
+            else if (animationController.gameObject.TryGetComponent(out SpriteController spriteController))
             {
-                if(spriteController.SourceReference != null) 
+                if (spriteController.SourceReference != null)
                 {
                     var reference = spriteController.SourceReference;
                     SetAnimation(name, shouldLoop, playAfterSet, reference.XSize, reference.YSize);
                     return;
                 }
             }
-            SetAnimation(name, shouldLoop, playAfterSet, 30 , 30);
+            SetAnimation(name, shouldLoop, playAfterSet, 30, 30);
         }
 
         [CodeEditorAttribute("Finds created animation by given name and sets it for this object.",
             "(string nameOfAnimation, bool shouldAnimationLoop, bool playAfterSet, float xScaling, float yScaling)")]
-        public void SetAnimation(string name, bool shouldLoop, bool playAfterSet, float x, float y) 
+        public void SetAnimation(string name, bool shouldLoop, bool playAfterSet, float x, float y)
         {
             if (!animationsManager.ContainsName(name))
                 throw new RuntimeException($"\"Exception in method \\\"SetAnimation\\\"!  There is no animation with name: {name}");
 
             var animationSource = new SourceReference(name, Enums.SourceType.Animation, x, y);
-            animationsManager.SetAnimation(animationController, animationSource, shouldLoop, playAfterSet) ;
+            animationsManager.SetAnimation(animationController, animationSource, shouldLoop, playAfterSet);
         }
 
         [CodeEditorAttribute("Plays setted animation if it is not already running, otherwise nothing happens.")]
@@ -174,11 +174,11 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             }
 
             var sourceReference = spriteController.SourceReference;
+
             if (sourceReference.Name != "")
             {
                 spriteManager.RemoveActiveController(sourceReference.Name, spriteController);
             }
-
             var animationSource = new SourceReference(name, SourceType.Image, x, y);
             spriteManager.SetSprite(spriteController, animationSource);
         }
@@ -190,8 +190,8 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
         }
 
         [CodeEditorAttribute("Sets color of this object. This includes all actual and future animations and images.")]
-        public void SetColor(float r, float g, float b) 
-        { 
+        public void SetColor(float r, float g, float b)
+        {
             spriteController.ChangeColor(r, g, b);
         }
         #endregion

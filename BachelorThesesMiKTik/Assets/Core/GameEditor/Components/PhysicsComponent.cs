@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components
@@ -35,6 +36,11 @@ namespace Assets.Core.GameEditor.Components
             IsZRotationFreeze = isZRotationFreeze;
             IsYPositionFreeze = isYPositionFreeze;
             IsXPositionFreeze = isXPositionFreeze;
+        }
+
+        public override Task Initialize()
+        {
+            return Task.CompletedTask;
         }
 
         public override void Set(ItemData item)

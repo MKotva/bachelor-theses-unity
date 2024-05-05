@@ -10,7 +10,6 @@ namespace Assets.Scripts.GameEditor.Entiti
 {
     public class PlayerObjectController : ActionsAgent, IObjectController
     {
-        private GameManager gameManager;
         private PlayerComponent playerSetting;
         private List<ActionBase> actions;
 
@@ -50,7 +49,18 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         public void Enter() 
         {
-            if(gameManager != null) 
+            if (playerSetting.OnCreateAction != null)
+            {
+                playerSetting.OnCreateAction.ResetContext();
+            }
+
+            if (playerSetting.OnUpdateAction != null)
+            {
+                playerSetting.OnUpdateAction.ResetContext();
+            }
+
+            var gameManager = GameManager.Instance;
+            if (gameManager != null)
             {
                 gameManager.AddPlayer(gameObject.GetInstanceID(), gameObject);
             }
@@ -59,7 +69,7 @@ namespace Assets.Scripts.GameEditor.Entiti
         public void Exit()
         {
             IsPlaying = false;
-            ActionsToPerform.Clear();
+            ClearActions();
         }
         #endregion
 
@@ -71,8 +81,6 @@ namespace Assets.Scripts.GameEditor.Entiti
             {
                 controller.Components.Add(typeof(PlayerObjectController), this);
             }
-
-            gameManager = GameManager.Instance;
         }
 
         private void FixedUpdate()
@@ -185,7 +193,8 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         private void CheckFall()
         {
-            if(gameManager != null)
+            var gameManager = GameManager.Instance;
+            if (gameManager != null)
             {
                 if (gameObject.transform.position.y < gameManager.LowestYPoint - 10)
                 {

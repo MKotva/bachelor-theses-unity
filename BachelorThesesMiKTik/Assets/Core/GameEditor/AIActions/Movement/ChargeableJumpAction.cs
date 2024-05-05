@@ -149,7 +149,7 @@ namespace Assets.Core.GameEditor.AIActions
             if (!actionTypes.ContainsKey(action) || isPerforming)
                 return;
 
-            if (MoveHelper.CheckIfStaysOnGround(performer))
+            if (MotionHelper.CheckIfStaysOnGround(performer))
             {
                 chargeTimeStart = Time.time;
                 chargeJumpDirection = actionTypes[action];

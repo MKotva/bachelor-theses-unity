@@ -10,5 +10,6 @@ namespace Assets.Core.SimpleCompiler.Syntax
         public string Variable;
         public ValueType VariableType;
         public Item[] Expression = default;
+        public string AsignOperator = default;
     }
 }

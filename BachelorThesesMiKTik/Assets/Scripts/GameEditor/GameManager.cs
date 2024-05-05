@@ -9,9 +9,11 @@ namespace Assets.Scripts.GameEditor
     {
         [SerializeField] public GameObject SuccesPanel;
         [SerializeField] public GameObject RestartPanel;
+
         [SerializeField] public Canvas ToolkitCanvas;
         [SerializeField] public Canvas PopUpCanvas;
         [SerializeField] public Canvas PlayModeCanvas;
+
 
         public CameraController Camera { get; set; }
         public Dictionary<int, IObjectController> ActiveObjects { get; set; }
@@ -19,28 +21,40 @@ namespace Assets.Scripts.GameEditor
         public bool IsInPlayMode { get; set; }
         public float LowestYPoint { get; set; }
 
-
+        #region ObjectManagment
         public void AddActiveObject(int id, IObjectController obj)
         {
+            if (ActiveObjects == null)
+                return;
+
             if (!ActiveObjects.ContainsKey(id))
                 ActiveObjects.Add(id, obj);
         }
 
         public void RemoveActiveObject(int id)
         {
+            if (ActiveObjects == null)
+                return;
+
             if (ActiveObjects.ContainsKey(id))
                 ActiveObjects.Remove(id);
         }
 
         public void AddPlayer(int id, GameObject obj)
         {
+            if (ActiveObjects == null)
+                return;
+
             if (!ActivePlayers.ContainsKey(id))
                 ActivePlayers.Add(id, obj);
         }
 
         public void RemovePlayer(int id)
         {
-            if (ActiveObjects.ContainsKey(id))
+            if (ActivePlayers == null)
+                return;
+
+            if (ActivePlayers.ContainsKey(id))
             {
                 ActivePlayers.Remove(id);
                 Camera.SetFollowTransform();
@@ -51,6 +65,7 @@ namespace Assets.Scripts.GameEditor
                 }
             }
         }
+        #endregion
 
         #region PlayMode
         /// <summary>
@@ -119,7 +134,7 @@ namespace Assets.Scripts.GameEditor
 
         #endregion
 
-
+        #region GameManagement
         public void RestartGame()
         {
             ExitGame();
@@ -180,6 +195,8 @@ namespace Assets.Scripts.GameEditor
             ActiveObjects = new Dictionary<int, IObjectController>();
             ActivePlayers = new Dictionary<int, GameObject> { };
         }
+
+        #endregion
 
         #region Private
 

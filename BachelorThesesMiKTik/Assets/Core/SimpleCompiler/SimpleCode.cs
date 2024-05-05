@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using Assets.Core.GameEditor.CodeEditor.EnviromentObjects;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Core.SimpleCompiler.Compilation;
@@ -76,7 +80,7 @@ namespace Assets.Core.SimpleCompiler
         /// <summary>
         /// Compiles given test to SimpleCode.
         /// </summary>
-        public void Compile()
+        public async Task CompileAsync()
         {
             try
             {
@@ -85,7 +89,8 @@ namespace Assets.Core.SimpleCompiler
                     LoadContext();
                 }
                 var compiler = new Compiler();
-                Main = new CodeBlock(compiler.CompileCode(Context, Code.Split(new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None)), 0);
+                var lines = await compiler.CompileCodeAsync(Context, Code.Split(new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None));
+                Main = new CodeBlock(lines, 0);
             }
             catch (CompilerException e)
             {
@@ -103,7 +108,8 @@ namespace Assets.Core.SimpleCompiler
             OutputManager.Instance.AddOnAddListener("Compiler", ConsoleHandler, "Console");
             if (Main == null)
             {
-                Compile();
+                ErrorOutput += $"There is no executable code!";
+                return; 
             }
             else
             {
@@ -118,8 +124,25 @@ namespace Assets.Core.SimpleCompiler
                     ErrorOutput += $"Error in section Main:\n {e.Message}!";
                     OutputManager.Instance.ShowMessage(Output);
                 }
+
+                catch (Exception e)
+                {
+                    ErrorOutput += $"Error in section Main:\n {e.Message}!";
+                    OutputManager.Instance.ShowMessage(Output);
+                }
             }
             OutputManager.Instance.RemoveListener("Compiler");
+        }
+
+        /// <summary>
+        /// Refreshes actual code context to initial state.
+        /// </summary>
+        public void ResetContext()
+        {
+            if(Context != null)
+            {
+                Context.ResetGlobalVariables(GlobalVariables);
+            }
         }
 
         /// <summary>
@@ -139,13 +162,17 @@ namespace Assets.Core.SimpleCompiler
         /// <param name="instance">Instance of gameobject</param>
         private void SetDependecies(GameObject instance)
         {
-            foreach(var dependency in Context.EnviromentObjects)
+            if(instance == null)
+                throw new RuntimeException("Fatal error, instance is empty!");
+
+            foreach (var dependency in Context.EnviromentObjects)
             {
                 var depInstance = dependency.Value.Instance;
                 if (depInstance is EnviromentObject)
                 {
                     var enviroment = (EnviromentObject) depInstance;
-                    enviroment.SetInstance(instance);
+                    if (!enviroment.SetInstance(instance))
+                        throw new RuntimeException("Failed to set dependecy! Object does no contain required components!");
                 }
             }
         }

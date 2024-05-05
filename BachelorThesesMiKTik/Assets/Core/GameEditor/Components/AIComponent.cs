@@ -24,6 +24,19 @@ namespace Assets.Core.GameEditor.Components
             OnUpdateAction = updateAction;
         }
 
+        public override async Task Initialize()
+        {
+            if(OnCreateAction != null) 
+            {
+                await OnCreateAction.CompileAsync();
+            }
+
+            if (OnUpdateAction != null)
+            {
+                await OnUpdateAction.CompileAsync();
+            }
+        }
+
         public override void Set(ItemData item) 
         {
             foreach(var component in item.Components)

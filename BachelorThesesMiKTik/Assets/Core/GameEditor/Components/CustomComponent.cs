@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.Components
@@ -8,6 +9,7 @@ namespace Assets.Core.GameEditor.Components
     {
         public string ComponentName;
         public int ComponentID;
+        public abstract Task Initialize();
         public abstract void Set(ItemData item);
         public abstract void SetInstance(ItemData item, GameObject instance);
         public virtual T GetOrAddComponent<T>(GameObject ob) where T : Component
