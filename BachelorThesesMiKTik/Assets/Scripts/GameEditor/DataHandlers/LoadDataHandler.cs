@@ -1,4 +1,5 @@
 using Assets.Core.GameEditor.Serializers;
+using Assets.Scenes.GameEditor.Core.DTOS;
 using SimpleFileBrowser;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -21,6 +22,13 @@ public class LoadDataHandler : MonoBehaviour
         FileBrowser.SetExcludedExtensions(".lnk", ".tmp", ".zip", ".rar", ".exe");
         FileBrowser.AddQuickLink("Users", "C:\\Users", null);
         FileBrowser.ShowLoadDialog((paths) => { OnSucces(paths[0]); }, OnFail, FileBrowser.PickMode.Files, false, DefaultPath, null, "Select Map", "Select");
+    }
+
+    public async Task Load(GameDataDTO gameData)
+    {
+            LoadingScreen.SetActive(true);
+            await GameDataSerializer.Deserialize(gameData);
+            LoadingScreen.SetActive(false);
     }
 
     /// <summary>

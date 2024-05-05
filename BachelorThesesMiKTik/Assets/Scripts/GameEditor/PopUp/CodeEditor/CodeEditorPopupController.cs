@@ -101,7 +101,7 @@ namespace Assets.Scripts.GameEditor.CodeEditor
             IsCompilationRunning = true;
 
             ClearConsole();
-            LogOutPut("Compiling...");
+            LogOutPut("Compiling... This may take some time.");
 
             if (LoadDependencies())
             {

@@ -79,7 +79,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
                     return;
                 }
             }
-            SetAnimation(name, shouldLoop, playAfterSet, 30, 30);
+            SetAnimation(name, shouldLoop, playAfterSet, 32, 32);
         }
 
         [CodeEditorAttribute("Finds created animation by given name and sets it for this object.",
@@ -161,7 +161,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
                     return;
                 }
             }
-            SetImage(name, 30, 30);
+            SetImage(name, 32, 32);
         }
 
         [CodeEditorAttribute("Finds created image by given name and sets it for this object.",
@@ -174,10 +174,12 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             }
 
             var sourceReference = spriteController.SourceReference;
-
-            if (sourceReference.Name != "")
+            if (sourceReference != null)
             {
-                spriteManager.RemoveActiveController(sourceReference.Name, spriteController);
+                if (sourceReference.Name != "")
+                {
+                    spriteManager.RemoveActiveController(sourceReference.Name, spriteController);
+                }
             }
             var animationSource = new SourceReference(name, SourceType.Image, x, y);
             spriteManager.SetSprite(spriteController, animationSource);

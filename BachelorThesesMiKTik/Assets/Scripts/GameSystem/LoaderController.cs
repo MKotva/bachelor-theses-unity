@@ -7,29 +7,15 @@ namespace Assets.Scripts.JumpSystem
 {
     public class LoaderController : MonoBehaviour
     {
+        [SerializeField] LoadDataHandler LoadDataHandler;
+
         private void Start()
         {
             var instance = GameManager.Instance;
             if (Loader.Data != null && instance != null)
             {
-                var task = Load();
+                var task = LoadDataHandler.Load(Loader.Data);
             }
-        }
-
-        public async Task Load()
-        {
-            var instance = GameManager.Instance;
-            if (Loader.Data != null && instance != null)
-            {
-                instance.Clear();
-                await GameDataSerializer.Deserialize(Loader.Data);
-                instance.EnterGame();
-                instance.StartGame();
-            }
-
-            var canvasInstane = EditorCanvas.Instance;
-            if (canvasInstane)
-                canvasInstane.OnDisable();
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator.Operations
             switch (op.OperatorText)
             {
                 case "+": return new Operand(a + b, ValueType.String);
-                case "==": return new Operand(a == b, ValueType.String);
-                case "!=": return new Operand(a != b, ValueType.String);
+                case "==": return new Operand(a == b, ValueType.Boolean);
+                case "!=": return new Operand(a != b, ValueType.Boolean);
                 case "=": return new Operand(b, ValueType.String);
                 case "+=": return new Operand(a + b, ValueType.String);
                 default:
