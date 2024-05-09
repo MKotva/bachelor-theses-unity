@@ -27,6 +27,7 @@ namespace Assets.Scripts.GameEditor.Audio
             if (!instance.ContainsName(name))
                 return;
 
+
             EditAudio(instance.AudioData[name]);
             audioSource.clip = instance.AudioClips[name];
 

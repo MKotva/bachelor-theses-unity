@@ -1,9 +1,12 @@
 ﻿using Assets.Core.GameEditor.Attributes;
 using Assets.Core.GameEditor.CodeEditor.EnviromentObjects;
+using Assets.Core.GameEditor.Serializers;
 using Assets.Core.SimpleCompiler.Exceptions;
+using Assets.Scenes.GameEditor.Core.DTOS;
 using Assets.Scripts.GameEditor;
 using Assets.Scripts.GameEditor.Managers;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
@@ -51,10 +54,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
                 if (!File.Exists(path))
                     throw new RuntimeException($"\"Exception in method \\\"LoadGame\\\"! Invalid path to file!");
 
-                gameManager.ExitGame();
-                var task = gameManager.LoadLevelFromGame(path);
-                gameManager.EnterGame();
-                gameManager.StartGame();
+                var task = LoadLevelFromGame(path);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
                 if (!File.Exists(path))
                     throw new RuntimeException($"\"Exception in method \\\"LoadGame\\\"! Invalid path to file!");
 
-                var task = gameManager.LoadLevelFromGame(path);
+                var task = LoadLevelFromGame(path);
             }
         }
 
@@ -134,6 +134,36 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
                 }
             }
             return false;
+        }
+
+        private async Task<bool> LoadLevelFromGame(string path)
+        {
+            GameDataDTO gameDataDTO = null;
+            if (!JSONSerializer.Deserialize(path, out gameDataDTO))
+            {
+                throw new RuntimeException($"\"Exception in method \\\"LoadGame\\\"! Invalid JSON file!");
+            }
+
+            var playmode = gameManager.IsInPlayMode;
+            if (playmode)
+            {
+                gameManager.DisablePlayMode();
+            }
+            gameManager.Clear();
+
+            await GameDataSerializer.Deserialize(gameDataDTO);
+            if (playmode)
+            {
+                gameManager.DisplayPlayMode();
+                gameManager.IsInPlayMode = true;
+            }
+            else
+            {
+                gameManager.EnterGame();
+                gameManager.StartGame();
+            }
+            gameManager.LoadedIngame = true;
+            return true;
         }
     }
 }

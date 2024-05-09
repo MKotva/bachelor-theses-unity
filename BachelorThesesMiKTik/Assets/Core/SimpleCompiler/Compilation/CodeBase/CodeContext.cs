@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Core.GameEditor;
 using Assets.Core.GameEditor.Attributes;
 using Assets.Core.GameEditor.CodeEditor.EnviromentHandlers;
 using Assets.Core.GameEditor.DTOS;
@@ -256,7 +257,7 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
             }
             else if (valueType == ValueType.Numeric)
             {
-                if (float.TryParse(input, out float result))
+                if (MathHelper.GetFloat(input, out float result))
                     return result;
                 throw new CompilationException($"Invalid global variable default value {input} for value type {valueType}");
             }

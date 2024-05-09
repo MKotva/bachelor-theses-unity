@@ -335,7 +335,7 @@ public class EditorCanvas : Singleton<EditorCanvas>
         if (IsDisabled)
             return;
 
-        if (Input.mousePosition.y < 830 && Input.mousePosition.y > 0
+        if (Input.mousePosition.y < Screen.height - 285 && Input.mousePosition.y > 0
             && Input.mousePosition.x > 0 && Input.mousePosition.x < 1920)
         {
             _isActionAllowed = true;

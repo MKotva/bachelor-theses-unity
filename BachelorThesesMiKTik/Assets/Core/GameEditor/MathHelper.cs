@@ -45,6 +45,28 @@ namespace Assets.Core.GameEditor
             return powered;
         }
 
+        public static bool GetFloat(string value, out float num)
+        {
+            num = 0f;
+            if (value == "")
+                return false;
+
+            value = value.Replace(',', '.');
+
+            var style = NumberStyles.AllowDecimalPoint;
+            var culture = CultureInfo.InvariantCulture;
+            if (!float.TryParse(value, style, culture, out num))
+            {
+                return false;
+            }
+            if (float.IsNaN(num))
+            {
+                return false;           
+            }
+
+            return true;
+        }
+
         public static float GetFloat(string value, float defaultValue = 1f, string name = "", string author = "")
         {
             if(value == "")

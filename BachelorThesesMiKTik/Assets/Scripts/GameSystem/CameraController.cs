@@ -62,6 +62,9 @@ public class CameraController : MonoBehaviour, IObjectController
         if (manager == null)
             return false;
 
+        if (manager.ActivePlayers == null) 
+            return false;
+
         if(manager.ActivePlayers.ContainsKey(followTransformId))
             return true;
 

@@ -1131,8 +1131,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1927096677}
-  - {fileID: 1361201053}
   - {fileID: 1999476479}
+  - {fileID: 1361201053}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3961,6 +3961,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PopUpCanvas: {fileID: 1999476478}
   PopUpWindow: {fileID: 6410812907724670985, guid: fc52fb1903254df40946372bf0db7ed7, type: 3}
+  PlayModeControler: {fileID: 1950055598}
 --- !u!1001 &710448304
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5131,6 +5132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PopUpCanvas: {fileID: 1999476478}
   PopUpWindow: {fileID: 8376384058187003592, guid: ea688faaa38a30644b6f3b976d653358, type: 3}
+  PlayModeControler: {fileID: 1950055598}
 --- !u!1 &1099283142 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6808688920610198198, guid: e4857c60408590e45a00334fc5b52255, type: 3}
@@ -6157,7 +6159,7 @@ RectTransform:
   m_Children:
   - {fileID: 1950055595}
   m_Father: {fileID: 187658835}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -10040,7 +10042,7 @@ RectTransform:
   m_Children:
   - {fileID: 498523296}
   m_Father: {fileID: 187658835}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

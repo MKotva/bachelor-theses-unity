@@ -1,5 +1,6 @@
 using Assets.Core.GameEditor.Serializers;
 using Assets.Scenes.GameEditor.Core.DTOS;
+using Assets.Scripts.GameEditor;
 using SimpleFileBrowser;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -61,7 +62,7 @@ public class LoadDataHandler : MonoBehaviour
         LoadingScreen.SetActive(true);
         await LoadMap(path);
         LoadingScreen.SetActive(false);
-        
+        SetToManager(path);
         map.OnEnable();
     }
 
@@ -71,6 +72,15 @@ public class LoadDataHandler : MonoBehaviour
     private void OnFail()
     {
         map.OnEnable();
+    }
+
+    private void SetToManager(string path)
+    {
+        var instance = GameManager.Instance;
+        if(instance != null) 
+        {
+            instance.LoadedLevel = path;
+        }
     }
     #endregion
 }

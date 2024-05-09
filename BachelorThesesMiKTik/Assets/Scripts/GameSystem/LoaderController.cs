@@ -25,6 +25,7 @@ namespace Assets.Scripts.JumpSystem
             if (Loader.Data != null && instance != null)
             {
                 await instance.LoadLevel(Loader.Data);
+                instance.LoadedLevel = Loader.Path;
             }
 
             var canvasInstane = EditorCanvas.Instance;

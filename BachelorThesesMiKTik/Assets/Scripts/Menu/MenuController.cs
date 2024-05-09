@@ -50,6 +50,7 @@ namespace Assets.Scripts.Menu
         {
             if (JSONSerializer.Deserialize(path, out var gameData))
             {
+                Loader.Path = path;
                 Loader.Data = gameData;
                 SceneManager.LoadScene("GameScene");
             }

@@ -82,6 +82,11 @@ public class SaveDataHandler : MonoBehaviour
         string extension = Path.GetExtension(path);
         string name = Path.GetFileNameWithoutExtension(path);
 
+        if(!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
         for (int i = 1; ; ++i)
         {
             if (!File.Exists(path))

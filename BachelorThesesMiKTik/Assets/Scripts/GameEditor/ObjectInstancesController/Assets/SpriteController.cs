@@ -49,6 +49,20 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
                 spriteRendered.color = new Color(r, g, b);
         }
 
+        public bool HasColor(float r, float g, float b)
+        {
+            if(spriteRendered.color.r == r &&
+                spriteRendered.color.g == g &&
+                spriteRendered.color.b == b)
+                return true;
+            return false;
+        }
+
+        public Color GetColor()
+        {
+            return spriteRendered.color;
+        }
+
         public void SetImage(SourceReference source)
         {
             var instance = SpriteManager.Instance;

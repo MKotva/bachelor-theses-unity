@@ -37,7 +37,10 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 Speed.text = flyAction.Speed.ToString();
                 SpeedCap.text = flyAction.SpeedCap.ToString();
             }
-            OutputManager.Instance.ShowMessage("Fly action panel faield to set stored action setting! Parsing error", "ObjectCreate");
+            else
+            {
+                OutputManager.Instance.ShowMessage("Fly action panel faield to set stored action setting! Parsing error", "ObjectCreate");
+            }
         }
 
         /// <summary>

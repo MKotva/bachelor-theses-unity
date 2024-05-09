@@ -1,6 +1,5 @@
 ﻿using Assets.Core.GameEditor.Attributes;
 using Assets.Core.SimpleCompiler.Exceptions;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
@@ -42,7 +41,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         public static float StringToNum(string s)
         {
             float f = 0;
-            if(float.TryParse(s, out f))
+            if(MathHelper.GetFloat(s, out f))
             {
                 return f;
             }

@@ -22,13 +22,13 @@
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "cookie",
-          "URL": "Mario\\cookie.png"
+          "Name": "mushroom",
+          "URL": "Mario\\mushroom.png"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "mushroom",
-          "URL": "Mario\\mushroom.png"
+          "Name": "cookie",
+          "URL": "Mario\\cookie.png"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
@@ -160,6 +160,28 @@
             {
               "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
               "DisplayTime": 0.20000000298023224,
+              "URL": "Lava1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava3.png"
+            }
+          ],
+          "Name": "lava",
+          "URL": ""
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
               "URL": "Mario\\Traps\\spikeHead1.png"
             },
             {
@@ -179,28 +201,6 @@
             }
           ],
           "Name": "skipeHead",
-          "URL": ""
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
-          "AnimationData": [
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava1.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava2.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava3.png"
-            }
-          ],
-          "Name": "lava",
           "URL": ""
         },
         {
@@ -444,7 +444,58 @@
     },
     "AudioManager": {
       "$type": "ManagerDTO, Assembly-CSharp",
-      "Sources": []
+      "Sources": [
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": false,
+          "Name": "coin",
+          "URL": "Audio\\coin.mp3"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": false,
+          "Name": "collision",
+          "URL": "Audio\\collision.mp3"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": false,
+          "Name": "start",
+          "URL": "Audio\\gameStart.mp3"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": false,
+          "Name": "jump",
+          "URL": "Audio\\jump.mp3"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": false,
+          "Name": "star",
+          "URL": "Audio\\showWin.mp3"
+        }
+      ]
     }
   },
   "Prototypes": [
@@ -518,7 +569,32 @@
           "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
           "XSize": 32.0,
           "YSize": 32.0,
-          "Colliders": [],
+          "Colliders": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "player"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "visual.SetAnimation(\"spikeHit\", false, true)\nsound.SetAudio(\"collision\", true)\n\n",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "visual",
+                    "TypeName": "ObjectVisual"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            }
+          ],
           "Scale": {
             "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
             "x": 0.0134375,
@@ -560,7 +636,27 @@
           "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
           "XSize": 32.0,
           "YSize": 32.0,
-          "Colliders": [],
+          "Colliders": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "player"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "sound.SetAudio(\"collision\", true)\n",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            }
+          ],
           "Scale": {
             "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
             "x": 0.04,
@@ -582,7 +678,7 @@
         {
           "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
           "Name": "mushroom",
-          "Group": "Decorations",
+          "Group": "Entities",
           "ComponentName": "General Setting",
           "ComponentID": 0
         },
@@ -602,7 +698,32 @@
           "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
           "XSize": 20.0,
           "YSize": 20.0,
-          "Colliders": [],
+          "Colliders": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "player"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "sound.SetAudio(\"star\", true)\ncontrol.Kill(false, false)",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "control",
+                    "TypeName": "ObjectControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            }
+          ],
           "Scale": {
             "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
             "x": 0.024,
@@ -687,7 +808,32 @@
             "magnitude": 0.0,
             "sqrMagnitude": 0.0
           },
-          "Colliders": [],
+          "Colliders": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "player"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "sound.SetAudio(\"coin\", true)\nobControll.Kill(false, false)",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "obControll",
+                    "TypeName": "ObjectControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            }
+          ],
           "Scale": {
             "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
             "x": 0.3,
@@ -735,7 +881,32 @@
             "magnitude": 0.0,
             "sqrMagnitude": 0.0
           },
-          "Colliders": [],
+          "Colliders": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "player"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "sound.SetAudio(\"star\", true)\nobControl.Kill(false,false)",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "obControl",
+                    "TypeName": "ObjectControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            }
+          ],
           "Scale": {
             "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
             "x": 0.024,
@@ -793,8 +964,8 @@
           "$type": "Assets.Core.GameEditor.Components.AIComponent, Assembly-CSharp",
           "Action": {
             "$type": "Assets.Core.GameEditor.DTOS.Action.FlyActionDTO, Assembly-CSharp",
-            "Speed": 3.0,
-            "SpeedCap": 5.0,
+            "Speed": 5.0,
+            "SpeedCap": 8.0,
             "Name": "Fly"
           },
           "OnCreateAction": {
@@ -940,7 +1111,7 @@
               "GroupsNames": [],
               "Handler": {
                 "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-                "Code": "if collider.HasCollidedInDirection(0, -1)\n\tvisual.SetAnimation(\"enemyHit\", false, true)\n\tob.Kill(true, true)\nfi",
+                "Code": "if collider.HasCollidedInDirection(0, -1)\n\tvisual.SetAnimation(\"enemyHit\", false, true)\n\tsound.SetAudio(\"collision\", true)\n\tob.Kill(true, true)\nelse\n\tsound.SetAudio(\"collision\", true)\nfi\n",
                 "EnviromentObjects": [
                   {
                     "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
@@ -961,6 +1132,11 @@
                     "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
                     "Alias": "output",
                     "TypeName": "Output"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
                   }
                 ],
                 "GlobalVariables": []
@@ -990,7 +1166,7 @@
           "OnCreateAction": null,
           "OnUpdateAction": {
             "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-            "Code": "if aiControl.ActualQueuedActionsCount() < 10\n\taiControl.PerformRandomAction()\nfi\n\nif obControl.GetXVelocity () != 0\r\n\tif actualAnimation != \"run\"\n\t\tobVisual.SetAnimation (\"enemyRun\", true, true)\n\t\tactualAnimation = \"run\"\r\n\tfi\nelse\r\n\tif actualAnimation != \"idle\"\n\t\tobVisual.SetAnimation (\"enemyIdle\", true, true)\r\n\t\tactualAnimation = \"idle\"\r\n\tfi\nfi\r\n\r\nif obControl.CheckIfIsMoving ()\r\n\tif obControl.GetXVelocity () > 0.5 && orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = false\r\n\telseif obControl.GetXVelocity () < -0.5 && ! orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = true\r\n\tfi\r\nfi\n\nif aiControl.IsInRange(\"player\", 10)\n\toutput.Print(\"Grrrr... You are to close!\")\nfi ",
+            "Code": "if aiControl.ActualQueuedActionsCount() < 10\n\taiControl.PerformRandomAction()\nfi\n\nif obControl.GetXVelocity () != 0\r\n\tif actualAnimation != \"run\"\n\t\tobVisual.SetAnimation (\"enemyRun\", true, true)\n\t\tactualAnimation = \"run\"\r\n\tfi\nelse\r\n\tif actualAnimation != \"idle\"\n\t\tobVisual.SetAnimation (\"enemyIdle\", true, true)\r\n\t\tactualAnimation = \"idle\"\r\n\tfi\nfi\r\n\r\nif obControl.CheckIfIsMoving ()\r\n\tif obControl.GetXVelocity () > 0.5 && orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = false\r\n\telseif obControl.GetXVelocity () < -0.5 && ! orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = true\r\n\tfi\r\nfi\n\nif aiControl.IsInRange(\"player\", 1) && ! showed && showCounter > 1000\n\toutput.Print(\"Grrrr... You are to close!\")\n\tshowed = true\n\tshowCounter = 0\nelse\n\tshowed = false\n\tshowCounter += 1\nfi \n",
             "EnviromentObjects": [
               {
                 "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
@@ -1025,6 +1201,18 @@
                 "Alias": "actualAnimation",
                 "Value": "idle",
                 "Type": 4
+              },
+              {
+                "$type": "Assets.Core.GameEditor.DTOS.GlobalVariableDTO, Assembly-CSharp",
+                "Alias": "showed",
+                "Value": "false",
+                "Type": 2
+              },
+              {
+                "$type": "Assets.Core.GameEditor.DTOS.GlobalVariableDTO, Assembly-CSharp",
+                "Alias": "showCounter",
+                "Value": "0",
+                "Type": 3
               }
             ]
           },
@@ -1082,7 +1270,7 @@
               "GroupsNames": [],
               "Handler": {
                 "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-                "Code": "if collider.HasCollidedInDirection(0, 1)\n\tob.SetAnimation(\"coinAnimation\", false, true, 32, 40)\n\tcontroll.Kill(true, true)\nfi",
+                "Code": "if collider.HasCollidedInDirection(0, 1)\n\tob.SetAnimation(\"coinAnimation\", false, true, 32, 40)\n\tsound.SetAudio(\"star\", true)\n\tcontroll.Kill(true, true)\nfi",
                 "EnviromentObjects": [
                   {
                     "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
@@ -1098,6 +1286,11 @@
                     "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
                     "Alias": "collider",
                     "TypeName": "ColliderControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
                   }
                 ],
                 "GlobalVariables": []
@@ -1180,7 +1373,7 @@
               "GroupsNames": [],
               "Handler": {
                 "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-                "Code": "if ! collider.HasCollidedInDirection(0,1)\n\tob.HP -= 30\n\tif ob.HP < 0\n\t\tob.Kill(true, true)\n\tfi\n\n\tif collider.HasCollidedInDirection(1,0)\n\t\tob.AddForceInDirection(250, 0)\n\n\telseif collider.HasCollidedInDirection(-1,0)\n\t\tob.AddForceInDirection(-250, 0)\n\tfi\n\t\n\tvisual.SetAnimation(\"playerHit\", false, true)\nfi ",
+                "Code": "if ! visual.HasColor(0.3, 0.2, 1)\n\n\tif ! collider.HasCollidedInDirection(0,1)\n\t\tob.HP -= 30\n\t\tif ob.HP < 0\n\t\t\tob.Kill(false, false)\n\t\tfi\n\n\t\tif collider.HasCollidedInDirection(1,0)\n\t\t\tob.AddForceInDirection(250, 0)\n\n\t\telseif collider.HasCollidedInDirection(-1,0)\n\t\t\tob.AddForceInDirection(-250, 0)\n\t\tfi\n\t\n\t\tvisual.SetAnimation(\"playerHit\", false, true)\n\tfi\nfi ",
                 "EnviromentObjects": [
                   {
                     "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
@@ -1196,6 +1389,152 @@
                     "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
                     "Alias": "visual",
                     "TypeName": "ObjectVisual"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "skipeHead",
+                "lava"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "if ! visual.HasColor(0.3, 0.2, 1)\n\tob.HP -= 30\n\tif ob.HP < 0\n\t\tob.Kill(false, false)\n\tfi\n\t\n\t#This handles collision bounce direction based on collision normal\n\tif collider.HasCollidedInDirection(1,0)\n\t\tob.AddForceInDirection(250, 0)\n\n\telseif collider.HasCollidedInDirection(-1,0)\n\t\tob.AddForceInDirection(-250, 0)\n\n\telseif collider.HasCollidedInDirection(0,1)\n\t\tob.AddForceInDirection(20, 200)\n\n\telseif collider.HasCollidedInDirection(0,-1)\n\t\tob.AddForceInDirection(0, -200)\n\tfi\n\t\n\tvisual.SetAnimation(\"playerHit\", false, true)\nfi",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "collider",
+                    "TypeName": "ColliderControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "ob",
+                    "TypeName": "ObjectControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "visual",
+                    "TypeName": "ObjectVisual"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "cookie"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "ob.Score += 30\nstring score = \"Score :\" + conv.NumToString(ob.Score)\nsound.SetAudio(\"coin\", true)\noutput.Print(score)  ",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "ob",
+                    "TypeName": "ObjectControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "output",
+                    "TypeName": "Output"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "conv",
+                    "TypeName": "Converters"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "star"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "output.Print(\"Super mode activated !\")\nsound.SetAudio(\"star\", true)\nvisual.SetColor(0.3, 0.2, 1)",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "output",
+                    "TypeName": "Output"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "visual",
+                    "TypeName": "ObjectVisual"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "mushroom"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "sound.SetAudio(\"star\", true)\nob.HP += 30\noutput.Print(\"Added extra life!\")\n\nob.Score += 30\nstring score = \"Score :\" + conv.NumToString(ob.Score)\noutput.Print(score)  ",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "ob",
+                    "TypeName": "ObjectControl"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "output",
+                    "TypeName": "Output"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "conv",
+                    "TypeName": "Converters"
+                  },
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [
+                "Finish"
+              ],
+              "GroupsNames": [],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "gameControl.ShowGameWin()",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "gameControl",
+                    "TypeName": "GameController"
                   }
                 ],
                 "GlobalVariables": []
@@ -1288,10 +1627,21 @@
               "ActionCode": null
             }
           ],
-          "OnCreateAction": null,
+          "OnCreateAction": {
+            "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+            "Code": "sound.SetAudio(\"start\", true)",
+            "EnviromentObjects": [
+              {
+                "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                "Alias": "sound",
+                "TypeName": "ObjectSound"
+              }
+            ],
+            "GlobalVariables": []
+          },
           "OnUpdateAction": {
             "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-            "Code": "if obVisual.GetNameOfAnimation() == \"playerHit\" && !obVisual.CheckIfIsFinished()\n\nelse\n\tif ! obControl.CheckIfStaysOnGround ()\r\n\t\tobVisual.SetImage (\"fall\")\r\n\t\tactualAnimation = \" \"\n\telseif obControl.GetXVelocity () != 0\r\n\t\tif actualAnimation != \"run\"\n\t\t\tobVisual.SetAnimation (\"playerRun\", true, true)\n\t\t\tactualAnimation = \"run\"\r\n\t\tfi\n\telse\r\n\t\tif actualAnimation != \"idle\"\n\t\t\tobVisual.SetAnimation (\"playerIdle\", true, true)\r\n\t\t\tactualAnimation = \"idle\"\r\n\t\tfi\n\tfi\r\n\r\n\tif obControl.CheckIfIsMoving ()\r\n\t\tif obControl.GetXVelocity () > 0.5 && orientation\r\n\t\t\tobVisual.FlipYVisual ()\r\n\t\t\torientation = false\r\n\t\telseif obControl.GetXVelocity () < -0.5 && ! orientation\r\n\t\t\tobVisual.FlipYVisual ()\r\n\t\t\torientation = true\r\n\t\tfi\r\n\tfi \nfi",
+            "Code": "#This disables super mode, after 1000 cycles. One cycle is about 20ms\nif obVisual.HasColor(0.3, 0.2, 1) && superMode >1000\n\tsuperMode = 0\n\tobVisual.SetColor(1, 1, 1)\nelse\n\tsuperMode += 1\nfi\n\nif obVisual.GetNameOfAnimation() == \"playerHit\" && !obVisual.CheckIfIsFinished()\n\nelse\n\tif ! obControl.CheckIfStaysOnGround ()\r\n\t\tobVisual.SetImage (\"fall\")\r\n\t\tactualAnimation = \" \"\n\telseif obControl.GetXVelocity () != 0\r\n\t\tif actualAnimation != \"run\"\n\t\t\tobVisual.SetAnimation (\"playerRun\", true, true)\n\t\t\tactualAnimation = \"run\"\r\n\t\tfi\n\telse\r\n\t\tif actualAnimation != \"idle\"\n\t\t\tobVisual.SetAnimation (\"playerIdle\", true, true)\r\n\t\t\tactualAnimation = \"idle\"\r\n\t\tfi\n\tfi\r\n\r\n\tif obControl.CheckIfIsMoving ()\r\n\t\tif obControl.GetXVelocity () > 0.5 && orientation\r\n\t\t\tobVisual.FlipYVisual ()\r\n\t\t\torientation = false\r\n\t\telseif obControl.GetXVelocity () < -0.5 && ! orientation\r\n\t\t\tobVisual.FlipYVisual ()\r\n\t\t\torientation = true\r\n\t\tfi\r\n\tfi \nfi",
             "EnviromentObjects": [
               {
                 "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
@@ -1316,6 +1666,12 @@
                 "Alias": "orientation",
                 "Value": "false",
                 "Type": 2
+              },
+              {
+                "$type": "Assets.Core.GameEditor.DTOS.GlobalVariableDTO, Assembly-CSharp",
+                "Alias": "superMode",
+                "Value": "",
+                "Type": 3
               }
             ]
           },
@@ -15227,11 +15583,11 @@
       "Id": 1875821083,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -7.52,
-        "y": 2.08,
+        "x": -32.16,
+        "y": 1.43999994,
         "z": 0.0,
-        "magnitude": 7.80235863,
-        "sqrMagnitude": 60.8768
+        "magnitude": 32.1922226,
+        "sqrMagnitude": 1036.33923
       }
     }
   ],

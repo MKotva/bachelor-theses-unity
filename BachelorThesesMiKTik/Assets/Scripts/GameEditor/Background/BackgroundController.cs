@@ -1,10 +1,8 @@
-using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Core.GameEditor.DTOS.Background;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor;
 using Assets.Scripts.GameEditor.Audio;
-using Assets.Scripts.GameEditor.Background;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;

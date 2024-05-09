@@ -1,8 +1,7 @@
-﻿using Assets.Core.GameEditor.DTOS.Action;
-using Assets.Scenes.GameEditor.Core.AIActions;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.DTOS.Action;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Assets.Scripts.GameEditor.SourcePanels.Components
 {
@@ -13,7 +12,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         public abstract List<string> GetActionTypes();
         public virtual bool TryParse(string text, out float result)
         {
-            if(float.TryParse(text, out result))
+            if(MathHelper.GetFloat(text, out result))
             {
                 return true;
             }

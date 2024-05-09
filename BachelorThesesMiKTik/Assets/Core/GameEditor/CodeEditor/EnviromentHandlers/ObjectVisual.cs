@@ -224,6 +224,30 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
         }
         #endregion
 
+        [CodeEditorAttribute("Returns if object has given color.","(string red, float green, float black)")]
+        public bool HasColor(float r, float g, float b)
+        {
+            return spriteController.HasColor(r, g, b);
+        }
+
+        [CodeEditorAttribute("Returns value, representing level of red color of actual color.")]
+        public float GetColorR()
+        {
+            return spriteController.GetColor().r;
+        }
+
+        [CodeEditorAttribute("Returns value, representing level of green color of actual color.")]
+        public float GetColorG()
+        {
+            return spriteController.GetColor().g;
+        }
+
+        [CodeEditorAttribute("Returns value, representing level of blue color of actual color.")]
+        public float GetColorB()
+        {
+            return spriteController.GetColor().b;
+        }
+
         [CodeEditorAttribute("Flips actual orientation of image by vertical axis")]
         public void FlipYVisual()
         {

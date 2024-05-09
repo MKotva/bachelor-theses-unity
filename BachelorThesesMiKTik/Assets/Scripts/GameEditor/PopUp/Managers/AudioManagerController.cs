@@ -154,22 +154,42 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
 
         private void EditAll(AudioSourceDTO source)
         {
+            var manager = AudioManager.Instance;
+            if (manager == null)
+                return;
+
             if (selected.Count == 0)
             {
-                foreach (var controllerGroup in AudioManager.Instance.AudioControllers.Values)
+                foreach (var controllerSource in manager.AudioData)
                 {
-                    foreach(var controller in controllerGroup.Values)
-                        controller.EditAudio(source);
+                    var newAudioSource = new AudioSourceDTO(controllerSource.Key, controllerSource.Value.URL)
+                    {
+                        Pitch = source.Pitch,
+                        Priority = source.Priority,
+                        StereoPan = source.StereoPan,
+                        Volume = source.Volume,
+                        ShouldLoop = source.ShouldLoop,
+                    };
+
+                    manager.EditAudioClip(newAudioSource);
                 }
             }
             else
             { 
                 foreach(var name in selected)
                 {
-                    if (AudioManager.Instance.AudioControllers.ContainsKey(name))
+                    if (manager.AudioData.ContainsKey(name))
                     {
-                        foreach(var controller in AudioManager.Instance.AudioControllers[name].Values)
-                            controller.EditAudio(source);
+                        var newAudioSource = new AudioSourceDTO(name, manager.AudioData[name].URL)
+                        {
+                            Pitch = source.Pitch,
+                            Priority = source.Priority,
+                            StereoPan = source.StereoPan,
+                            Volume = source.Volume,
+                            ShouldLoop = source.ShouldLoop,
+                        };
+
+                        AudioManager.Instance.EditAudioClip(newAudioSource);
                     }
                 }
             }
@@ -177,11 +197,18 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
 
         private void Edit(AudioSourceDTO source)
         {
-            if (AudioManager.Instance.AudioControllers.ContainsKey(selected[0])) 
-            {
-                foreach(var controller in AudioManager.Instance.AudioControllers[selected[0]].Values)
-                    controller.EditAudio(source);
-            }
+            var manager = AudioManager.Instance;
+            if (manager == null || selected == null)
+                return;
+
+            if (selected.Count == 0)
+                return;
+
+            var editingAudio = manager.AudioData[selected[0]];
+            source.Name = editingAudio.Name;
+            source.URL = editingAudio.URL;
+
+            AudioManager.Instance.EditAudioClip(source);
         }
         #endregion
     }

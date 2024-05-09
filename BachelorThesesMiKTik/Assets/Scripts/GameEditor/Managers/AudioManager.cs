@@ -93,6 +93,7 @@ namespace Assets.Scripts.GameEditor.Managers
         /// <returns></returns>
         public void EditAudioClip(AudioSourceDTO audioSourceDTO) 
         {
+            var name = audioSourceDTO.Name;
             if (!AudioData.ContainsKey(name))
             {
                 return;

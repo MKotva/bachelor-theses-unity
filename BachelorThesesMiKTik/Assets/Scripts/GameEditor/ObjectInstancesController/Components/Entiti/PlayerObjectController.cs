@@ -78,6 +78,14 @@ namespace Assets.Scripts.GameEditor.Entiti
                 OnUpdate.ResetContext();
             }
 
+            foreach(var binding in  Bindings) 
+            {
+                if(binding.ActionCode != null)
+                {
+                    binding.ActionCode.ResetContext();
+                }
+            }
+
             var gameManager = GameManager.Instance;
             if (gameManager != null)
             {

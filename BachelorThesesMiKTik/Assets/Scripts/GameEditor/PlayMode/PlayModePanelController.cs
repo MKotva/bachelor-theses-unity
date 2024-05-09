@@ -39,7 +39,7 @@ public class PlayModePanelController : MonoBehaviour
             outputManager.ClearMessages();
     }
 
-    private void SwitchPlayPauseButton(bool isPlaying)
+    public void SwitchPlayPauseButton(bool isPlaying)
     {
         if (isPlaying)
         {

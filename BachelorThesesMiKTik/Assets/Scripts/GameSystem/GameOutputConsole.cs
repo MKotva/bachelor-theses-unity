@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 using UnityEngine.UI;
 
 namespace Assets.Scripts.GameSystem
@@ -15,8 +16,14 @@ namespace Assets.Scripts.GameSystem
         /// </summary>
         public void ShowMessage(string message)
         {
-            OutputConsole.text = message;
-            Background.color = DisplayColor;
+            if (message == null)
+                return;
+
+            if (message != "")
+            {
+                OutputConsole.text = message;
+                Background.color = DisplayColor;
+            }
         }
 
         /// <summary>

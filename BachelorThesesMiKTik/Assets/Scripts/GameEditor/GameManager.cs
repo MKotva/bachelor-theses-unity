@@ -1,7 +1,6 @@
 ﻿using Assets.Core.GameEditor.Serializers;
 using Assets.Scenes.GameEditor.Core.DTOS;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
-using DG.Tweening.Core.Easing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,11 +17,15 @@ namespace Assets.Scripts.GameEditor
         [SerializeField] public Canvas PopUpCanvas;
         [SerializeField] public Canvas PlayModeCanvas;
 
+
+        public string LoadedLevel { get; set; } = "";
         public CameraController Camera { get; set; }
         public Dictionary<int, IObjectController> ActiveObjects { get; set; }
         public Dictionary<int, GameObject> ActivePlayers { get; set; }
         public bool IsInPlayMode { get; set; }
         public float LowestYPoint { get; set; }
+        public bool LoadedIngame { get; set; }
+
 
         #region ObjectManagment
         public void AddActiveObject(int id, IObjectController obj)
@@ -87,11 +90,11 @@ namespace Assets.Scripts.GameEditor
         public void DisableEditor()
         {
             ToolkitCanvas.gameObject.SetActive(false);
-        }    
+        }
 
-        public void DisplayPlayMode() 
+        public void DisplayPlayMode()
         {
-            if (IsInPlayMode) 
+            if (IsInPlayMode)
             {
                 return;
             }
@@ -102,7 +105,18 @@ namespace Assets.Scripts.GameEditor
             EnterGame();
         }
 
-        public void StartPlayMode() 
+        public void DisablePlayMode()
+        {
+            if (!IsInPlayMode)
+            {
+                return;
+            }
+            EnableEditor();
+            PlayModeCanvas.gameObject.SetActive(false);
+            IsInPlayMode = false;
+        }
+
+        public void StartPlayMode()
         {
             if (!IsInPlayMode)
             {
@@ -112,26 +126,19 @@ namespace Assets.Scripts.GameEditor
             StartGame();
         }
 
-        public void PausePlayMode() 
+        public void PausePlayMode()
         {
             if (!IsInPlayMode)
             {
                 return;
             }
-            
+
             PauseGame();
         }
 
         public void ExitPlayMode()
         {
-            if (!IsInPlayMode)
-            {
-                return;
-            }
-            EnableEditor();
-            PlayModeCanvas.gameObject.SetActive(false);
-            IsInPlayMode = false;
-
+            DisablePlayMode();
             ExitGame();
         }
 
@@ -147,14 +154,18 @@ namespace Assets.Scripts.GameEditor
 
         public void EnterGame()
         {
+
             foreach (var obj in ActiveObjects.Values)
                 obj.Enter();
 
             Camera.Enter();
+            LoadedIngame = false;
         }
 
         public void StartGame()
         {
+            ClearMessages();
+
             foreach (var obj in ActiveObjects.Values)
                 obj.Play();
 
@@ -178,7 +189,15 @@ namespace Assets.Scripts.GameEditor
                 obj.Exit();
 
             ActivePlayers.Clear();
-            OutputManager.Instance.ClearMessages();
+            ClearMessages();
+
+            if (LoadedIngame && LoadedLevel != null)
+            {
+                if (LoadedLevel != "")
+                {
+                    var task = LoadDataHandler.LoadMap(LoadedLevel);
+                }
+            }
         }
 
         public void ShowGameFail()
@@ -200,21 +219,10 @@ namespace Assets.Scripts.GameEditor
         }
 
         #endregion
-
-        public async Task LoadLevelFromGame(string path)
-        {
-            Clear();
-            await LoadDataHandler.LoadMap(path);
-            IsInPlayMode = true;
-            EnterGame();
-            StartGame();
-        }
-
         public async Task LoadLevel(GameDataDTO data)
         {
             Clear();
             await GameDataSerializer.Deserialize(data);
-            IsInPlayMode = true;
             EnterGame();
             StartGame();
         }
@@ -250,6 +258,12 @@ namespace Assets.Scripts.GameEditor
             }
         }
 
+        private void ClearMessages()
+        {
+            var instance = OutputManager.Instance;
+            if (instance != null)
+                instance.ClearMessages();
+        }
         protected override void Awake()
         {
             base.Awake();

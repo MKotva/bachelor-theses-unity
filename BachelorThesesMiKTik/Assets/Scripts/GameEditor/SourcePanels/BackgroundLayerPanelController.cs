@@ -1,5 +1,4 @@
-﻿using Assets.Core.GameEditor;
-using Assets.Core.GameEditor.DTOS.Assets;
+﻿using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Core.GameEditor.DTOS.Background;
 using TMPro;
 using UnityEngine;
@@ -18,7 +17,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         public BackgroundReference GetData()
         {
             var source = AssetPanel.GetData();
-            return new BackgroundReference(source, MathHelper.GetPositiveFloat(ParalaxSpeed.text, 0));
+            return new BackgroundReference(source, 0);
         }
 
         /// <summary>
