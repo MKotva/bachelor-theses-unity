@@ -1,5 +1,4 @@
 using Assets.Core.GameEditor.Components;
-using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -67,7 +66,6 @@ public class ItemData
     {
         var prefab = new GameObject("CustomObjectPrefab");
         prefab.AddComponent<SpriteRenderer>();
-        prefab.AddComponent<ObjectController>();
         return prefab;
     }
 }

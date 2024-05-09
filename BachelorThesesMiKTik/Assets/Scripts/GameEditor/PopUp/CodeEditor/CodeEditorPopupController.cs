@@ -35,7 +35,7 @@ namespace Assets.Scripts.GameEditor.CodeEditor
         public void Initialize(SimpleCode code)
         {
             CompilationCode = code;
-            lastCompilation = code;
+            lastCompilation = null;
 
             Code.text = code.Code;
 

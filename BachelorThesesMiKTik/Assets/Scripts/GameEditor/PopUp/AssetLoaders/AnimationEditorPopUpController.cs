@@ -1,4 +1,5 @@
-﻿using Assets.Core.GameEditor.Animation;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.Animation;
 using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Scripts.GameEditor.Managers;
@@ -90,7 +91,7 @@ namespace Assets.Scripts.GameEditor.PopUp.AssetLoaders
         public void SetData(AnimationSourceDTO data)
         {
             animaName = data.Name;
-            NameField.text = $"Name: {animaName}";
+            NameField.text = animaName;
 
             foreach (var item in data.AnimationData)
             {
@@ -128,9 +129,7 @@ namespace Assets.Scripts.GameEditor.PopUp.AssetLoaders
             {
                 var displayTime = line.transform.GetChild(1).GetComponent<TMP_InputField>().text;
                 var URL = line.transform.GetChild(2).GetComponent<TMP_InputField>().text;
-
-                if (double.TryParse(displayTime, out var time))
-                    data.Add(new AnimationFrameDTO(time, URL));
+                data.Add(new AnimationFrameDTO(MathHelper.GetPositiveFloat(displayTime, 1, "display time"), URL));
             }
 
             return new AnimationSourceDTO(data, NameField.text);

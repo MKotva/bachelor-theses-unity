@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using Assets.Core.GameEditor;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,20 +19,19 @@ namespace Assets.Scripts.GameEditor.Toolkit
         {
             ActualValue.text = Slider.value.ToString();
 
-            Slider.onValueChanged.AddListener(delegate 
+            Slider.onValueChanged.AddListener(delegate
             {
                 ActualValue.text = Slider.value.ToString();
             });
 
-            ActualValue.onValueChanged.AddListener(delegate 
+            ActualValue.onValueChanged.AddListener(delegate
             {
-                if (float.TryParse(ActualValue.text, out var result))
+                var result = MathHelper.GetFloat(ActualValue.text);
+                if (result >= Slider.minValue && result <= Slider.maxValue)
                 {
-                    if (result >= Slider.minValue && result <= Slider.maxValue)
-                    {
-                        Slider.value = result;
-                    }
+                    Slider.value = result;
                 }
+
             });
         }
     }

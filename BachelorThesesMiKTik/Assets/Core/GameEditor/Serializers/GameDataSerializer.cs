@@ -64,7 +64,7 @@ namespace Assets.Core.GameEditor.Serializers
         private static List<ItemDTO> GetItems()
         {
             var dtos = new List<ItemDTO>();
-            foreach (var item in ItemManager.Instance.Items.Values)
+            foreach (var item in PrototypeManager.Instance.Items.Values)
             {
                 if (item.Components != null)
                     dtos.Add(new ItemDTO(item));
@@ -79,7 +79,7 @@ namespace Assets.Core.GameEditor.Serializers
         /// <returns></returns>
         private static async Task SetItems(List<ItemDTO> items)
         {
-            ItemManager.Instance.ClearItems();
+            PrototypeManager.Instance.ClearItems();
             foreach (var item in items)
             {
                 var newItem = new ItemData();
@@ -93,7 +93,7 @@ namespace Assets.Core.GameEditor.Serializers
                     tasks.Add(component.Initialize());
                 }
                 await Task.WhenAll(tasks);
-                ItemManager.Instance.AddItem(newItem);
+                PrototypeManager.Instance.AddItem(newItem);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Assets.Core.GameEditor.Serializers
 
             foreach (var obj in mapObjects)
             {
-                var item = ItemManager.Instance.Items[obj.Id];
+                var item = PrototypeManager.Instance.Items[obj.Id];
                 map.Paint(item, obj.Position);
             }
         }

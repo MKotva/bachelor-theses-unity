@@ -12,7 +12,7 @@ namespace Assets.Scripts.GameSystem
     {
         [SerializeField] public AudioMixerGroup MixerGroup;
         [SerializeField] public GameObject ConfirmationPrefab;
-        [SerializeField] public LoadDataHandler LoadDataHandler;
+        [SerializeField] public LoaderController LoadDataHandler;
         [SerializeField] public Canvas MenuCanvas;
         [SerializeField] public GameObject Slider;
 
@@ -47,7 +47,7 @@ namespace Assets.Scripts.GameSystem
         public async void OnRestartClick()
         {
             if(Loader.Data != null)
-                await LoadDataHandler.Load(Loader.Data);
+                await LoadDataHandler.Load();
             MenuCanvas.gameObject.SetActive(false);
         }
 

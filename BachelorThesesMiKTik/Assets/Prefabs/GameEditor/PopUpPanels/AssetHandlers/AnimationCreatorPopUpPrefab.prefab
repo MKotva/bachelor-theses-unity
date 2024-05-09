@@ -2419,6 +2419,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -350
       objectReference: {fileID: 0}
+    - target: {fileID: 7055250039236916158, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: -1057438992125997633}
+    - target: {fileID: 7055250039236916158, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnShowHelp
+      objectReference: {fileID: 0}
     - target: {fileID: 9217928428494547916, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
       propertyPath: m_text
       value: Animation Creator
@@ -2448,6 +2456,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84595010da7a19e468f9e355e60b72b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InfoPanel: {fileID: 3728185945272438124, guid: 3c3c7cc43c440cc48a445b2f252843ad, type: 3}
+  Info: 'In this panel, you can create our own animation by adding separate frames
+    and setting display time. Frames are loaded with HTTP protocol or from folder/subfolder
+    of SteamingAssets.                  For loading via HTTP, set URL with .png or
+    .jpg on end.  For loading from Streaming assets use following format : SubFolder\SubFolder\name(.jpg\.png)'
   LinePrefab: {fileID: 4001692445414181392, guid: 938c433619c54a24283b7d7fa612bdae, type: 3}
   ContentView: {fileID: 6306315727949456082}
   NameField: {fileID: 7290348628636887302}

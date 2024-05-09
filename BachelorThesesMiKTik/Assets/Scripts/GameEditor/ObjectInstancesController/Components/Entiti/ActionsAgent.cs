@@ -4,6 +4,7 @@ using Assets.Scripts.GameEditor.AI;
 using Assets.Scripts.GameEditor.AI.PathFind;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
@@ -13,11 +14,18 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
         public GameObject Performer { get; set; }
         public List<ActionBase> ActionPerformers { get; internal set; }
         public EditorCanvas Map { get; internal set; }
-        public Queue<AgentActionDTO> ActionsToPerform {get; internal set; }
+        public Queue<AgentActionDTO> ActionsToPerform { get; internal set; }
+        public AgentActionDTO PerformingTask { get; internal set; }
+        public Vector2 Velocity { get; internal set; }
+
+        internal Vector2 originPosition;
 
         internal IAIPathFinder pathFinder;
-        internal AgentActionDTO performingTask;
         internal bool isPerforming;
+
+        private int performCounter;
+        private bool isSimulating;
+        private Vector2 initialPosition;
 
         public virtual void EnqueueActions(List<AgentActionDTO> actions)
         {
@@ -26,15 +34,21 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
 
         public virtual void PerformActions()
         {
-            if (ActionsToPerform.Count > 0 && performingTask == null && isPerforming)
+            if (ActionsToPerform.Count > 0 && PerformingTask == null && isPerforming)
             {
-                performingTask = ActionsToPerform.Dequeue();
+                PerformingTask = ActionsToPerform.Dequeue();
+                performCounter = 0;
             }
 
-            if (performingTask != null)
+            if (PerformingTask != null)
             {
-                if(performingTask.Performer(performingTask, ActionsToPerform, Time.deltaTime))
-                    performingTask = null;
+                if (PerformingTask.Action.PerformAgentAction(PerformingTask, ActionsToPerform, Time.deltaTime))
+                    PerformingTask = null;
+                else
+                {
+                    performCounter++;
+                    CheckForStuck();
+                }
             }
         }
 
@@ -48,11 +62,23 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
         public virtual void ClearActions()
         {
             ActionsToPerform.Clear();
-            performingTask = null;
+            if (PerformingTask != null)
+            {
+                PerformingTask.Action.ClearAction();
+                PerformingTask = null;
+            }
+
+            if (isSimulating)
+            {
+                EndSimulation();
+            }
         }
 
         public void MoveTo(Vector3 endPosition)
         {
+            if (isSimulating)
+                return;
+
             ClearActions();
 
             var path = pathFinder.FindPath(Performer.transform.position, GetPosition(endPosition), ActionPerformers);
@@ -62,27 +88,48 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
             }
         }
 
+        public void SimulateMoveTo(Vector3 endPosition)
+        {
+            if (isSimulating)
+                return;
+
+            ClearActions();
+
+            var path = pathFinder.FindPath(Performer.transform.position, GetPosition(endPosition), ActionPerformers);
+            if (path != null)
+            {
+                EnqueueActions(path);
+            }
+
+            initialPosition = transform.position;
+            isPerforming = true;
+            isSimulating = true;
+        }
+
         public List<GameObject> PrintMoveTo(Vector3 endPosition)
         {
+            if (isSimulating)
+                return new List<GameObject>();
+
             var path = pathFinder.FindPath(Performer.transform.position, GetPosition(endPosition), ActionPerformers);
             return AgentActionDTO.Print(path);
         }
 
         public void PerformRandomAction()
         {
-            var actionPerformer = ActionPerformers[(int)Random.Range(0, ActionPerformers.Count - 1)];
+            var actionPerformer = ActionPerformers[(int) Random.Range(0, ActionPerformers.Count - 1)];
 
             AgentActionDTO newAction = null;
             if (ActionsToPerform.Count != 0)
             {
-                 newAction = actionPerformer.GetRandomAction(ActionsToPerform.Last().EndPosition);
+                newAction = actionPerformer.GetRandomAction(ActionsToPerform.Last().EndPosition);
             }
             else
             {
                 newAction = actionPerformer.GetRandomAction(Performer.transform.position);
             }
 
-            if (newAction != null && ActionsToPerform.Count < 1000) 
+            if (newAction != null && ActionsToPerform.Count < 1000)
             {
                 ActionsToPerform.Enqueue(newAction);
             }
@@ -110,9 +157,54 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti
             Map = EditorCanvas.Instance;
             pathFinder = new AStar();
             ActionsToPerform = new Queue<AgentActionDTO>();
+            Velocity = Vector2.zero;
 
             if (ActionPerformers == null)
                 ActionPerformers = new List<ActionBase>();
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (isSimulating)
+            {
+                if (ActionsToPerform.Count == 0 && PerformingTask == null)
+                {
+                    EndSimulation();
+                }
+                else
+                {
+                    PerformActions();
+                }
+            }
+            else
+            {
+                var actualPosition = (Vector2) Performer.transform.position;
+                Velocity = ( actualPosition - originPosition ) / Time.fixedDeltaTime;
+                originPosition = actualPosition;
+
+                foreach (var action in ActionPerformers)
+                {
+                    action.ClampSpeed();
+                }
+            }
+        }
+
+        private void EndSimulation()
+        {
+            isSimulating = false;
+            isPerforming = false;
+            transform.position = initialPosition;
+        }
+
+        private void CheckForStuck()
+        {
+            if (performCounter > 10000000)
+            {
+                PerformingTask.Action.ClearAction();
+                transform.position = Map.GetCellCenterPosition(PerformingTask.EndPosition);
+                PerformingTask = null;
+                performCounter = 0;
+            }
         }
     }
 }

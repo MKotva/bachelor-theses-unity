@@ -1,12 +1,13 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.GameSystem
 {
     public class GameOutputConsole : MonoBehaviour
     {
         [SerializeField] TMP_Text OutputConsole;
-        [SerializeField] SpriteRenderer Background;
+        [SerializeField] Image Background;
         [SerializeField] Color DisplayColor;
 
         /// <summary>

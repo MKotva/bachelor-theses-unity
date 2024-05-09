@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2160462712641027132}
   - component: {fileID: 2035352776959558202}
   - component: {fileID: 1180932710859737584}
-  - component: {fileID: 5093300816350718904}
   m_Layer: 0
   m_Name: BackgroundSpritePrefab
   m_TagString: Untagged
@@ -38,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1, y: 1}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &2160462712641027132
 SpriteRenderer:
@@ -104,6 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08cb256cbde40c44acb93732c01c08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WasCreatedFromCode: 0
 --- !u!222 &1180932710859737584
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -112,17 +112,3 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7158092678459658480}
   m_CullTransparentMesh: 1
---- !u!114 &5093300816350718904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7158092678459658480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 019267d9764a42147826579938c774bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 2160462712641027132}
-  speed: 0

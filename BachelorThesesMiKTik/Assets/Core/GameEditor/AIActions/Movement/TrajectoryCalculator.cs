@@ -15,6 +15,14 @@ namespace Assets.Core.GameEditor.AIActions
             return new Vector2(direction.x * horizontalForce, direction.y * verticalForce);
         }
 
+        /// <summary>
+        /// Based on given jumper object, simulates jump trajetory by disrete steps.
+        /// </summary>
+        /// <param name="jumper">Jumper object</param>
+        /// <param name="startPos">Initial jump position.</param>
+        /// <param name="jumpDirection">Direction of jump.</param>
+        /// <param name="depth">Depth of simulation.</param>
+        /// <returns></returns>
         public static TrajectoryDTO GetTrajectory(JumperDTO jumper, Vector2 startPos, Vector2 jumpDirection, int depth = 100) 
         {
             var velocity = jumpDirection.magnitude / jumper.Mass * Time.fixedDeltaTime;
@@ -97,7 +105,7 @@ namespace Assets.Core.GameEditor.AIActions
                 maxPosition,
                 minPosition,
                 new Vector2(maxPosition.x, minPosition.y),
-                new Vector2(minPosition.y, maxPosition.x),
+                new Vector2(minPosition.x, maxPosition.y),
             };
         }
 

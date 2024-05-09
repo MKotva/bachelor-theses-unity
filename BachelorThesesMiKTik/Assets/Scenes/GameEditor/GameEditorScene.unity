@@ -1226,7 +1226,6 @@ MonoBehaviour:
   DefaultItems:
   - {fileID: 11400000, guid: 458ea73f3cb9f864297f736212b8c127, type: 2}
   - {fileID: 11400000, guid: 76af04abd376607459da079d3da36b47, type: 2}
-  - {fileID: 11400000, guid: 91eeac731545a8540822131e803f5249, type: 2}
   - {fileID: 11400000, guid: f56d04d3e3c0e134d8cd8e17583cd324, type: 2}
   - {fileID: 11400000, guid: 5cb9d4bbb9f02734f9474ea289d24f3d, type: 2}
   - {fileID: 11400000, guid: ba63c89fefd6d394b82e90de697960e2, type: 2}
@@ -10364,7 +10363,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2121499507}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.000015258789, y: -0.000008523464, z: 10}
+  m_LocalPosition: {x: -0.000015258789, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10403,6 +10402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03e8c2dd942fc4b4082283098c83fe07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WasCreatedFromCode: 0
 --- !u!1001 &2142739309537398205
 PrefabInstance:
   m_ObjectHideFlags: 0

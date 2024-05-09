@@ -24,6 +24,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         [SerializeField] private float DefaultY;
 
         private GameObject Canvas;
+        private int namesCount;
 
         /// <summary>
         /// This method returns proper SourceDTO class based on selected type in type dropdown.
@@ -70,10 +71,40 @@ namespace Assets.Scripts.GameEditor.SourcePanels
             SpritesDropdown.onValueChanged.AddListener(SpriteDropDownChange);
             AnimationsDropdown.onValueChanged.AddListener(AnimationDropDownChange);
 
+
             var names = SpriteManager.Instance.Sprites.Keys.ToArray();
             SetDropdown(SpritesDropdown, names);
 
             Canvas = GameManager.Instance.PopUpCanvas.gameObject;
+        }
+
+        private void Update()
+        {
+            if(namesCount == 0) 
+                return;
+
+            if (SourceT.value == 1)
+            {
+                var animationManager = AnimationsManager.Instance;
+                if (animationManager == null)
+                    return;
+
+                if(namesCount != animationManager.Animations.Count)
+                {
+                    SetAnimationDropDown();
+                }
+            }
+            else
+            {
+                var spriteManager = SpriteManager.Instance;
+                if (spriteManager == null)
+                    return;
+
+                if (namesCount != spriteManager.Sprites.Count)
+                {
+                    SetSpriteDropDown();
+                }
+            }
         }
 
         private string GetName(TMP_Dropdown dropdown)
@@ -133,6 +164,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         private void SetDropdown(TMP_Dropdown dropdown, string[] foundNames)
         {
             dropdown.options.Clear();
+            namesCount = foundNames.Length;
 
             var names = new List<string> { "None" };
             foreach (var name in foundNames)

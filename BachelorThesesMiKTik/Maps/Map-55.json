@@ -1,0 +1,80 @@
+{
+  "$type": "Assets.Scenes.GameEditor.Core.DTOS.GameDataDTO, Assembly-CSharp",
+  "Managers": {
+    "$type": "Assets.Core.GameEditor.DTOS.Managers.ManagersDTO, Assembly-CSharp",
+    "SpritesManager": {
+      "$type": "ManagerDTO, Assembly-CSharp",
+      "Sources": []
+    },
+    "AnimationManager": {
+      "$type": "ManagerDTO, Assembly-CSharp",
+      "Sources": []
+    },
+    "AudioManager": {
+      "$type": "ManagerDTO, Assembly-CSharp",
+      "Sources": []
+    }
+  },
+  "Prototypes": [
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "JumpTest",
+      "ID": 1368386490,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "JumpTest",
+          "Group": "Boxes",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.PlayerComponent, Assembly-CSharp",
+          "Actions": {
+            "$type": "Assets.Core.GameEditor.DTOS.Action.ChargeJumpDTO, Assembly-CSharp",
+            "VerticalForceMin": 0.0,
+            "VerticalForceMax": 0.0,
+            "HorizontalForceMin": 0.0,
+            "HorizontalForceMax": 0.0,
+            "JumpTimeCap": 0.0,
+            "JumpSpeedCap": 0.0,
+            "OnlyGrounded": true,
+            "Name": "Jump"
+          },
+          "Bindings": [],
+          "OnCreateAction": null,
+          "OnUpdateAction": null,
+          "ComponentName": "Player Control",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.PhysicsComponent, Assembly-CSharp",
+          "Mass": 1.0,
+          "Gravity": 1.0,
+          "LinearDrag": 0.0,
+          "AngularDrag": 0.05,
+          "IsZRotationFreeze": false,
+          "IsYPositionFreeze": false,
+          "IsXPositionFreeze": false,
+          "ComponentName": "Physics",
+          "ComponentID": 0
+        }
+      ]
+    }
+  ],
+  "MapObjects": [],
+  "BackgroundSetting": {
+    "$type": "Assets.Core.GameEditor.DTOS.BackgroundDTO, Assembly-CSharp",
+    "LayersSources": [
+      {
+        "$type": "Assets.Core.GameEditor.DTOS.Background.BackgroundReference, Assembly-CSharp",
+        "ParalaxSpeed": 0.0,
+        "Name": null,
+        "Type": 1,
+        "XSize": 30.0,
+        "YSize": 30.0
+      }
+    ],
+    "AudioSource": null
+  }
+}

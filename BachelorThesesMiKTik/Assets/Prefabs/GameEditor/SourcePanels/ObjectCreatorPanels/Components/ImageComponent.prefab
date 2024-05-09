@@ -778,7 +778,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: X (defualt 30)
+  m_text: X (defualt 32)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
@@ -2953,7 +2953,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Y (defualt 30)
+  m_text: Y (defualt 32)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
@@ -4160,6 +4160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08cb256cbde40c44acb93732c01c08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WasCreatedFromCode: 0
 --- !u!1 &8037509176983922727
 GameObject:
   m_ObjectHideFlags: 0
@@ -4712,12 +4713,12 @@ MonoBehaviour:
   SourceT: {fileID: 737482545701239741}
   AnimationsDropdown: {fileID: 5475818389449727948}
   SpritesDropdown: {fileID: 5669718153722439299}
-  AnimationCreator: {fileID: 1981270122649247868, guid: 92385868ae76dd8479cdd2dccf8365b6, type: 3}
-  ImageCreator: {fileID: 6347265747826292851, guid: 58316d45fc6b87043ad636da0839e91a, type: 3}
   XSize: {fileID: 839834318631770533}
   YSize: {fileID: 8162654511269263869}
-  DefaultX: 30
-  DefaultY: 30
+  AnimationCreator: {fileID: 1981270122649247868, guid: 92385868ae76dd8479cdd2dccf8365b6, type: 3}
+  ImageCreator: {fileID: 6347265747826292851, guid: 58316d45fc6b87043ad636da0839e91a, type: 3}
+  DefaultX: 32
+  DefaultY: 32
 --- !u!1 &9006528767125542543
 GameObject:
   m_ObjectHideFlags: 0

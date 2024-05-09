@@ -30,7 +30,7 @@ namespace Assets.Scripts.GameEditor
             {
                 if (Quitting || Destroyed)
                 {
-                    Debug.LogWarning($"[{nameof(Singleton<T>)}<{typeof(T)}>] Instance will not be returned because the application is quitting.");
+                    // Debug.LogWarning($"[{nameof(Singleton<T>)}<{typeof(T)}>] Instance will not be returned because the application is quitting.");
                     // ReSharper disable once AssignNullToNotNullAttribute
                     return null;
                 }

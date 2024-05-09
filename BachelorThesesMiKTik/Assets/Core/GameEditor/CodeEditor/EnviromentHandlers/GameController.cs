@@ -2,6 +2,7 @@
 using Assets.Core.GameEditor.CodeEditor.EnviromentObjects;
 using Assets.Core.SimpleCompiler.Exceptions;
 using Assets.Scripts.GameEditor;
+using Assets.Scripts.GameEditor.Managers;
 using System.IO;
 using UnityEngine;
 
@@ -10,14 +11,21 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
     public class GameController : EnviromentObject
     {
         private GameManager gameManager;
+        private EditorCanvas canvasManager;
+        private PrototypeManager itemManager;
+        private string defaultPath;
 
         public override bool SetInstance(GameObject instance)
         {
             gameManager = GameManager.Instance;
-            if(gameManager == null) 
+            if (gameManager == null)
             {
-                return false;            
+                return false;
             }
+
+            canvasManager = EditorCanvas.Instance;
+            itemManager = PrototypeManager.Instance;
+            defaultPath = "C:\\Users\\mkotv\\Documents\\bachelor-theses-unity\\BachelorThesesMiKTik\\Maps\\";
 
             return true;
         }
@@ -34,14 +42,98 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             gameManager.ShowGameFail();
         }
 
-        [CodeEditorAttribute("")]
-        public void LoadGame(string path) 
-        {
-            if(!File.Exists(path)) 
-                throw new RuntimeException($"\"Exception in method \\\"LoadGame\\\"! Invalid path to file!");
+        [CodeEditorAttribute("Load new game from Maps forlder with provided absolute path" +
+        "Example of path: \"C:\\\\Users\\Jumpking\\Map1.json\"", "(string absolutePath)")]
+        public void LoadGame(string path)
+        { 
+            if (gameManager != null)
+            {
+                if (!File.Exists(path))
+                    throw new RuntimeException($"\"Exception in method \\\"LoadGame\\\"! Invalid path to file!");
 
-            var task = LoadDataHandler.LoadMap(path);
-            GameManager.Instance.RestartGame();
+                gameManager.ExitGame();
+                var task = gameManager.LoadLevelFromGame(path);
+                gameManager.EnterGame();
+                gameManager.StartGame();
+            }
+        }
+
+        [CodeEditorAttribute("Load new game from Maps forlder with provided relative path" +
+            "Example of path: \"Jumpking\\Map1.json\"", "(string relativePath)")]
+        public void LoadGameFromMaps(string relativePath)
+        {
+            if (gameManager != null)
+            {
+                var path = defaultPath + relativePath;
+                if (!File.Exists(path))
+                    throw new RuntimeException($"\"Exception in method \\\"LoadGame\\\"! Invalid path to file!");
+
+                var task = gameManager.LoadLevelFromGame(path);
+            }
+        }
+
+        [CodeEditorAttribute("This method will check for any active object of given name in game scene"
+            + "returns true, if exists", "(string prototypeName)")]
+        public bool ContainsActiveObject(string name)
+        {
+            if(canvasManager != null && itemManager != null)
+            {
+                int id = 0;
+                if (!itemManager.TryFindIdByName(name, out id))
+                {
+                    return false;
+                }
+
+                if(!canvasManager.Data.ContainsKey(id))
+                {
+                    return false;
+                }
+
+                foreach (var ob in canvasManager.Data[id].Values)
+                {
+                    if (ob.activeSelf == true)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        [CodeEditorAttribute("This method will check for selected amount of active object of given name in game scene"
+            + "returns true, if exists. Otherwise false", "(string prototypeName, num amount)")]
+
+        public bool ContainsNumberOfAtiveObjects(string name, float num)
+        {
+            int count = (int)num;
+            if (canvasManager != null && itemManager != null)
+            {
+                int id = 0;
+                if (!itemManager.TryFindIdByName(name, out id))
+                {
+                    return false;
+                }
+
+                if (!canvasManager.Data.ContainsKey(id))
+                {
+                    return false;
+                }
+
+                var founded = 0;
+                foreach (var ob in canvasManager.Data[id].Values)
+                {
+                    if (ob.activeSelf == true)
+                    {
+                        if (founded < count)
+                        {
+                            founded++;
+                        }
+                        else if (founded == count)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }

@@ -12,8 +12,12 @@ namespace Assets.Scripts.GameEditor.Controllers
     {
         public IAnimator Animator { get; private set; }
         public bool ShouldLoop {  get; set; }
+        public bool IsManualyPaused { get; set; }
         public SourceReference SourceReference { get; private set; }
 
+        public bool WasCreatedFromCode = false;
+
+        private SourceReference snapShot;
 
         private void Update()
         {
@@ -73,8 +77,10 @@ namespace Assets.Scripts.GameEditor.Controllers
         /// </summary>
         public void RemoveAnimation()
         {
-            Animator.RemoveAnimation();
+            if (Animator != null)
+                Animator.RemoveAnimation();
             SourceReference = null;
+            Animator = null;
         }
 
         /// <summary>
@@ -83,7 +89,10 @@ namespace Assets.Scripts.GameEditor.Controllers
         public void ResetClip()
         {
             if (Animator != null)
+            {
+                IsManualyPaused = false;
                 Animator.ResetAnimation();
+            }
         }
 
         /// <summary>
@@ -107,7 +116,7 @@ namespace Assets.Scripts.GameEditor.Controllers
         #region IObjectMethods
         public void Play()
         {
-            if (Animator != null)
+            if (Animator != null && !IsManualyPaused)
                 Animator.ResetAnimation();
         }
 
@@ -120,20 +129,38 @@ namespace Assets.Scripts.GameEditor.Controllers
         public void Resume()
         {
             if (Animator != null)
+            {
+                IsManualyPaused = false;
                 Animator.ResumeAnimation();
+            }
         }
 
         public void Stop()
         {
             if (Animator != null)
+            {
+                IsManualyPaused = false;
                 Animator.Stop();
+            }
         }
 
-        public void Enter() { }
+        public void Enter() 
+        {
+            if (SourceReference != null)
+                snapShot = SourceReference;
+        }
 
         public void Exit()
-        {
-            Animator.Stop();
+        {   
+            Stop();
+            IsManualyPaused = false;
+            if(WasCreatedFromCode) 
+            {
+                RemoveController();
+                Animator = null;
+                SourceReference = null;
+            }
+            Restore();
         }
         #endregion
 
@@ -147,9 +174,38 @@ namespace Assets.Scripts.GameEditor.Controllers
 
         private void OnDestroy()
         {
+            RemoveController();
+        }
+
+        private void RemoveController()
+        {
             var instance = AnimationsManager.Instance;
             if (instance != null && SourceReference != null)
                 instance.RemoveActiveController(SourceReference.Name, this);
+        }
+
+        private void Restore()
+        {
+            var instance = AnimationsManager.Instance;
+            if (snapShot != null && instance != null)
+            {
+
+                if(SourceReference != null)
+                    if (snapShot.Name == SourceReference.Name)
+                        return;
+
+                RemoveController();
+                if(instance.ContainsName(snapShot.Name))
+                {
+                    instance.SetAnimation(this, snapShot, true, true);
+                    Stop();
+
+                    if(TryGetComponent<SpriteRenderer>(out var renderer))
+                    {
+                        renderer.sprite = instance.GetAnimationPreview(snapShot.Name);
+                    }
+                }
+            }    
         }
     }
 }

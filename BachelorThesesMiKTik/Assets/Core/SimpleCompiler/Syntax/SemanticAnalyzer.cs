@@ -36,6 +36,24 @@ namespace Assets.Core.SimpleCompiler.Syntax
             return result.ToArray();
         }
 
+        /// <summary>
+        /// Analyze given lines of text and searches for pattern of language.
+        /// </summary>
+        /// <param name="lines">Text splitted to lines</param>
+        /// <returns></returns>
+        public ActionItem[] AnalyzeCode(string[] lines)
+        {
+            var result = new List<ActionItem>();
+            foreach (var line in lines)
+            {
+                var action = AnalyzeLine(line.Trim());
+                if (action.ActionType == ActionType.EMPTY)
+                    continue;
+                result.Add(action);
+            }
+            return result.ToArray();
+        }
+
         private async Task<ActionItem> AnalyzeLineAsync(string line) 
         {
             return await Task.Run<ActionItem>(() => { return  AnalyzeLine(line); });
@@ -96,7 +114,7 @@ namespace Assets.Core.SimpleCompiler.Syntax
             else if (match.Groups["simpleLine"].Success)
             {
                 result.ActionType = ActionType.SimpleLine;
-                result.Expression = Expression.ParseExpression(match.Groups["assignValue_expression"].Value);
+                result.Expression = Expression.ParseExpression(match.Groups["simpleLine_expression"].Value);
             }
             else
             {

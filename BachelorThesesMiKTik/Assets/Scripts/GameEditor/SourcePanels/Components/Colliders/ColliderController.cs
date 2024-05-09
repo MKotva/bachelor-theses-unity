@@ -18,7 +18,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
         [SerializeField] internal Image PreviewImage;
 
         private List<GameObject> instances;
-        internal Vector2 counterScale;
+        internal Vector2 counterScale = new Vector2(1f / 100f, 1f / 100f);
 
         public virtual ColliderComponent GetComponent() { return null; }
         public virtual void SetComponent(ColliderComponent component) { }
@@ -179,7 +179,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.Colliders
             }
             else
             {
-                counterScale = new Vector2(1 / 100, 1 / 100);
+                counterScale = new Vector2(1f / 100f, 1f / 100f);
             }
         }
 

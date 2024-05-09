@@ -1915,7 +1915,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3598734048884818291, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_Size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4756580167997134832, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1938,8 +1938,12 @@ PrefabInstance:
       value: Animation manager
       objectReference: {fileID: 0}
     - target: {fileID: 6910260077308043047, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910260077308043047, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1
+      value: 86.33647
       objectReference: {fileID: 0}
     - target: {fileID: 7830948227866340662, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_Name
@@ -1952,6 +1956,14 @@ PrefabInstance:
     - target: {fileID: 8081258309814966402, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8152997147797236336, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
+      propertyPath: Info
+      value: 'In this panel, you can iteract with existing animations, edit or delete
+        them and alsocreate new one.                           Existing animation
+        are displayed in scroll view.                WARNING: Interaction work only
+        on items, that are actualy using selected animation! If you will change animation
+        via code, interaction won''t prevail.'
       objectReference: {fileID: 0}
     - target: {fileID: 8981604773831702864, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_Pivot.x

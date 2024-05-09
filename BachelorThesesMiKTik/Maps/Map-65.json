@@ -1,0 +1,563 @@
+{
+  "$type": "Assets.Scenes.GameEditor.Core.DTOS.GameDataDTO, Assembly-CSharp",
+  "Managers": {
+    "$type": "Assets.Core.GameEditor.DTOS.Managers.ManagersDTO, Assembly-CSharp",
+    "SpritesManager": {
+      "$type": "ManagerDTO, Assembly-CSharp",
+      "Sources": [
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "ground",
+          "URL": "Mario\\ground.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "mushroom",
+          "URL": "Mario\\mushroom.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "cookie",
+          "URL": "Mario\\cookie.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "star",
+          "URL": "Mario\\star.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "platform",
+          "URL": "Mario\\platform.png"
+        }
+      ]
+    },
+    "AnimationManager": {
+      "$type": "ManagerDTO, Assembly-CSharp",
+      "Sources": [
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop3.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop4.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop5.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop6.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop5.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop4.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop3.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\coinDrop1.png"
+            }
+          ],
+          "Name": "Name: coinAnimation",
+          "URL": ""
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Mario\\Traps\\spikeHead1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Mario\\Traps\\spikeHead2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Mario\\Traps\\spikeHead3.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Mario\\Traps\\spikeHead4.png"
+            }
+          ],
+          "Name": "skipeHead",
+          "URL": ""
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Mario\\Traps\\spikeHit1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Mario\\Traps\\spikeHit2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Mario\\Traps\\spikeHit3.png"
+            }
+          ],
+          "Name": "spikeHit",
+          "URL": ""
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava3.png"
+            }
+          ],
+          "Name": "lava",
+          "URL": ""
+        }
+      ]
+    },
+    "AudioManager": {
+      "$type": "ManagerDTO, Assembly-CSharp",
+      "Sources": []
+    }
+  },
+  "Prototypes": [
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "ground",
+      "ID": 2024461217,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "ground",
+          "Group": "Boxes",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
+          "Data": {
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "ground",
+            "Type": 1,
+            "XSize": 32.0,
+            "YSize": 32.0
+          },
+          "ComponentName": "Image/Animation",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
+          "XSize": 32.0,
+          "YSize": 32.0,
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.015,
+            "y": 0.015,
+            "magnitude": 0.0212132037,
+            "sqrMagnitude": 0.00045
+          },
+          "IsTrigger": false,
+          "ComponentName": "Collider",
+          "ComponentID": 0
+        }
+      ]
+    },
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "skipeHead",
+      "ID": 505025262,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "skipeHead",
+          "Group": "Traps",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
+          "Data": {
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "skipeHead",
+            "Type": 3,
+            "XSize": 32.0,
+            "YSize": 32.0
+          },
+          "ComponentName": "Image/Animation",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
+          "XSize": 32.0,
+          "YSize": 32.0,
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.0134375,
+            "y": 0.0134375,
+            "magnitude": 0.0190034956,
+            "sqrMagnitude": 0.0003611328
+          },
+          "IsTrigger": false,
+          "ComponentName": "Collider",
+          "ComponentID": 0
+        }
+      ]
+    },
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "lava",
+      "ID": 2619960,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "lava",
+          "Group": "Traps",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
+          "Data": {
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "lava",
+            "Type": 3,
+            "XSize": 32.0,
+            "YSize": 32.0
+          },
+          "ComponentName": "Image/Animation",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
+          "XSize": 32.0,
+          "YSize": 32.0,
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.04375,
+            "y": 0.04375,
+            "magnitude": 0.06187184,
+            "sqrMagnitude": 0.00382812484
+          },
+          "IsTrigger": false,
+          "ComponentName": "Collider",
+          "ComponentID": 0
+        }
+      ]
+    },
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "mushroom",
+      "ID": -1962971928,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "mushroom",
+          "Group": "Decorations",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
+          "Data": {
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "mushroom",
+            "Type": 1,
+            "XSize": 20.0,
+            "YSize": 20.0
+          },
+          "ComponentName": "Image/Animation",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
+          "XSize": 20.0,
+          "YSize": 20.0,
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.024,
+            "y": 0.024,
+            "magnitude": 0.0339411274,
+            "sqrMagnitude": 0.001152
+          },
+          "IsTrigger": false,
+          "ComponentName": "Collider",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.AIComponent, Assembly-CSharp",
+          "Action": {
+            "$type": "Assets.Core.GameEditor.DTOS.Action.MoveActionDTO, Assembly-CSharp",
+            "Speed": 5.0,
+            "SpeedCap": 0.0,
+            "OnlyGrounded": true,
+            "Name": "Move"
+          },
+          "OnCreateAction": null,
+          "OnUpdateAction": {
+            "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+            "Code": "if ai.ActualQueuedActionsCount() > 5\n\tai.PerformRandomAction()\nfi",
+            "EnviromentObjects": [
+              {
+                "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                "Alias": "ai",
+                "TypeName": "AIControl"
+              }
+            ],
+            "GlobalVariables": []
+          },
+          "ComponentName": "AI Control",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.PhysicsComponent, Assembly-CSharp",
+          "Mass": 1.0,
+          "Gravity": 1.0,
+          "LinearDrag": 0.0,
+          "AngularDrag": 0.05,
+          "IsZRotationFreeze": false,
+          "IsYPositionFreeze": false,
+          "IsXPositionFreeze": false,
+          "ComponentName": "Physics",
+          "ComponentID": 0
+        }
+      ]
+    },
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "cookie",
+      "ID": -2127341228,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "cookie",
+          "Group": "Entities",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
+          "Data": {
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "cookie",
+            "Type": 1,
+            "XSize": 20.0,
+            "YSize": 20.0
+          },
+          "ComponentName": "Image/Animation",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.Colliders.CircleColliderComponent, Assembly-CSharp",
+          "Radius": 10.0,
+          "Center": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.3,
+            "y": 0.3,
+            "magnitude": 0.424264073,
+            "sqrMagnitude": 0.18
+          },
+          "IsTrigger": true,
+          "ComponentName": "Collider",
+          "ComponentID": 0
+        }
+      ]
+    },
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "star",
+      "ID": -1623813978,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "star",
+          "Group": "Entities",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
+          "Data": {
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "star",
+            "Type": 1,
+            "XSize": 20.0,
+            "YSize": 20.0
+          },
+          "ComponentName": "Image/Animation",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.Colliders.CircleColliderComponent, Assembly-CSharp",
+          "Radius": 5.0,
+          "Center": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.024,
+            "y": 0.024,
+            "magnitude": 0.0339411274,
+            "sqrMagnitude": 0.001152
+          },
+          "IsTrigger": true,
+          "ComponentName": "Collider",
+          "ComponentID": 0
+        }
+      ]
+    },
+    {
+      "$type": "Assets.Core.GameEditor.DTOS.ItemDTO, Assembly-CSharp",
+      "Name": "movingPlatform",
+      "ID": -1103859829,
+      "Components": [
+        {
+          "$type": "Assets.Core.GameEditor.Components.GeneralSettingComponent, Assembly-CSharp",
+          "Name": "movingPlatform",
+          "Group": "Entities",
+          "ComponentName": "General Setting",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.VisualComponent, Assembly-CSharp",
+          "Data": {
+            "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
+            "Name": "platform",
+            "Type": 1,
+            "XSize": 144.0,
+            "YSize": 32.0
+          },
+          "ComponentName": "Image/Animation",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.Colliders.BoxColliderComponent, Assembly-CSharp",
+          "XSize": 144.0,
+          "YSize": 32.0,
+          "Colliders": [],
+          "Scale": {
+            "$type": "UnityEngine.Vector2, UnityEngine.CoreModule",
+            "x": 0.01,
+            "y": 0.015,
+            "magnitude": 0.0180277564,
+            "sqrMagnitude": 0.000324999972
+          },
+          "IsTrigger": false,
+          "ComponentName": "Collider",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.AIComponent, Assembly-CSharp",
+          "Action": {
+            "$type": "Assets.Core.GameEditor.DTOS.Action.FlyActionDTO, Assembly-CSharp",
+            "Speed": 2.0,
+            "SpeedCap": 0.0,
+            "Name": "Fly"
+          },
+          "OnCreateAction": null,
+          "OnUpdateAction": null,
+          "ComponentName": "AI Control",
+          "ComponentID": 0
+        },
+        {
+          "$type": "Assets.Core.GameEditor.Components.PhysicsComponent, Assembly-CSharp",
+          "Mass": 1.0,
+          "Gravity": 0.0,
+          "LinearDrag": 0.0,
+          "AngularDrag": 0.05,
+          "IsZRotationFreeze": true,
+          "IsYPositionFreeze": false,
+          "IsXPositionFreeze": false,
+          "ComponentName": "Physics",
+          "ComponentID": 0
+        }
+      ]
+    }
+  ],
+  "MapObjects": [],
+  "BackgroundSetting": {
+    "$type": "Assets.Core.GameEditor.DTOS.BackgroundDTO, Assembly-CSharp",
+    "LayersSources": [
+      {
+        "$type": "Assets.Core.GameEditor.DTOS.Background.BackgroundReference, Assembly-CSharp",
+        "ParalaxSpeed": 0.0,
+        "Name": null,
+        "Type": 1,
+        "XSize": 30.0,
+        "YSize": 30.0
+      }
+    ],
+    "AudioSource": null
+  }
+}

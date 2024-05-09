@@ -400,6 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08cb256cbde40c44acb93732c01c08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WasCreatedFromCode: 0
 --- !u!1 &2250659075878920758
 GameObject:
   m_ObjectHideFlags: 0
@@ -1788,6 +1789,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -30
       objectReference: {fileID: 0}
+    - target: {fileID: 7055250039236916158, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1091380548516177250}
     - target: {fileID: 9217928428494547916, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
       propertyPath: m_text
       value: Sprite Loader
@@ -1816,6 +1821,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77b06335797b4ba408d5f42de3b58d8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InfoPanel: {fileID: 3728185945272438124, guid: 3c3c7cc43c440cc48a445b2f252843ad, type: 3}
+  Info: 'In this panel, you can create new image with given name. Name has to be
+    specified!                 Image is  loaded with HTTP protocol or from folder/subfolder
+    of SteamingAssets.               For loading via HTTP, set URL with .png or .jpg
+    on end.  For loading from Streaming assets use following format : SubFolder\SubFolder\name(.jpg\.png)'
   URLSource: {fileID: 8767291841031478727}
   NameSource: {fileID: 893906878891032326}
   ImageSource: {fileID: 2214218432589649382}

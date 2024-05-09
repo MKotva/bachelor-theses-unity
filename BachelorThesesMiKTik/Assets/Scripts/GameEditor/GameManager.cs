@@ -1,6 +1,10 @@
-﻿using Assets.Scripts.GameEditor.ObjectInstancesController;
+﻿using Assets.Core.GameEditor.Serializers;
+using Assets.Scenes.GameEditor.Core.DTOS;
+using Assets.Scripts.GameEditor.ObjectInstancesController;
+using DG.Tweening.Core.Easing;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.GameEditor
@@ -13,7 +17,6 @@ namespace Assets.Scripts.GameEditor
         [SerializeField] public Canvas ToolkitCanvas;
         [SerializeField] public Canvas PopUpCanvas;
         [SerializeField] public Canvas PlayModeCanvas;
-
 
         public CameraController Camera { get; set; }
         public Dictionary<int, IObjectController> ActiveObjects { get; set; }
@@ -192,11 +195,29 @@ namespace Assets.Scripts.GameEditor
 
         public void Clear()
         {
-            ActiveObjects = new Dictionary<int, IObjectController>();
             ActivePlayers = new Dictionary<int, GameObject> { };
+            ActiveObjects = new Dictionary<int, IObjectController> { };
         }
 
         #endregion
+
+        public async Task LoadLevelFromGame(string path)
+        {
+            Clear();
+            await LoadDataHandler.LoadMap(path);
+            IsInPlayMode = true;
+            EnterGame();
+            StartGame();
+        }
+
+        public async Task LoadLevel(GameDataDTO data)
+        {
+            Clear();
+            await GameDataSerializer.Deserialize(data);
+            IsInPlayMode = true;
+            EnterGame();
+            StartGame();
+        }
 
         #region Private
 

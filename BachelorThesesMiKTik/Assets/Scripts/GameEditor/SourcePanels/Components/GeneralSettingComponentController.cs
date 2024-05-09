@@ -35,7 +35,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components
         private void Awake()
         {
             var groupNames = new List<string>();
-            foreach (var groupPair in ItemManager.Instance.Groups)
+            foreach (var groupPair in PrototypeManager.Instance.Groups)
             {
                 groupNames.Add(groupPair.Key);
             }

@@ -118,18 +118,6 @@ public class BackgroundPopUpController : PopUpController
         return controller;
     }
 
-    private void DestroyPanel(int id)
-    {
-        for (int i = 0; i < lineControllers.Count; i++)
-        {
-            if (lineControllers[i].gameObject.GetInstanceID() == id)
-            {
-                Destroy(lineControllers[i].gameObject);
-                lineControllers.RemoveAt(i);
-            }
-        }
-    }
-
     private void SetAudioDropDown(string defaultValue = "")
     {
         var instance = AudioManager.Instance;
@@ -188,6 +176,18 @@ public class BackgroundPopUpController : PopUpController
         if (manager != null)
         {
             SetAudioDropDown(source.Name);
+        }
+    }
+
+    private void DestroyPanel(int id)
+    {
+        for (int i = 0; i < lineControllers.Count; i++)
+        {
+            if (lineControllers[i].gameObject.GetInstanceID() == id)
+            {
+                Destroy(lineControllers[i].gameObject);
+                lineControllers.RemoveAt(i);
+            }
         }
     }
     #endregion

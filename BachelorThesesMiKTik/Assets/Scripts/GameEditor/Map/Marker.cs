@@ -65,6 +65,9 @@ namespace Assets.Scripts.GameEditor.Map
         public void UnMarkObject(GameObject gameObject)
         {
             Renderer renderer;
+            if (gameObject == null)
+                return;
+
             if (!gameObject.TryGetComponent(out renderer))
                 renderer = gameObject.GetComponentInChildren<Renderer>();
 

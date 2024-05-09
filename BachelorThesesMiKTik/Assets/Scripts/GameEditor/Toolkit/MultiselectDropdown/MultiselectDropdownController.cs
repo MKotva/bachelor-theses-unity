@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.GameEditor.Toolkit.MultiselectDropdown;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -8,12 +9,11 @@ namespace Assets.Scripts.GameEditor.Toolkit
     public class MultiselectDropdownController : MonoBehaviour
     {
         [SerializeField] TMP_Text PreviewButton;
-        [SerializeField] GameObject SelectionButtonPreafab;
-        [SerializeField] GameObject SelectionView;
+        [SerializeField] GameObject ViewMenuPanel;
         [SerializeField] GameObject ContentView;
 
-        private bool isPreviewActive;
-        private List<SelectionPanelController> itemOptions = new ();
+        private Dictionary<string, bool> checkedOptions;
+        private SelectionMenuController instance;
 
         /// <summary>
         /// Sets state of dropdown options with given data. Marks them as selected if exists.
@@ -24,16 +24,19 @@ namespace Assets.Scripts.GameEditor.Toolkit
             if (options.Count == 0)
                 return;
 
-            foreach (var item in itemOptions) 
+            var keys = checkedOptions.Keys.ToList();
+            foreach (var item in keys) 
             {
-                item.SetState(false);
-                foreach (var option in options)
+                if(checkedOptions.ContainsKey(item))
+                    checkedOptions[item] = false;
+            }
+
+            foreach (var option in options)
+            {
+                if (checkedOptions.ContainsKey(option))
                 {
-                    if (item.Name == option)
-                    {
-                        item.SetState(true);
-                        PreviewButton.text = string.Join(", ", option);
-                    }
+                    checkedOptions[option] = true;
+                    PreviewButton.text = string.Join(", ", options);
                 }
             }
         }
@@ -48,10 +51,7 @@ namespace Assets.Scripts.GameEditor.Toolkit
 
             foreach (var option in options)
             {
-                var controller = Instantiate(SelectionButtonPreafab, ContentView.transform)
-                    .GetComponent<SelectionPanelController>();
-                controller.Set(option);
-                itemOptions.Add(controller);
+                checkedOptions.Add(option, false);
             }
         }
 
@@ -62,10 +62,10 @@ namespace Assets.Scripts.GameEditor.Toolkit
         public List<string> Get()
         {
             var selected = new List<string>();
-            foreach(var controller in itemOptions)
+            foreach (var key in checkedOptions.Keys)
             {
-                if(controller.IsClicked)
-                    selected.Add(controller.Name);
+                if (checkedOptions[key])
+                    selected.Add(key);
             }
             return selected;
         }
@@ -75,51 +75,56 @@ namespace Assets.Scripts.GameEditor.Toolkit
         /// </summary>
         public void ShowPreview()
         {
-            if(isPreviewActive)
+            if(instance == null)
             {
-                SelectionView.SetActive(false);
-                isPreviewActive = false;
-                SetSelectButtonText();
-            }
-            else
-            {
-                SelectionView.SetActive(true);
-                isPreviewActive=true;
+                var gameInstance = GameManager.Instance;
+                if (gameInstance == null)
+                    return;
+
+                if (gameInstance.PopUpCanvas == null)
+                    return;
+
+                instance = Instantiate(ViewMenuPanel, gameInstance.PopUpCanvas.transform)
+                    .GetComponent<SelectionMenuController>();
+
+                instance.SetOptions(checkedOptions);
+                instance.onExit += MenuExit;
             }
         }
 
         private void Awake()
         {
             PreviewButton.text = "Items";
+
+            if(checkedOptions == null)
+                checkedOptions = new Dictionary<string, bool>();
         }
 
-        /// <summary>
-        /// Gets all selected options and displays them in preview panel. If no option
-        /// is selected, then the default text is displayed.
-        /// </summary>
-        private void SetSelectButtonText()
-        {
-            var selected = Get();
-            if (selected.Count == 0)
-                PreviewButton.text = "Items";
-            else
-                PreviewButton.text = string.Join(", ", selected);
-        }
-
+        ///// <summary>
+        ///// Gets all selected options and displays them in preview panel. If no option
+        ///// is selected, then the default text is displayed.
+        ///// </summary>
+        //private void SetSelectButtonText()
+        //{
+        //    var selected = Get();
+        //    if (selected.Count == 0)
+        //        PreviewButton.text = "Items";
+        //    else
+        //        PreviewButton.text = string.Join(", ", selected);
+        //}
 
         /// <summary>
         /// Clears all options in dropdown.
         /// </summary>
         private void Clear()
         {
-            if(itemOptions.Count > 0)
-            {
-                foreach (var controller in itemOptions)
-                {
-                    Destroy(controller.gameObject);
-                }
-                itemOptions.Clear();
-            }
+            checkedOptions = new Dictionary<string, bool>();
+        }
+
+        private void MenuExit()
+        {
+            SetSelected(instance.Get());
+            instance = null;
         }
     }
 }

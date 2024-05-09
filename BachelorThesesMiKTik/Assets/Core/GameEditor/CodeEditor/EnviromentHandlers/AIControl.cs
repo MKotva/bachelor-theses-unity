@@ -11,7 +11,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
     public class AIControl : EnviromentObject
     {
         private AIObjectController agent;
-        private ItemManager itemManager;
+        private PrototypeManager itemManager;
         private EditorCanvas editor;
 
         public override bool SetInstance(GameObject instance) 
@@ -21,7 +21,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
                 return false;
             }
 
-            itemManager = ItemManager.Instance;
+            itemManager = PrototypeManager.Instance;
             if(itemManager == null)
                 return false;
 
@@ -34,7 +34,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 
         public AIControl()
         {
-            itemManager = ItemManager.Instance;
+            itemManager = PrototypeManager.Instance;
             editor = EditorCanvas.Instance;
         }
         
@@ -74,7 +74,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         {
             var agentPos = agent.transform.position;
             if(itemManager.TryFindIdByName(name, out var endpointId))
-                return editor.Data[endpointId].Any(x => Vector3.Distance(agentPos, x.Key) < distance);
+                return editor.Data[endpointId].Any(x => Vector3.Distance(agentPos, x.Value.transform.position) < distance);
             return false;
         }
 
@@ -117,6 +117,9 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         [CodeEditorAttribute("Returns number of queued actions.")]
         public float ActualQueuedActionsCount()
         {
+            if(agent.PerformingTask != null) 
+                return agent.ActionsToPerform.Count() + 1;
+
             return agent.ActionsToPerform.Count();
         }
 
@@ -125,14 +128,14 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         {
             var agentPos = agent.transform.position;
             //Due to lazy evaluation, the orderby will be O(n)
-            return data.OrderByDescending(x => Vector3.Distance(agentPos, x.Key)).First().Key; //TODO: Check if possition is valid! Like not in the wall
+            return data.OrderBy(x => Vector3.Distance(agentPos, x.Value.transform.position)).First().Key; //TODO: Check if possition is valid! Like not in the wall
         }
 
         private Vector3 GetNthPos(Dictionary<Vector3, GameObject> data, int n)
         {
             var agentPos = agent.transform.position;
             //Due to lazy evaluation, the orderby will be O(n)
-            var maxPos = data.OrderBy(x => Vector3.Distance(agentPos, x.Key)); //TODO: Check if possition is valid! Like not in the wall
+            var maxPos = data.OrderBy(x => Vector3.Distance(agentPos, x.Value.transform.position)); //TODO: Check if possition is valid! Like not in the wall
 
             var count = maxPos.Count();
             if (count < n)
@@ -145,7 +148,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         {
             var agentPos = agent.transform.position;
             //Due to lazy evaluation, the orderby will be O(n)
-            return data.OrderByDescending(x => Vector3.Distance(agentPos, x.Key)).First().Key; //TODO: Check if possition is valid! Like not in the wall
+            return data.OrderByDescending(x => Vector3.Distance(agentPos, x.Value.transform.position)).First().Key; //TODO: Check if possition is valid! Like not in the wall
         }
 
         private Dictionary<Vector3, GameObject> GetElementInstances(string name)
@@ -161,7 +164,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
         private Dictionary<Vector3, GameObject> GetElementsInRange(Dictionary<Vector3, GameObject> instances, float distance)
         {
             var agentPos = agent.transform.position;
-            return (Dictionary<Vector3, GameObject>)instances.Where(x => Vector3.Distance(agentPos, x.Key) < distance);
+            return (Dictionary<Vector3, GameObject>)instances.Where(x => Vector3.Distance(agentPos, x.Value.transform.position) < distance);
         }
         #endregion
     }

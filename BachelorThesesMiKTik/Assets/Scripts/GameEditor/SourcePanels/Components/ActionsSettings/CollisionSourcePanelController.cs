@@ -1,6 +1,7 @@
 ﻿using Assets.Core.GameEditor.DTOS.SourcePanels;
 using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.CodeEditor;
+using Assets.Scripts.GameEditor.Entiti;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.Toolkit;
 using System.Collections.Generic;
@@ -20,8 +21,25 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         private SimpleCode handler;
         private void Awake()
         {
-            Groups = ItemManager.Instance.Groups.Keys.ToList();
-            var itemSelection = ItemManager.Instance.ItemsNameIdPair.Keys.ToList();
+            var prototypeManager = PrototypeManager.Instance;
+            if( prototypeManager == null ) 
+                return;
+
+            Groups = prototypeManager.Groups.Keys.ToList();
+           
+            var itemSelection = new List<string>();
+            foreach ( var id in prototypeManager.Items.Keys)
+            {
+                var name = prototypeManager.Items[id].ShownName;
+                if(prototypeManager.Items[id].Components == null)
+                {
+                    if (prototypeManager.Items[id].Prefab.TryGetComponent<ColliderController>(out var col))
+                        itemSelection.Add(name);
+                }
+                else if (prototypeManager.Items[id].Components.Any(x => x.ComponentName == "Collider"))
+                    itemSelection.Add(name);
+            }
+
             itemSelection.AddRange(Groups);
 
             MultiselectController.SetOptions(itemSelection);

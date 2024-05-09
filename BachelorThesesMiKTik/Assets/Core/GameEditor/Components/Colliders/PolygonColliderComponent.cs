@@ -35,6 +35,11 @@ namespace Assets.Core.GameEditor.Components.Colliders
                     return;
             }
 
+            if (Colliders.Count != 0 || IsTrigger)
+            {
+                return;
+            }
+
             var rigid = item.Prefab.AddComponent<Rigidbody2D>();
             rigid.isKinematic = true;
 

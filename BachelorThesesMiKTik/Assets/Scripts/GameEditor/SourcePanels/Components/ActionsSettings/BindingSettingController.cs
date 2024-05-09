@@ -15,7 +15,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         private void Awake()
         {
             instances = new List<BindingSourcePanelController>();
-            actualActions = new List<string> { "None", "Create code" };
+            actualActions = new List<string> { "None"};
         }
 
         public void OnAdd()
@@ -52,7 +52,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <param name="actions"></param>
         public void SetActions(List<string> actions)
         {
-            var defaultactions = new List<string> { "None", "Create code" };
+            var defaultactions = new List<string> { "None" };
             defaultactions.AddRange(actions);
             foreach (var instance in instances)
             {

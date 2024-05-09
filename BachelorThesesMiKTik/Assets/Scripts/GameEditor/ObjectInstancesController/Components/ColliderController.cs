@@ -8,12 +8,18 @@ namespace Assets.Scripts.GameEditor.Entiti
 {
     public class ColliderController : MonoBehaviour, IObjectController
     {
+        [SerializeField] string InitName;
+        [SerializeField] string InitGroupName;
+
         public string Name { get; private set; }
         public string GroupName { get; private set; }
         public Collider2D ObjectCollider { get; private set; }
         public ColliderComponent ColliderSettings { get; private set; }
+        public ContactPoint2D[] ContactPoints { get; private set; }
+
 
         private List<(HashSet<string>, HashSet<string>, SimpleCode)> handlers;
+        private bool IsEnabled = false;
 
         public void Initialize(string name, string groupName, ColliderComponent colliderSetting)
         {
@@ -23,6 +29,12 @@ namespace Assets.Scripts.GameEditor.Entiti
 
             foreach (var handler in ColliderSettings.Colliders)
             {
+                if(handler == null)
+                    continue;
+
+                if(handler.Handler == null)
+                    continue;
+
                 var namesSet = new HashSet<string>();
                 var groupSet = new HashSet<string>();
 
@@ -35,23 +47,26 @@ namespace Assets.Scripts.GameEditor.Entiti
                     groupSet.Add(group);
                 }
 
-                handlers.Add((namesSet, groupSet, handler.Handler));
+                handlers.Add((namesSet, groupSet, new SimpleCode(handler.Handler)));
             }
         }
 
         #region IObjectMethods
         public void Play()
         {
+            IsEnabled = true;
             ObjectCollider.enabled = true;
         }
 
         public void Pause()
         {
+            IsEnabled = false; 
             ObjectCollider.enabled = false;
         }
 
         public void Enter() 
         {
+            IsEnabled = true;
             ObjectCollider.enabled = true;
 
             foreach (var handler in handlers)
@@ -65,10 +80,29 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         public void Exit() 
         {
+            IsEnabled = false;
             ObjectCollider.enabled = false;
         }
 
         #endregion
+
+        public bool ContainsContactPoint(Vector2 normal)
+        {
+            if (ContactPoints == null)
+                return false;
+
+            foreach (var point in ContactPoints)
+            {
+                var pointNormal = point.normal;
+                if (Mathf.Abs(normal.x - pointNormal.x) < float.Epsilon &&
+                    Mathf.Abs(normal.y - pointNormal.y) < float.Epsilon)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public bool ContainsHandler(string name)
         {
@@ -89,6 +123,10 @@ namespace Assets.Scripts.GameEditor.Entiti
         //TODO: Consider construction of data structure for faster name check: MB: List<Dictionary<string, Code>>
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if (!IsEnabled)
+                return;
+
+            ContactPoints = collision.contacts;
             if (collision.gameObject.TryGetComponent<ColliderController>(out var controller))
             {
                 foreach (var handler in handlers)
@@ -97,16 +135,21 @@ namespace Assets.Scripts.GameEditor.Entiti
                     {
                         handler.Item3.Execute(gameObject);
                     }
-                    else if (handler.Item2.Contains(controller.Name))
+                    else if (handler.Item2.Contains(controller.GroupName))
                     {
                         handler.Item3.Execute(gameObject);
                     }
                 }
             }
+
+            ContactPoints = null;
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
+            if (!IsEnabled)
+                return;
+
             if (collision.gameObject.TryGetComponent<ColliderController>(out var controller))
             {
                 foreach (var handler in handlers)
@@ -125,6 +168,7 @@ namespace Assets.Scripts.GameEditor.Entiti
 
         private void Awake()
         {
+            DefaultPrefabInit();
             ColliderSettings = new ColliderComponent();
             handlers = new List<(HashSet<string>, HashSet<string>, SimpleCode)>();
 
@@ -140,6 +184,28 @@ namespace Assets.Scripts.GameEditor.Entiti
                 ObjectCollider.isTrigger = false;
             }
             ObjectCollider = collider;
+        }
+
+        private void DefaultPrefabInit()
+        {
+            if(InitName != null && InitGroupName != null) 
+            {
+                if(InitName != "" && InitGroupName != "")
+                {
+
+                    if(Name == null && GroupName == null) 
+                    {
+                        Name = InitName;
+                        GroupName = InitGroupName;
+                    }
+                    
+                    if(Name == "" && GroupName == "")
+                    {
+                        Name = InitName;
+                        GroupName= InitGroupName;
+                    }
+                }
+            }
         }
     }
 }

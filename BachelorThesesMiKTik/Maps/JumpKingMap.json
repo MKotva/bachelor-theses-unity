@@ -7,21 +7,6 @@
       "Sources": [
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "groundBoxLess",
-          "URL": "Ground1.png"
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "thor",
-          "URL": "Thor.jpg"
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "fall",
-          "URL": "JumpKing\\Fall1.png"
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
           "Name": "background",
           "URL": "JumpKing\\Background\\staticBackground.png"
         },
@@ -34,51 +19,27 @@
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
           "Name": "slider",
           "URL": "Slider.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "fall",
+          "URL": "JumpKing\\Fall1.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "thor",
+          "URL": "Thor.jpg"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "groundBoxLess",
+          "URL": "Ground1.png"
         }
       ]
     },
     "AnimationManager": {
       "$type": "ManagerDTO, Assembly-CSharp",
       "Sources": [
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
-          "AnimationData": [
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 1.0,
-              "URL": "idle1.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 1.0,
-              "URL": "idle2.png"
-            }
-          ],
-          "Name": "idle",
-          "URL": ""
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
-          "AnimationData": [
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava0.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava2.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava3.png"
-            }
-          ],
-          "Name": "lava",
-          "URL": ""
-        },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
           "AnimationData": [
@@ -110,12 +71,72 @@
           ],
           "Name": "run",
           "URL": ""
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava0.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava3.png"
+            }
+          ],
+          "Name": "lava",
+          "URL": ""
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 1.0,
+              "URL": "idle1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 1.0,
+              "URL": "idle2.png"
+            }
+          ],
+          "Name": "idle",
+          "URL": ""
         }
       ]
     },
     "AudioManager": {
       "$type": "ManagerDTO, Assembly-CSharp",
-      "Sources": []
+      "Sources": [
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": false,
+          "Name": "jump",
+          "URL": "Audio\\jump.mp3"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": false,
+          "Name": "coll",
+          "URL": "Audio\\collision.mp3"
+        }
+      ]
     }
   },
   "Prototypes": [
@@ -271,6 +292,25 @@
                 ],
                 "GlobalVariables": []
               }
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.CollisionDTO, Assembly-CSharp",
+              "ObjectsNames": [],
+              "GroupsNames": [
+                "Boxes"
+              ],
+              "Handler": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "sound.SetAudio(\"coll\", true)",
+                "EnviromentObjects": [
+                  {
+                    "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                    "Alias": "sound",
+                    "TypeName": "ObjectSound"
+                  }
+                ],
+                "GlobalVariables": []
+              }
             }
           ],
           "Scale": {
@@ -314,6 +354,7 @@
               "HorizontalForceMin": 20.0,
               "HorizontalForceMax": 250.0,
               "JumpTimeCap": 2.0,
+              "JumpSpeedCap": 0.0,
               "OnlyGrounded": true,
               "Name": null
             },
@@ -342,7 +383,12 @@
                 113
               ],
               "ActionType": "Jump left",
-              "ActionCode": null
+              "ActionCode": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "",
+                "EnviromentObjects": [],
+                "GlobalVariables": []
+              }
             },
             {
               "$type": "Assets.Core.GameEditor.DTOS.SourcePanels.ActionBindDTO, Assembly-CSharp",
@@ -350,13 +396,18 @@
                 101
               ],
               "ActionType": "Jump right",
-              "ActionCode": null
+              "ActionCode": {
+                "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
+                "Code": "",
+                "EnviromentObjects": [],
+                "GlobalVariables": []
+              }
             }
           ],
           "OnCreateAction": null,
           "OnUpdateAction": {
             "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-            "Code": "if ! obControl.CheckIfStaysOnGround ()\r\n\tobVisual.SetImage (\"fall\")\r\nfi\r\n\r\nif obControl.GetXVelocity () != 0\r\n\tif actualAnimation != \"run\"\n\t\tobVisual.SetAnimation (\"run\", true, true)\n\t\tactualAnimation = \"run\"\r\n\tfi\nfi\r\n\r\nif obControl.CheckIfIsMoving ()\r\n\tif obControl.GetXVelocity () > 0.5 && orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = false\r\n\tfi\r\n\r\n\tif obControl.GetXVelocity () > 0.5 && orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = true\r\n\tfi\r\nelse\r\n\tif actualAnimation != \"idle\"\n\t\tobVisual.SetAnimation (\"idle\", true, true)\r\n\t\tactualAnimation = \"idle\"\r\n\tfi\nfi",
+            "Code": "\rif ! obControl.CheckIfStaysOnGround ()\r\n\tobVisual.SetImage (\"fall\")\r\n\tactualAnimation = \" \"\n\tif obControl.GetYVelocity() > 0.5 && sound != \"jump\"\n\t\tobSound.SetAudio(\"jump\", true)\n\t\tsound = \"jump\"\n\tfi\nelseif obControl.GetXVelocity () != 0\r\n\tif actualAnimation != \"run\"\n\t\tsound = \"\"\n\t\tobVisual.SetAnimation (\"run\", true, true)\n\t\tactualAnimation = \"run\"\r\n\tfi\nelse\r\n\tif actualAnimation != \"idle\"\n\t\tsound = \"\"\n\t\tobVisual.SetAnimation (\"idle\", true, true)\r\n\t\tactualAnimation = \"idle\"\r\n\tfi\nfi\r\n\r\nif obControl.CheckIfIsMoving ()\r\n\tif obControl.GetXVelocity () > 0.5 && orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = false\r\n\telseif obControl.GetXVelocity () < -0.5 && ! orientation\r\n\t\tobVisual.FlipYVisual ()\r\n\t\torientation = true\r\n\tfi\r\nfi \n",
             "EnviromentObjects": [
               {
                 "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
@@ -367,6 +418,11 @@
                 "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
                 "Alias": "obVisual",
                 "TypeName": "ObjectVisual"
+              },
+              {
+                "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
+                "Alias": "obSound",
+                "TypeName": "ObjectSound"
               }
             ],
             "GlobalVariables": [
@@ -380,6 +436,12 @@
                 "$type": "Assets.Core.GameEditor.DTOS.GlobalVariableDTO, Assembly-CSharp",
                 "Alias": "actualAnimation",
                 "Value": "idle",
+                "Type": 4
+              },
+              {
+                "$type": "Assets.Core.GameEditor.DTOS.GlobalVariableDTO, Assembly-CSharp",
+                "Alias": "sound",
+                "Value": "",
                 "Type": 4
               }
             ]
@@ -5046,10 +5108,10 @@
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
         "x": -31.84,
-        "y": 9.76,
+        "y": 12.6399994,
         "z": 0.0,
-        "magnitude": 33.3023,
-        "sqrMagnitude": 1109.04321
+        "magnitude": 34.25719,
+        "sqrMagnitude": 1173.55518
       }
     },
     {
@@ -5058,10 +5120,10 @@
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
         "x": -31.5199986,
-        "y": 9.76,
+        "y": 12.6399994,
         "z": 0.0,
-        "magnitude": 32.9964828,
-        "sqrMagnitude": 1088.768
+        "magnitude": 33.9599762,
+        "sqrMagnitude": 1153.27991
       }
     },
     {
@@ -5070,10 +5132,10 @@
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
         "x": -31.1999989,
-        "y": 9.76,
+        "y": 12.6399994,
         "z": 0.0,
-        "magnitude": 32.69094,
-        "sqrMagnitude": 1068.69751
+        "magnitude": 33.6631775,
+        "sqrMagnitude": 1133.20947
       }
     },
     {
@@ -5082,10 +5144,10 @@
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
         "x": -30.88,
-        "y": 9.76,
+        "y": 12.6399994,
         "z": 0.0,
-        "magnitude": 32.3856735,
-        "sqrMagnitude": 1048.83191
+        "magnitude": 33.36681,
+        "sqrMagnitude": 1113.34387
       }
     },
     {
@@ -5094,22 +5156,10 @@
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
         "x": -30.56,
-        "y": 9.76,
-        "z": 0.0,
-        "magnitude": 32.0806961,
-        "sqrMagnitude": 1029.17114
-      }
-    },
-    {
-      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
-      "Id": -1234459612,
-      "Position": {
-        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -28.96,
         "y": 12.6399994,
         "z": 0.0,
-        "magnitude": 31.598278,
-        "sqrMagnitude": 998.4511
+        "magnitude": 33.07088,
+        "sqrMagnitude": 1093.68311
       }
     },
     {
@@ -5117,11 +5167,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -28.64,
+        "x": -30.24,
         "y": 12.6399994,
         "z": 0.0,
-        "magnitude": 31.3052578,
-        "sqrMagnitude": 980.019165
+        "magnitude": 32.7754059,
+        "sqrMagnitude": 1074.22717
       }
     },
     {
@@ -5129,11 +5179,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -28.32,
-        "y": 12.6399994,
+        "x": -26.72,
+        "y": 11.04,
         "z": 0.0,
-        "magnitude": 31.0127716,
-        "sqrMagnitude": 961.792
+        "magnitude": 28.9108963,
+        "sqrMagnitude": 835.839966
       }
     },
     {
@@ -5141,11 +5191,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -28.0,
-        "y": 12.6399994,
+        "x": -29.92,
+        "y": 7.83999968,
         "z": 0.0,
-        "magnitude": 30.7208328,
-        "sqrMagnitude": 943.7696
+        "magnitude": 30.9301147,
+        "sqrMagnitude": 956.672
       }
     },
     {
@@ -5153,11 +5203,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -26.08,
-        "y": 14.88,
+        "x": -29.5999985,
+        "y": 7.83999968,
         "z": 0.0,
-        "magnitude": 30.0263348,
-        "sqrMagnitude": 901.5808
+        "magnitude": 30.62067,
+        "sqrMagnitude": 937.6255
       }
     },
     {
@@ -5165,11 +5215,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -25.76,
-        "y": 14.88,
+        "x": -27.68,
+        "y": 14.5599995,
         "z": 0.0,
-        "magnitude": 29.7488155,
-        "sqrMagnitude": 884.992
+        "magnitude": 31.2758045,
+        "sqrMagnitude": 978.176
       }
     },
     {
@@ -5177,11 +5227,11 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -25.4399986,
-        "y": 14.88,
+        "x": -27.3599987,
+        "y": 14.5599995,
         "z": 0.0,
-        "magnitude": 29.4721546,
-        "sqrMagnitude": 868.6079
+        "magnitude": 30.9929523,
+        "sqrMagnitude": 960.5631
       }
     },
     {
@@ -5189,11 +5239,35 @@
       "Id": -1234459612,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -25.1199989,
-        "y": 14.88,
+        "x": -27.039999,
+        "y": 14.5599995,
         "z": 0.0,
-        "magnitude": 29.1963825,
-        "sqrMagnitude": 852.4288
+        "magnitude": 30.71083,
+        "sqrMagnitude": 943.155151
+      }
+    },
+    {
+      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
+      "Id": -1234459612,
+      "Position": {
+        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
+        "x": -26.72,
+        "y": 14.5599995,
+        "z": 0.0,
+        "magnitude": 30.4294586,
+        "sqrMagnitude": 925.951965
+      }
+    },
+    {
+      "$type": "Assets.Scenes.GameEditor.Core.DTOS.MapObjectDTO, Assembly-CSharp",
+      "Id": -1234459612,
+      "Position": {
+        "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
+        "x": -26.4,
+        "y": 14.5599995,
+        "z": 0.0,
+        "magnitude": 30.1488571,
+        "sqrMagnitude": 908.953552
       }
     },
     {
@@ -6125,11 +6199,11 @@
       "Id": 1875862075,
       "Position": {
         "$type": "UnityEngine.Vector3, UnityEngine.CoreModule",
-        "x": -18.72,
+        "x": -19.68,
         "y": -1.12,
         "z": 0.0,
-        "magnitude": 18.7534733,
-        "sqrMagnitude": 351.69278
+        "magnitude": 19.7118454,
+        "sqrMagnitude": 388.556824
       }
     },
     {

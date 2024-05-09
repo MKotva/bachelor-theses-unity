@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.GameEditor.ObjectInstancesController;
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -28,6 +29,9 @@ namespace Assets.Core.GameEditor.Components
             item.Id = Name.GetHashCode();
         }
 
-        public override void SetInstance(ItemData item, GameObject instance) {}
+        public override void SetInstance(ItemData item, GameObject instance) 
+        {
+            instance.AddComponent<ObjectController>();
+        }
     }
 }

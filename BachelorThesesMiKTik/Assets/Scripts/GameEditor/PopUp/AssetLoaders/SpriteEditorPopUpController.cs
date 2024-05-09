@@ -37,7 +37,7 @@ namespace Assets.Scripts.GameEditor.PopUp.Managers
 
             SpriteSource = spriteSource;
             URLSource.text = spriteSource.URL;
-            NameSource.text = $"Name : {spriteSource.Name}";
+            NameSource.text = spriteSource.Name;
         }
 
 

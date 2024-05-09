@@ -27,6 +27,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             if (!instance.TryGetComponent(out animationController))
             {
                 animationController = instance.AddComponent<AnimationsController>();
+                animationController.WasCreatedFromCode = true;
             }
 
             animationsManager = AnimationsManager.Instance;
@@ -41,6 +42,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             if (!instance.TryGetComponent(out spriteController))
             {
                 spriteController = instance.AddComponent<SpriteController>();
+                spriteController.WasCreatedFromCode = true;
             }
 
             spriteManager = SpriteManager.Instance;
@@ -53,15 +55,39 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
         #region AnimationMethods
 
         [CodeEditorAttribute("If animation has shown all images returs true. WARNING: If you set animation for loop, this " +
-            "method will always return false.", "(string nameOfAnimation, bool shouldAnimationLoop, bool playAfterSet)")]
+            "method will always return false.")]
         public bool CheckIfIsFinished()
         {
             return animationController.HasFinished();
         }
 
+        [CodeEditorAttribute("Returns name of actual antimation, played on this object. Returns empty string if no animation" +
+            "is played.")]
+        public string GetNameOfAnimation()
+        {
+            if(animationController.SourceReference != null)
+            {
+                return animationController.SourceReference.Name;
+            }
+
+            return "";
+        }
+
+        [CodeEditorAttribute("Returns name of actual image, displayed on this object. Returns empty string if no image" +
+            "is set.")]
+        public string GetNameOfImage()
+        {
+            if (spriteController.SourceReference != null)
+            {
+                return animationController.SourceReference.Name;
+            }
+
+            return "";
+        }
+
         [CodeEditorAttribute("Finds created animation by given name and sets it for this object. If there was previous " +
             "animation or image of certain scaling, this scaling will be used for this animation. Otherwise default scaling " +
-            "30x30 will be used.", "(string nameOfAnimation, bool shouldAnimationLoop, bool playAfterSet)")]
+            "32x32 will be used.", "(string nameOfAnimation, bool shouldAnimationLoop, bool playAfterSet)")]
         public void SetAnimation(string name, bool shouldLoop, bool playAfterSet)
         {
             if (animationController.SourceReference != null)
@@ -203,11 +229,8 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
         {
             if (spriteController == null)
                 return;
-            spriteController.spriteRendered.flipX = !spriteController.spriteRendered.flipX;
-        }
 
-        public void RotateVisual(float angle)
-        {
+            spriteController.spriteRendered.flipX = !spriteController.spriteRendered.flipX;
         }
     }
 }

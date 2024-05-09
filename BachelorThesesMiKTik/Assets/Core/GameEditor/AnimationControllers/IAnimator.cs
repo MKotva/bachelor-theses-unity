@@ -13,8 +13,5 @@ namespace Assets.Core.GameEditor.AnimationControllers
         public void Stop();
         public bool HasFinished();
         public bool Animating();
-        public float GetXScaling();
-        public float GetYScaling();
-        public CustomAnimation GetAnimation();
     }
 }

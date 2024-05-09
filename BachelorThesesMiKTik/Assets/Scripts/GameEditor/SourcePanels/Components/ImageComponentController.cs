@@ -5,13 +5,19 @@ using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.PopUp.CodeEditor;
 using Assets.Scripts.GameEditor.SourcePanels;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class ImageComponentController : ObjectComponent
 {
     [SerializeField] AssetPanelController SourcePanel;
     [SerializeField] GameObject PreviewObject;
+
+
+    private Image previewImage;
+    private AnimationsController animationControler;
 
     /// <summary>
     /// Sets component panel based on given component class.
@@ -27,92 +33,6 @@ public class ImageComponentController : ObjectComponent
         else
         {
             OutputManager.Instance.ShowMessage("Image component parsing error!", "ObjectCreate");
-        }
-    }
-
-    /// <summary>
-    /// Returns component new class from data, in component panel. 
-    /// </summary>
-    /// <returns></returns>
-    public override CustomComponent GetComponent()
-    {
-        return CreateComponent();
-    }
-
-    #region PRIVATE
-    private void Awake()
-    {
-        PreviewManager.Instance.previewGetter = SourcePanel.GetData;
-        SourcePanel.AnimationsDropdown.onValueChanged.AddListener(OnAnimationValueChange);
-        SourcePanel.SpritesDropdown.onValueChanged.AddListener(OnSpriteValueChange);
-        SourcePanel.XSize.onEndEdit.AddListener(OnEditEnd);
-        SourcePanel.YSize.onEndEdit.AddListener(OnEditEnd);
-    }
-
-    private void OnEditEnd(string _) 
-    {
-        if (SourcePanel.SourceT.value == 0)
-        {
-            OnSpriteValueChange(SourcePanel.SpritesDropdown.value);
-        }
-        else
-        {
-            OnAnimationValueChange(SourcePanel.AnimationsDropdown.value);
-        }
-    }
-
-    /// <summary>
-    /// Handles animation menu dropdown value. If value is not default, changes
-    /// actual preview image to animation preview image.
-    /// </summary>
-    /// <param name="id"></param>
-    private void OnAnimationValueChange(int id)
-    {
-        var value = SourcePanel.AnimationsDropdown.options[id].text;
-        if(value == "None" || value == "Create")
-        {
-            if(TryGetComponent<AnimationsController>(out var controller)) 
-            {
-                controller.RemoveAnimation();
-            }
-            ChangePreview(null);
-            return;
-        }
-
-        var source = SourcePanel.GetData();
-        var instance = AnimationsManager.Instance;
-        if (instance != null)
-            instance.SetAnimation(PreviewObject, source);
-
-        ScalePreview(source);
-        ChangePreview(source);
-    }   
-
-    /// <summary>
-    /// Handles sprite menu dropdown value. If value is not default, changes
-    /// actual preview image.
-    /// </summary>
-    /// <param name="id"></param>
-    private void OnSpriteValueChange(int id)
-    {
-        var value = SourcePanel.SpritesDropdown.options[id].text;
-        if (value == "None" || value == "Create")
-        {
-            PreviewObject.GetComponent<Image>().sprite = null;
-            ChangePreview(null);
-            return;
-        }
-
-        var instance = SpriteManager.Instance;
-        if (instance != null)
-        {
-            if(instance.Sprites.ContainsKey(value))
-            {
-                var source = SourcePanel.GetData();
-                PreviewObject.GetComponent<Image>().sprite = SpriteManager.Instance.Sprites[source.Name];
-                ScalePreview(source);
-                ChangePreview(source);
-            }
         }
     }
 
@@ -146,6 +66,102 @@ public class ImageComponentController : ObjectComponent
     }
 
     /// <summary>
+    /// Returns component new class from data, in component panel. 
+    /// </summary>
+    /// <returns></returns>
+    public override CustomComponent GetComponent()
+    {
+        return CreateComponent();
+    }
+
+    #region PRIVATE
+    private void Awake()
+    {
+        previewImage = PreviewObject.GetComponent<Image>();
+        animationControler = PreviewObject.GetComponent<AnimationsController>();
+
+        PreviewManager.Instance.previewGetter = SourcePanel.GetData;
+        SourcePanel.AnimationsDropdown.onValueChanged.AddListener(OnAnimationValueChange);
+        SourcePanel.SpritesDropdown.onValueChanged.AddListener(OnSpriteValueChange);
+        SourcePanel.XSize.onEndEdit.AddListener(OnEditEnd);
+        SourcePanel.YSize.onEndEdit.AddListener(OnEditEnd);
+    }
+
+    private void OnDestroy()
+    {
+        ChangePreview(null);
+    }
+
+    private void OnEditEnd(string _) 
+    {
+        if (SourcePanel.SourceT.value == 0)
+        {
+            OnSpriteValueChange(SourcePanel.SpritesDropdown.value);
+        }
+        else
+        {
+            OnAnimationValueChange(SourcePanel.AnimationsDropdown.value);
+        }
+    }
+
+    /// <summary>
+    /// Handles animation menu dropdown value. If value is not default, changes
+    /// actual preview image to animation preview image.
+    /// </summary>
+    /// <param name="id"></param>
+    private void OnAnimationValueChange(int id)
+    {
+        var value = SourcePanel.AnimationsDropdown.options[id].text;
+        if(IsDefaultValue(value))
+        {
+            animationControler.RemoveAnimation();
+        }
+
+        var source = SourcePanel.GetData();
+        var instance = AnimationsManager.Instance;
+        if (instance != null)
+        {
+            if (!instance.ContainsName(source.Name))
+                return;
+
+
+            animationControler.SetCustomAnimation(instance.Animations[source.Name], source, true, true);
+
+            ScalePreview(source);
+            ChangePreview(source);
+        }
+    }   
+
+    /// <summary>
+    /// Handles sprite menu dropdown value. If value is not default, changes
+    /// actual preview image.
+    /// </summary>
+    /// <param name="id"></param>
+    private void OnSpriteValueChange(int id)
+    {
+        if (PreviewObject.TryGetComponent(out AnimationsController control))
+        {
+            control.Stop();
+        }
+
+        var value = SourcePanel.SpritesDropdown.options[id].text;
+
+        var instance = SpriteManager.Instance;
+        if (instance != null)
+        {
+            if(!instance.Sprites.ContainsKey(value))
+            {
+                return;
+            }
+
+            var source = SourcePanel.GetData();
+            previewImage.sprite = SpriteManager.Instance.Sprites[source.Name];
+            ScalePreview(source);
+            ChangePreview(source);
+        }
+    }
+
+    /// <summary>
     /// Invokes preview manager change.
     /// </summary>
     /// <param name="source"></param>
@@ -166,6 +182,17 @@ public class ImageComponentController : ObjectComponent
     {
         var sourceDTO = SourcePanel.GetData();
         return new VisualComponent(sourceDTO);
+    }
+
+    private bool IsDefaultValue(string value)
+    {
+        if (value == "None" || value == "Create")
+        {
+            previewImage.sprite = null;
+            ChangePreview(null);
+            return true;
+        }
+        return false;
     }
     #endregion
 }

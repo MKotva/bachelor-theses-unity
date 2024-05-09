@@ -1,6 +1,8 @@
 ﻿using Assets.Core.GameEditor.DTOS.Action;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor
@@ -42,38 +44,25 @@ namespace Assets.Core.GameEditor
 
             return powered;
         }
-        public static float GetFloat(string text, float defaultVal)
-        {
-            text.Replace('.', ',');
-            var value = 1f;
-            if (!float.TryParse(text, out value))
-            {
-                return defaultVal;
-            }
-            if (float.IsNaN(value))
-            {
-                return defaultVal;
-            }
-
-            return value;
-        }
 
         public static float GetFloat(string value, float defaultValue = 1f, string name = "", string author = "")
         {
             if(value == "")
                 return defaultValue;
 
-            value.Replace(',', '.');
+            value = value.Replace(',', '.');
 
             var result = defaultValue;
-            if (!float.TryParse(value, out result))
+            var style = NumberStyles.AllowDecimalPoint;
+            var culture = CultureInfo.InvariantCulture;
+            if (!float.TryParse(value, style, culture, out result))
             {
-                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author, 1000);
                 return 1;
             }
             if(float.IsNaN(result))
             {
-                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author, 1000);
                 return 1;
             }
 
@@ -85,17 +74,19 @@ namespace Assets.Core.GameEditor
             if (value == "")
                 return defaultValue;
 
-            value.Replace('.', ',');
+            value = value.Replace(',', '.');
 
             var result = defaultValue;
-            if (!float.TryParse(value, out result))
+            var style = NumberStyles.AllowDecimalPoint;
+            var culture = CultureInfo.InvariantCulture;
+            if (!float.TryParse(value, style, culture, out result))
             {
-                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to 1", author, 1000);
                 return defaultValue;
             }
             if (result < 0f || float.IsNaN(result))
             {
-                OutputManager.Instance.ShowMessage($"{name} parsing error, value is below 0! {name} was setted to 1", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error, value is below 0! {name} was setted to 1", author, 1000);
                 return defaultValue;
             }
             return result;
@@ -109,7 +100,7 @@ namespace Assets.Core.GameEditor
             }
             else
             {
-                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to {defaultValue}", author);
+                OutputManager.Instance.ShowMessage($"{name} parsing error! {name} was setted to {defaultValue}", author, 1000);
                 return defaultValue;
             }
         }

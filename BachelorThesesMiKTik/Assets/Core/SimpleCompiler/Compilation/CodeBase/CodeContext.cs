@@ -28,6 +28,7 @@ namespace Assets.Core.SimpleCompiler.Compilation.CodeBase
                 throw new CompilationException($"There are enviroment and global variable with same name {name}!");
             }
         }
+
         /// <summary>
         /// After finding the "Acting object" (with FindActingObject()) the method will
         /// search his type for methods with the same name as last member of the path.

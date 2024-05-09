@@ -15,6 +15,8 @@ namespace Assets.Scripts.GameEditor.Managers
         public Dictionary<string, Dictionary<int, AnimationsController>> AnimationControllers { get; private set; }
         public Dictionary<string, CustomAnimation> Animations { get; private set; }
         public Dictionary<string, AnimationSourceDTO> AnimationData { get; private set; }
+
+
         protected override void Awake()
         {
             AnimationControllers = new Dictionary<string, Dictionary<int, AnimationsController>>();
@@ -188,8 +190,12 @@ namespace Assets.Scripts.GameEditor.Managers
             if (!Animations.ContainsKey(source.Name))
                 return;
 
-            if (ContainsActiveController(source.Name, controller.GetInstanceID()))
+            var instanceID = controller.GetInstanceID();
+            if (ContainsActiveController(source.Name, instanceID))
+            {
+                AnimationControllers[source.Name][instanceID].ResetClip();
                 return;
+            }
 
             var sourceReference = controller.SourceReference;
             if (sourceReference != null)
@@ -313,8 +319,11 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 foreach (var controllers in AnimationControllers.Values)
                 {
-                    foreach (var controller in controllers.Values)
-                        controller.Pause();
+                    foreach (var controler in controllers.Values)
+                    {
+                        controler.IsManualyPaused = true;
+                        controler.Pause();
+                    }
                 }
                 return true;
             }
@@ -325,8 +334,11 @@ namespace Assets.Scripts.GameEditor.Managers
                     if (!AnimationControllers.ContainsKey(name))
                         return false;
 
-                    foreach(var controller in AnimationControllers[name].Values)
-                        controller.Pause();
+                    foreach (var controler in AnimationControllers[name].Values)
+                    {
+                        controler.IsManualyPaused = true;
+                        controler.Pause();
+                    }
                 }
                 return true;
             }
@@ -343,8 +355,10 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 foreach (var controllers in AnimationControllers.Values)
                 {
-                    foreach (var controller in controllers.Values)
-                        controller.Resume();
+                    foreach (var controler in controllers.Values)
+                    {
+                        controler.Resume();
+                    }
                 }
                 return true;
             }
@@ -356,7 +370,9 @@ namespace Assets.Scripts.GameEditor.Managers
                         return false;
 
                     foreach (var controller in AnimationControllers[name].Values)
+                    {
                         controller.Resume();
+                    }
                 }
                 return true;
             }
@@ -422,6 +438,5 @@ namespace Assets.Scripts.GameEditor.Managers
             }
         }
         #endregion
-
     }
 }

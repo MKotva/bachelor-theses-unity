@@ -1,4 +1,5 @@
-﻿using Assets.Core.GameEditor.DTOS.Action;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.DTOS.Action;
 using Assets.Scripts.GameEditor.AI;
 using System.Collections.Generic;
 using TMPro;
@@ -20,18 +21,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <returns></returns>
         public override ActionDTO GetAction()
         {
-            var speed = 1f;
-            if (TryParse(Speed.text, out var sp))
-                speed = sp;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Speed was setted to 1");
-
-            var speedCap = 1f;
-            if (TryParse(SpeedCap.text, out var spCap))
-                speedCap = spCap;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Speed cap was setted to 1");
-
+            var speed = MathHelper.GetPositiveFloat(Speed.text, 0, "move speed");
+            var speedCap = MathHelper.GetPositiveFloat(SpeedCap.text, 0, "speed cap");
 
             return new MoveActionDTO(speed, speedCap, GroundedOnly.isOn);
         }
@@ -48,6 +39,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 MoveActionDTO moveAction = (MoveActionDTO) action;
                 Speed.text = moveAction.Speed.ToString();
                 SpeedCap.text = moveAction.SpeedCap.ToString();
+                GroundedOnly.isOn = moveAction.OnlyGrounded;
                 return;
             }
             OutputManager.Instance.ShowMessage("Move action panel faield to set stored action setting! Parsing error", "ObjectCreate");

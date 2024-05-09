@@ -1,5 +1,6 @@
 ﻿using Assets.Core.GameEditor.Components;
 using Assets.Core.GameEditor.DTOS.SourcePanels;
+using Assets.Core.SimpleCompiler;
 using Assets.Scenes.GameEditor.Core.AIActions;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti;
@@ -10,24 +11,42 @@ namespace Assets.Scripts.GameEditor.Entiti
 {
     public class PlayerObjectController : ActionsAgent, IObjectController
     {
-        private PlayerComponent playerSetting;
+        private List<ActionBindDTO> Bindings;
         private List<ActionBase> actions;
+        private SimpleCode OnCreate;
+        private SimpleCode OnUpdate;
+
 
         private delegate void ActionFinishHandler();
         private Dictionary<List<KeyCode>, ActionFinishHandler> actionsFinishers;
 
-        private bool IsInitDone;
         private bool WasPlayed;
         private bool IsPlaying;
 
         public void Initialize(PlayerComponent component)
-        {
-            playerSetting = component;
-            actions = component.Actions.GetAction(gameObject);
-            actionsFinishers = new Dictionary<List<KeyCode>, ActionFinishHandler>();
+        {       
+            foreach(ActionBindDTO bind in component.Bindings) 
+            {
+                if(bind.ActionCode != null)
+                    Bindings.Add(new ActionBindDTO(bind.Binding, bind.ActionType, bind.ActionCode));
+                else
+                    Bindings.Add(new ActionBindDTO(bind.Binding, bind.ActionType));
+            }
 
-            ActionPerformers = playerSetting.Actions.GetAction(gameObject);
-            IsInitDone = false;
+            actions = component.Actions.GetAction(gameObject);
+            
+            if(component.OnCreateAction != null) 
+            {
+                OnCreate = new SimpleCode(component.OnCreateAction);
+            }
+
+            if (component.OnUpdateAction != null)
+            {
+                OnUpdate = new SimpleCode(component.OnUpdateAction);
+            }
+
+            actionsFinishers = new Dictionary<List<KeyCode>, ActionFinishHandler>();
+            ActionPerformers = component.Actions.GetAction(gameObject);
         }
 
         #region IObjectMethods
@@ -35,8 +54,8 @@ namespace Assets.Scripts.GameEditor.Entiti
         {
             if (!WasPlayed)
             {
-                if (playerSetting.OnCreateAction != null)
-                    playerSetting.OnCreateAction.Execute(gameObject);
+                if (OnCreate != null)
+                    OnCreate.Execute(gameObject);
                 WasPlayed = true;
             }
             IsPlaying = true;
@@ -47,16 +66,16 @@ namespace Assets.Scripts.GameEditor.Entiti
             IsPlaying = false;
         }
 
-        public void Enter() 
+        public void Enter()
         {
-            if (playerSetting.OnCreateAction != null)
+            if (OnCreate != null)
             {
-                playerSetting.OnCreateAction.ResetContext();
+                OnCreate.ResetContext();
             }
 
-            if (playerSetting.OnUpdateAction != null)
+            if (OnUpdate != null)
             {
-                playerSetting.OnUpdateAction.ResetContext();
+                OnUpdate.ResetContext();
             }
 
             var gameManager = GameManager.Instance;
@@ -64,11 +83,14 @@ namespace Assets.Scripts.GameEditor.Entiti
             {
                 gameManager.AddPlayer(gameObject.GetInstanceID(), gameObject);
             }
+
+            originPosition = transform.position;
         }
 
         public void Exit()
         {
             IsPlaying = false;
+            WasPlayed = false;
             ClearActions();
         }
         #endregion
@@ -76,6 +98,7 @@ namespace Assets.Scripts.GameEditor.Entiti
         #region PRIVATE
         protected override void Awake()
         {
+            Bindings = new List<ActionBindDTO>();
             base.Awake();
             if (TryGetComponent<ObjectController>(out var controller))
             {
@@ -83,48 +106,42 @@ namespace Assets.Scripts.GameEditor.Entiti
             }
         }
 
-        private void FixedUpdate()
+        protected override void FixedUpdate()
         {
             if (!IsPlaying)
             {
                 return;
             }
 
-            if (!IsInitDone && playerSetting.OnCreateAction != null)
-            {
-                playerSetting.OnCreateAction.Execute(gameObject);
-            }
-
-            if(ActionsToPerform.Count > 0) 
+            if (ActionsToPerform.Count > 0)
             {
                 PerformActions();
                 return;
             }
 
             HandleReleasedKeys();
-
-            if (HandlePressedKeys(playerSetting.Bindings, out var selectedAction))
+            if (HandlePressedKeys(Bindings, out var selectedAction))
             {
                 if (selectedAction.ActionCode != null)
                     selectedAction.ActionCode.Execute(gameObject);
-                else
+
+                foreach (var action in actions)
                 {
-                    foreach (var action in actions)
+                    if (action.ContainsActionCode(selectedAction.ActionType))
                     {
-                        if (action.ContainsActionCode(selectedAction.ActionType))
-                        {
-                            action.PerformAction(selectedAction.ActionType);
-                            if (!actionsFinishers.ContainsKey(selectedAction.Binding))
-                                actionsFinishers.Add(selectedAction.Binding, action.FinishAction);
-                        }
+                        action.PerformAction(selectedAction.ActionType);
+                        if (!actionsFinishers.ContainsKey(selectedAction.Binding))
+                            actionsFinishers.Add(selectedAction.Binding, action.FinishAction);
                     }
                 }
             }
 
-            if (playerSetting.OnUpdateAction != null)
-                playerSetting.OnUpdateAction.Execute(gameObject);
+            if (OnUpdate != null)
+                OnUpdate.Execute(gameObject);
 
             CheckFall();
+
+            base.FixedUpdate();
         }
 
         /// <summary>

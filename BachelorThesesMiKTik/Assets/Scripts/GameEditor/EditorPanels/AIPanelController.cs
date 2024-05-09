@@ -54,12 +54,16 @@ namespace Assets.Scripts.GameEditor.AI
                 return;
 
             if(TryFindEndPosition("Finish", out var endpoint))
-                agent.MoveTo(endpoint);
+                agent.SimulateMoveTo(endpoint);
         }
 
         public void OnCleanClick()
         {
             DestroyAllMarkers();
+            if (!TryInitialize())
+                return;
+
+            agent.ClearActions();
         }
         #region PRIVATE
 
@@ -96,7 +100,7 @@ namespace Assets.Scripts.GameEditor.AI
 
         private bool TryFindEndPosition(string name, out Vector3 endPosition)
         {
-            if (ItemManager.Instance.TryFindIdByName(name, out int edpointId))
+            if (PrototypeManager.Instance.TryFindIdByName(name, out int edpointId))
             {
                 if (map.Data.ContainsKey(edpointId))
                 {

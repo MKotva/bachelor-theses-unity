@@ -25,16 +25,22 @@ namespace Assets.Scripts.GameEditor.AI
 
         private float speed;
         private float speedCap;
-        private bool GroundedOnly;
+        private bool onlyGrounded;
         private LinearTranslator moveHelper;
 
         public MoveAction(GameObject gameObject, float moveSpeed = 1, float moveSpeedCap = 1, bool canFallOf = false) : base(gameObject)
         {
             speed = moveSpeed;
             speedCap = moveSpeedCap;
-            GroundedOnly = canFallOf;
+            onlyGrounded = canFallOf;
         }
 
+        /// <summary>
+        /// Returns all possible AgentActions from given position. Possible actions is action, which leads
+        /// to a walkable position.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
         public override List<AgentActionDTO> GetPossibleActions(Vector2 position)
         {
             var cellSize = map.GridLayout.cellSize;
@@ -47,22 +53,29 @@ namespace Assets.Scripts.GameEditor.AI
             var reacheablePositions = new List<AgentActionDTO>();
             if (IsWalkable(newPositions[0]))
             {
-                reacheablePositions.Add(new AgentActionDTO(position, newPositions[0], "Move left", 1f, PerformAgentActionAsync, PrintAgentActionAsync));
+                reacheablePositions.Add(new AgentActionDTO(position, newPositions[0], "Move left", 1f, this));
             }
 
             if (IsWalkable(newPositions[1]))
             {
-                reacheablePositions.Add(new AgentActionDTO(position, newPositions[1], "Move right", 1f, PerformAgentActionAsync, PrintAgentActionAsync));
+                reacheablePositions.Add(new AgentActionDTO(position, newPositions[1], "Move right", 1f, this));
             }
 
             return reacheablePositions;
         }
 
-        public override bool PerformAgentActionAsync(AgentActionDTO action, Queue<AgentActionDTO> actions, float deltaTime)
+        /// <summary>
+        /// Performs agent action by simulating movement of action performer.
+        /// </summary>
+        /// <param name="action">Agent action</param>
+        /// <param name="actions">All queued agent action. Usefull for optimalization of actual action.</param>
+        /// <param name="deltaTime">Time since last update.</param>
+        /// <returns></returns>
+        public override bool PerformAgentAction(AgentActionDTO action, Queue<AgentActionDTO> actions, float deltaTime)
         {
             if (moveHelper == null)
             {
-                moveHelper = new LinearTranslator(performerRigidbody, speed, action.StartPosition, map.GetCellCenterPosition(LinearTranslator.FindContinuousPath(action, actions)));
+                moveHelper = new LinearTranslator(speed, action.StartPosition, map.GetCellCenterPosition(LinearTranslator.FindContinuousPath(action, actions)));
             }
 
             if (!moveHelper.TranslationTick(performer, map, deltaTime))
@@ -74,25 +87,40 @@ namespace Assets.Scripts.GameEditor.AI
             return true;
         }
 
-        public override async Task<List<GameObject>> PrintAgentActionAsync(AgentActionDTO action)
+        /// <summary>
+        /// Simulates action, based on given AgentAction, by printing results of simulated action.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public override List<GameObject> PrintAgentAction(AgentActionDTO action)
         {
-            var result = new List<GameObject>() { map.Marker.CreateMarkAtPosition(action.StartPosition) };
-            return await Task.FromResult(result);
+            return new List<GameObject>() { map.Marker.CreateMarkAtPosition(action.StartPosition) };
         }
 
+        /// <summary>
+        /// Performs action in direction, based on given string parameter.
+        /// </summary>
+        /// <param name="action">Action parameter</param>
         public override void PerformAction(string action)
         {
             if (actionTypes.ContainsKey(action))
             {
-                if (MotionHelper.CheckIfStaysOnGround(performer))
+                if (!MotionHelper.CheckIfStaysOnGround(performer) && onlyGrounded)
                 {
-                    var direction = actionTypes[action];
-                    performerRigidbody.AddForce(direction * speed);
-                    performerRigidbody.velocity = Vector3.ClampMagnitude(performerRigidbody.velocity, speedCap);
+                    return;
                 }
+
+                var direction = actionTypes[action];
+                performerRigidbody.AddForce(direction * speed);
+                ClampSpeed();
             }
         }
 
+        /// <summary>
+        /// Returns random action from all possible actions on given position.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public override AgentActionDTO GetRandomAction(Vector2 lastPosition)
         {
             var initActions = GetPossibleActions(lastPosition);
@@ -130,21 +158,36 @@ namespace Assets.Scripts.GameEditor.AI
             return action;
         }
 
-        public override bool IsPerforming()
-        {
-            return false;
-        }
-
+        /// <summary>
+        /// Clears actualy performed agent action.
+        /// </summary>
         public override void ClearAction()
         {
             moveHelper = null;
         }
 
-        public override void FinishAction() { }
-
+        /// <summary>
+        /// Checks if actual action contains given action type code
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public override bool ContainsActionCode(string code)
         {
             return ActionTypes.Contains(code);
+        }
+
+        /// <summary>
+        /// Clamps speed for this action.
+        /// </summary>
+        public override void ClampSpeed()
+        {
+            if (speedCap == 0)
+                return;
+
+            var velocity = performerRigidbody.velocity;
+            if (velocity.x > speedCap ||
+                velocity.x < -speedCap)
+                performerRigidbody.velocity = Vector2.ClampMagnitude(performerRigidbody.velocity, speedCap);
         }
     }
 }

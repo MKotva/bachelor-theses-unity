@@ -97,7 +97,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (action is ItemOperation)
             {
-                var itemManager = ItemManager.Instance;
+                var itemManager = PrototypeManager.Instance;
                 if (itemManager == null)
                     return;
 
@@ -129,7 +129,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
                 if (itemOperation.Items.Count != 1)
                     return;
 
-                var itemManager = ItemManager.Instance;
+                var itemManager = PrototypeManager.Instance;
                 if (itemManager == null)
                     return;
 
@@ -151,7 +151,7 @@ namespace Assets.Scenes.GameEditor.Core.EditorActions
         {
             if (action is ItemOperation)
             {
-                var itemManager = ItemManager.Instance;
+                var itemManager = PrototypeManager.Instance;
                 if (itemManager == null)
                     return;
 

@@ -68,7 +68,6 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     public void AppendLayer(BackgroundReference source)
     {
         var layer = AppendBackgroundLayer();
-        layer.GetComponent<BackgroundParalax>().speed = source.ParalaxSpeed;
         SetLayer(layer, source);
         Sources.Add(source);
     }

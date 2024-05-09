@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Assets.Core.GameEditor.CodeEditor.EnviromentObjects;
 using Assets.Core.GameEditor.DTOS;
@@ -69,6 +66,14 @@ namespace Assets.Core.SimpleCompiler
             GlobalVariables = globalVariables;
         }
 
+        public SimpleCode(SimpleCode code)
+        {
+            Code = code.Code;
+            EnviromentObjects = code.EnviromentObjects;
+            GlobalVariables = code.GlobalVariables;
+            var task = CompileAsync();
+        }
+
         [JsonConstructor]
         private SimpleCode()
         {
@@ -78,7 +83,7 @@ namespace Assets.Core.SimpleCompiler
         }
 
         /// <summary>
-        /// Compiles given test to SimpleCode.
+        /// Compiles given test to SimpleCode async.
         /// </summary>
         public async Task CompileAsync()
         {
@@ -100,6 +105,29 @@ namespace Assets.Core.SimpleCompiler
         }
 
         /// <summary>
+        /// Compiles given test to SimpleCode.
+        /// </summary>
+        public void Compile()
+        {
+            try
+            {
+                if (Context == null)
+                {
+                    LoadContext();
+                }
+                var compiler = new Compiler();
+                var lines = compiler.CompileCode(Context, Code.Split(new string[] { Environment.NewLine, "\n" }, StringSplitOptions.None));
+                Main = new CodeBlock(lines, 0);
+            }
+            catch (CompilerException e)
+            {
+                ErrorOutput = $"Error in section Main:\n {e.Message}!";
+                OutputManager.Instance.ShowMessage(e.Message);
+            }
+        }
+
+
+        /// <summary>
         /// If code is compiled, than this method will execute it. At the same time, listener for console output
         /// is added for runtime.
         /// </summary>
@@ -119,16 +147,30 @@ namespace Assets.Core.SimpleCompiler
                     Context.LocalVariables.Clear();
                     Main.Execute();
                 }
+                catch (RuntimeException e)
+                {
+                    ErrorOutput += $"Error in section Main:\n {e.Message}!";
+                    OutputManager.Instance.ShowMessage(e.Message);
+                }
+
                 catch (CompilerException e)
                 {
                     ErrorOutput += $"Error in section Main:\n {e.Message}!";
-                    OutputManager.Instance.ShowMessage(Output);
+                    OutputManager.Instance.ShowMessage(e.Message);
                 }
 
                 catch (Exception e)
                 {
-                    ErrorOutput += $"Error in section Main:\n {e.Message}!";
-                    OutputManager.Instance.ShowMessage(Output);
+                    if (e.InnerException is RuntimeException)
+                    {
+                        ErrorOutput += $"Error in section Main:\n {e.InnerException.Message}!";
+                        OutputManager.Instance.ShowMessage(e.InnerException.Message);
+                    }
+                    else
+                    {
+                        ErrorOutput += $"Error in section Main:\n {e.Message}!";
+                        OutputManager.Instance.ShowMessage(e.Message);
+                    }
                 }
             }
             OutputManager.Instance.RemoveListener("Compiler");

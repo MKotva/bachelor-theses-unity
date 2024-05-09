@@ -73,7 +73,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 60, y: 60}
-  m_Spacing: {x: 20, y: 20}
+  m_Spacing: {x: 20, y: 30}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &7738830992762917924
@@ -531,4 +531,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ButtonPrefab: {fileID: 1161064152761621849, guid: 9c7db049595ca07458c5c3e52eeb7127, type: 3}
   ParentObject: {fileID: 7738830992523326081}
-  ItemDatas: []

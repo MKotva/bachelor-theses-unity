@@ -1,29 +1,34 @@
 ﻿using Assets.Core.GameEditor.Components;
+using Assets.Core.SimpleCompiler;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti;
+using UnityEngine;
 
 namespace Assets.Scripts.GameEditor.AI
 {
     public class AIObjectController : ActionsAgent, IObjectController
     {
-        private AIComponent aiSetting;
-        private bool wasPlayed;
+        private SimpleCode OnCreate;
+        private SimpleCode OnUpdate;
         private bool isPlaying;
 
         public void Initialize(AIComponent component)
         {
-            aiSetting = component;
-            ActionPerformers = aiSetting.Action.GetAction(Performer);
+            if(component.OnCreateAction != null) 
+            {
+                OnCreate = new SimpleCode(component.OnCreateAction);
+            }
+
+            if (component.OnUpdateAction != null)
+            {
+                OnUpdate = new SimpleCode(component.OnUpdateAction);
+            }
+
+            ActionPerformers = component.Action.GetAction(Performer);
         }
 
         public void Play()
         {
-            if (!wasPlayed && aiSetting.OnCreateAction != null)
-            {
-                aiSetting.OnCreateAction.Execute(gameObject);
-                wasPlayed = true;
-            }
-
             isPlaying = true;
             isPerforming = true;
         }
@@ -36,15 +41,18 @@ namespace Assets.Scripts.GameEditor.AI
 
         public void Enter() 
         {
-            if (aiSetting.OnCreateAction != null)
+            if (OnCreate != null)
             {
-                aiSetting.OnCreateAction.ResetContext();
+                OnCreate.ResetContext();
+                OnCreate.Execute(gameObject);
             }
 
-            if (aiSetting.OnUpdateAction != null)
+            if (OnUpdate != null)
             {
-                aiSetting.OnUpdateAction.ResetContext();
+                OnUpdate.ResetContext();
             }
+
+            originPosition = transform.position;
         }
 
         public void Exit()
@@ -64,15 +72,16 @@ namespace Assets.Scripts.GameEditor.AI
             }
         }
 
-        private void FixedUpdate()
+        protected override void FixedUpdate()
         {
             if (!isPlaying)
                 return;
 
-            if (aiSetting.OnUpdateAction != null)
-                aiSetting.OnUpdateAction.Execute(gameObject);
+            if (OnUpdate != null)
+                OnUpdate.Execute(gameObject);
 
             PerformActions();
+            base.FixedUpdate();
         }
         #endregion
     }

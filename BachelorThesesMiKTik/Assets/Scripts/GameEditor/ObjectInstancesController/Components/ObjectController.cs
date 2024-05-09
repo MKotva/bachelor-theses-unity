@@ -9,13 +9,16 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
     {
         public string Name { get; private set; }
 
-        private float HP { get; set; }
+        public float HP { get; set; }
+        public float Score { get; set; }
 
         public Dictionary<System.Type, IObjectController> Components { get; private set; }
 
         private Vector3 positon;
         private Quaternion rotation;
         private bool IsDying;
+        private string AnimationName = "";
+        private string AudioName = "";
 
         private AnimationsController animationsController;
         private AudioController audioController;
@@ -43,6 +46,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
                 {
                     controller.StopAfterFinishingLoop();
                     animationsController = controller;
+                    AnimationName = animationsController.SourceReference.Name;
                 }
             }
 
@@ -52,6 +56,7 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
                 {
                     controller.StopAfterFinishingLoop();
                     audioController = controller;
+                    AudioName = audioController.AudioSourceDTO.Name;
                 }
             }
         }
@@ -75,6 +80,8 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         public void Enter()
         {
             HP = 100f;
+            Score = 0;
+
             positon = gameObject.transform.position;
             rotation = gameObject.transform.rotation;
 
@@ -117,13 +124,15 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             {
                 if (animationsController != null)
                 {
-                    if (!animationsController.HasFinished())
+                    if (!animationsController.HasFinished() &&
+                        animationsController.SourceReference.Name == AnimationName)
                         return;
                 }
 
                 if(audioController != null)
                 {
-                    if (!audioController.HasFinished())
+                    if (!audioController.HasFinished() &&
+                        audioController.AudioSourceDTO.Name == AudioName)
                         return;
                 }
 

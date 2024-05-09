@@ -42,6 +42,7 @@ namespace Assets.Core.SimpleCompiler.Syntax
         {
             var items = Expression.SplitExpression(expression);
             List<Item> result = new List<Item>();
+            bool functionDetected = false;
 
             foreach (var item in items)
             {
@@ -95,7 +96,12 @@ namespace Assets.Core.SimpleCompiler.Syntax
                 else if (typematch.Groups["variable"].Success)
                     res.Type = ExpressionItemType.Variable;
                 else if (typematch.Groups["openBracket"].Success)
+                {
+                    if (result.Last().Type == ExpressionItemType.Variable)
+                        functionDetected = true;
+
                     res.Type = ExpressionItemType.OpenBracket;
+                }
                 else if (typematch.Groups["closeBracket"].Success)
                     res.Type = ExpressionItemType.CloseBracket;
                 else if (typematch.Groups["funcArgDelimeter"].Success)
@@ -106,7 +112,8 @@ namespace Assets.Core.SimpleCompiler.Syntax
                 result.Add(res);
             }
 
-            result = FindFunctions(result);
+            if(functionDetected)
+                result = FindFunctions(result);
             return result.ToArray();
         }
 

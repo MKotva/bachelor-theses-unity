@@ -5,18 +5,18 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 {
     public class PhysicsController : MonoBehaviour, IObjectController
     {
+        public Rigidbody2D Rigid { get; private set; }
         private PhysicsComponent physicsSetting;
-        private Rigidbody2D rigid;
-        private Vector2 velocity;
+        private bool isManualyDeactivated;
         public float GravityScale
         {
             get
             {
-                return rigid.gravityScale;
+                return Rigid.gravityScale;
             }
             set
             {
-                rigid.gravityScale = value;
+                Rigid.gravityScale = value;
             }
         }
 
@@ -24,11 +24,11 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             get
             {
-                return rigid.angularDrag;
+                return Rigid.angularDrag;
             }
             set
             {
-                rigid.angularDrag = value;
+                Rigid.angularDrag = value;
             }
         }
 
@@ -36,11 +36,11 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             get
             {
-                return rigid.drag;
+                return Rigid.drag;
             }
             set
             {
-                rigid.drag = value;
+                Rigid.drag = value;
             }
         }
 
@@ -48,11 +48,11 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             get
             {
-                return rigid.mass;
+                return Rigid.mass;
             }
             set
             {
-                rigid.mass = value;
+                Rigid.mass = value;
             }
         }
 
@@ -60,8 +60,8 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             get
             {
-                if (rigid.constraints == RigidbodyConstraints2D.FreezeRotation ||
-                    rigid.constraints == RigidbodyConstraints2D.FreezeAll)
+                if (Rigid.constraints == RigidbodyConstraints2D.FreezeRotation ||
+                    Rigid.constraints == RigidbodyConstraints2D.FreezeAll)
                     return true;
                 return false;
             }
@@ -69,22 +69,22 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             {
                 if (value)
                 {
-                    if (rigid.constraints == RigidbodyConstraints2D.None)
-                        rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+                    if (Rigid.constraints == RigidbodyConstraints2D.None)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezePosition)
-                        rigid.constraints = RigidbodyConstraints2D.FreezeAll;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezePosition)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezeAll;
                 }
                 else
                 {
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezeRotation)
-                        rigid.constraints = RigidbodyConstraints2D.None;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezeRotation)
+                        Rigid.constraints = RigidbodyConstraints2D.None;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezeAll)
-                        rigid.constraints = RigidbodyConstraints2D.FreezePosition;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezeAll)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezePosition;
                 }
 
-                rigid.freezeRotation = value;
+                Rigid.freezeRotation = value;
             }
         }
 
@@ -92,9 +92,9 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             get
             {
-                if(rigid.constraints == RigidbodyConstraints2D.FreezePositionX ||
-                    rigid.constraints == RigidbodyConstraints2D.FreezePosition ||
-                    rigid.constraints == RigidbodyConstraints2D.FreezeAll)
+                if(Rigid.constraints == RigidbodyConstraints2D.FreezePositionX ||
+                    Rigid.constraints == RigidbodyConstraints2D.FreezePosition ||
+                    Rigid.constraints == RigidbodyConstraints2D.FreezeAll)
                     return true;
                 return false;
             }
@@ -102,22 +102,22 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             {
                 if (value)
                 {
-                    if (rigid.constraints == RigidbodyConstraints2D.None)
-                        rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+                    if (Rigid.constraints == RigidbodyConstraints2D.None)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezePositionY)
-                        rigid.constraints = RigidbodyConstraints2D.FreezePosition;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezePositionY)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezePosition;
                 }
                 else
                 {
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezePositionX)
-                        rigid.constraints = RigidbodyConstraints2D.None;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezePositionX)
+                        Rigid.constraints = RigidbodyConstraints2D.None;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezePosition)
-                        rigid.constraints = RigidbodyConstraints2D.FreezePositionY;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezePosition)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezePositionY;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezeAll)
-                        rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezeAll)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
                 }
             }
         }
@@ -126,9 +126,9 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
         {
             get
             {
-                if (rigid.constraints == RigidbodyConstraints2D.FreezePositionY ||
-                    rigid.constraints == RigidbodyConstraints2D.FreezePosition ||
-                    rigid.constraints == RigidbodyConstraints2D.FreezeAll)
+                if (Rigid.constraints == RigidbodyConstraints2D.FreezePositionY ||
+                    Rigid.constraints == RigidbodyConstraints2D.FreezePosition ||
+                    Rigid.constraints == RigidbodyConstraints2D.FreezeAll)
                     return true;
                 return false;
             }
@@ -136,22 +136,22 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             {
                 if (value)
                 {
-                    if (rigid.constraints == RigidbodyConstraints2D.None)
-                        rigid.constraints = RigidbodyConstraints2D.FreezePositionY;
+                    if (Rigid.constraints == RigidbodyConstraints2D.None)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezePositionY;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezePositionX)
-                        rigid.constraints = RigidbodyConstraints2D.FreezePosition;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezePositionX)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezePosition;
                 }
                 else
                 {
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezePositionY)
-                        rigid.constraints = RigidbodyConstraints2D.None;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezePositionY)
+                        Rigid.constraints = RigidbodyConstraints2D.None;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezePosition)
-                        rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezePosition)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
 
-                    if (rigid.constraints == RigidbodyConstraints2D.FreezeAll)
-                        rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+                    if (Rigid.constraints == RigidbodyConstraints2D.FreezeAll)
+                        Rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
                 }
             }
         }
@@ -170,37 +170,53 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
 
         public void Play()
         {
-            rigid.WakeUp();
-            rigid.isKinematic = false;
-            //rigid.velocity = velocity;
+            if (!isManualyDeactivated)
+            {
+                Rigid.WakeUp();
+                Rigid.isKinematic = false;
+            }
         }
 
         public void Pause()
         {
-            rigid.Sleep();
-            rigid.isKinematic = true;
-            //velocity = rigid.velocity;
+            Rigid.Sleep();
+            Rigid.isKinematic = true;
         }
 
         public void Enter() {}
 
         public void Exit()
         {
-            rigid.Sleep();
-            rigid.isKinematic = true;
+            Rigid.Sleep();
+            Rigid.isKinematic = true;
 
             if (physicsSetting != null)
                 Initialize(physicsSetting);
+
+            isManualyDeactivated = false;
         }
 
         public float GetVelocityX()
         {
-            return rigid.velocity.x;
+            return Rigid.velocity.x;
         }
 
         public float GetVelocityY()
         {
-            return rigid.velocity.y;
+            return Rigid.velocity.y;
+        }
+
+
+        public void Activate()
+        {
+            isManualyDeactivated = false;
+            TurnOn();
+        }
+
+        public void Deactivate()
+        {
+            isManualyDeactivated = true;
+            TurnOff();
         }
 
 
@@ -210,13 +226,31 @@ namespace Assets.Scripts.GameEditor.ObjectInstancesController
             {
                 controller.Components.Add(typeof(PhysicsController), this);
 
+                Rigidbody2D rigid;
                 if (!TryGetComponent(out rigid))
                 {
-                    rigid = gameObject.AddComponent<Rigidbody2D>();
-                    rigid.sleepMode = RigidbodySleepMode2D.StartAsleep;
+                    Rigid = gameObject.AddComponent<Rigidbody2D>();
+                    Rigid.sleepMode = RigidbodySleepMode2D.StartAsleep;
                 }
+                else
+                {
+                    Rigid = rigid;
+                }
+
                 Pause();
             }
+        }
+
+        private void TurnOff()
+        {
+            Rigid.Sleep();
+            Rigid.isKinematic = true;
+        }
+
+        private void TurnOn()
+        {
+            Rigid.WakeUp();
+            Rigid.isKinematic = false;
         }
     }
 }

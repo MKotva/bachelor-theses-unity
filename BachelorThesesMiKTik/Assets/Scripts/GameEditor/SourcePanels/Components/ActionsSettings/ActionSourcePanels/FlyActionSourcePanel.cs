@@ -1,7 +1,6 @@
-﻿using Assets.Core.GameEditor.AIActions;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.AIActions;
 using Assets.Core.GameEditor.DTOS.Action;
-using Assets.Core.SimpleCompiler.Compilation.CodeBase;
-using Assets.Scenes.GameEditor.Core.AIActions;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -20,18 +19,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <returns></returns>
         public override ActionDTO GetAction()
         {
-            var speed = 1f;
-            if(TryParse(Speed.text, out var sp))
-                speed = sp;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Speed was setted to 1");
-
-            var speedCap = 1f;
-            if(TryParse(SpeedCap.text, out var spCap))
-                speedCap = spCap;
-            else
-                OutputManager.Instance.ShowMessage("Fly action parsing error! Speed cap was setted to 1");
-
+            var speed = MathHelper.GetPositiveFloat(Speed.text, 0, "fly speed");
+            var speedCap = MathHelper.GetPositiveFloat(SpeedCap.text, 0, "fly speed cap");
             return new FlyActionDTO(speed, speedCap);
         }
 

@@ -10,7 +10,7 @@ public class OutputManager : Singleton<OutputManager>
     public delegate void DisposeMessageAction();
     public string Message { get; set; }
 
-    private Queue<(string, string)> messages;
+    private Queue<(string, string, int)> messages;
     private Task performingTask;
     private bool isPerforming;
 
@@ -82,9 +82,9 @@ public class OutputManager : Singleton<OutputManager>
         }
     }
 
-    public void ShowMessage(string message, string authorName = "")
+    public void ShowMessage(string message, string authorName = "", int displayTime = 10000)
     {
-        messages.Enqueue((authorName, message));
+        messages.Enqueue((authorName, message, displayTime));
         InvokeListeners(onAddMessageListeners, authorName, message);
     }
 
@@ -107,7 +107,7 @@ public class OutputManager : Singleton<OutputManager>
         onShowListeners = new Dictionary<string, Dictionary<string, ShowMessageAction>>();
         onAddMessageListeners = new Dictionary<string, Dictionary<string, ShowMessageAction>>();
         onDisposeMessageListeners = new Dictionary<string, DisposeMessageAction>();
-        messages = new Queue<(string, string)>();
+        messages = new Queue<(string, string, int)>();
         base.Awake();
     }
 
@@ -117,7 +117,7 @@ public class OutputManager : Singleton<OutputManager>
     private void Update()
     {
         if (messages == null)
-            messages = new Queue<(string, string)>();
+            messages = new Queue<(string, string, int)>();
 
         if (messages.Count > 0 && !isPerforming)
         {
@@ -139,10 +139,10 @@ public class OutputManager : Singleton<OutputManager>
     /// </summary>
     /// <param name="infoText"></param>
     /// <returns></returns>
-    private async Task UpdateText((string, string) infoText)
+    private async Task UpdateText((string, string, int) infoText)
     {
         InvokeListeners(onShowListeners, infoText.Item1, infoText.Item2);
-        await Task.Delay(10000);
+        await Task.Delay(infoText.Item3);
         await ClearText();
     }
 

@@ -1,11 +1,13 @@
 ﻿using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.DTOS;
 using Assets.Core.GameEditor.DTOS.Assets;
+using Assets.Scripts.GameEditor.Controllers;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 namespace Assets.Scripts.GameEditor.Managers
 {
@@ -130,6 +132,8 @@ namespace Assets.Scripts.GameEditor.Managers
             if (!Sprites.ContainsKey(name))
                 return;
 
+            RemoveAnimationController(controller.gameObject);
+
             controller.SetSprite(Sprites[name], source);
             AddActiveController(name, controller);
         }
@@ -196,5 +200,19 @@ namespace Assets.Scripts.GameEditor.Managers
             return Sprites.ContainsKey(name);
         }
         #endregion
+
+        private void RemoveAnimationController(GameObject gameOb)
+        {
+            if (gameOb.TryGetComponent<AnimationsController>(out var animation))
+            {
+                if (animation.SourceReference == null)
+                    return;
+
+                animation.Stop();
+                var manager = AnimationsManager.Instance;
+                if (manager != null)
+                    manager.RemoveActiveController(animation.SourceReference.Name, animation);
+            }
+        }
     }
 }

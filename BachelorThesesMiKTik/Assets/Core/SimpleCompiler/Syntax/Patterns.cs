@@ -28,13 +28,13 @@ namespace Assets.Core.SimpleCompiler.Syntax
         // language=regex
         private static readonly string assignOperator = @"(\=|\+\=|\-\=|\*\=|\/\=)";
         // language=regex
-        private static readonly string type = @"(num|bool)";
+        private static readonly string type = @"(num|bool|string)";
         // language=regex
         private static readonly string typeKeyWords = @"(^|\s)(num|bool|string)(\s|$)";
         // language=regex
         private static readonly string keyWords = @"(^|\s)(if|while|elseif|else|fi|end|while)(\s|$)";
         // language=regex
-        private static readonly string funcArg = @"\s*(.*\s*,)*(.*\s*)*\s*";
+        private static readonly string funcArg = @".*[^,]";
         // language=regex
         private static readonly string func = $"({variable}\\s*\\({funcArg}\\))*";
         // language=regex
@@ -50,7 +50,7 @@ namespace Assets.Core.SimpleCompiler.Syntax
         // language=regex
         private static readonly string assignLinePattern = $"^\\s*((?<assignValue_type>{type})\\s*)?(?<assignValue_variable>{variable})\\s*(?<assignValue_operator>{assignOperator})\\s*(?<assignValue_expression>{expression})\\s*$";
         // language=regex
-        private static readonly string simpleLinePattern = $"^\\s*(?<assignValue_expression>{expression})\\s*$";
+        private static readonly string simpleLinePattern = $"^\\s*(?<simpleLine_expression>{expression})\\s*$";
         // language=regex
         private static readonly string whilePattern = $"^while (?<while_expression>{expression})$";
         // language=regex

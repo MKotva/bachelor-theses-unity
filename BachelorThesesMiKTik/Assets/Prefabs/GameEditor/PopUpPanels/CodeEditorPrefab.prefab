@@ -402,7 +402,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -125.74922, y: 135}
+  m_AnchoredPosition: {x: -234.99995, y: 135}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1777860314639250382
@@ -906,7 +906,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 909865283062603833}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.95000005
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1059,7 +1059,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -125.74922, y: 160}
+  m_AnchoredPosition: {x: -234.99995, y: 160}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &4093952534127259784
@@ -1642,7 +1642,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8981318745940364099}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.5104334
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2447,7 +2447,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2494365911394638114}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.5
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4099,7 +4099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 141.79361, y: -4.8961825}
+  m_AnchoredPosition: {x: 0, y: -9.149977}
   m_SizeDelta: {x: 610, y: 0}
   m_Pivot: {x: 0.5, y: 0.95}
 --- !u!222 &2252676604678470141
@@ -5290,7 +5290,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 4428793841769202295}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.5
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5414,6 +5414,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 964
       objectReference: {fileID: 0}
+    - target: {fileID: 7055250039236916158, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 9059768566159382251}
     - target: {fileID: 9217928428494547916, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
       propertyPath: m_text
       value: Code editor
@@ -5437,6 +5441,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19e0f09b0a8969341bd8d5411a23930e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InfoPanel: {fileID: 3728185945272438124, guid: 3c3c7cc43c440cc48a445b2f252843ad, type: 3}
+  Info: In this panel you can create your own action, with simple langulage.                                                 
+    Code text editor is place for your code. For veryfying code validity, use "Compile
+    button". When you are finished, you can save action with "Save" button.                   
+    Language specification can be found in PDF file.
   Code: {fileID: 7782123607946640876}
   OutputConsole: {fileID: 2540561435469702948}
   IntelisencePrefab: {fileID: 4640172080314021985, guid: e7cb296f354253f4eb42a49f14cb4061, type: 3}

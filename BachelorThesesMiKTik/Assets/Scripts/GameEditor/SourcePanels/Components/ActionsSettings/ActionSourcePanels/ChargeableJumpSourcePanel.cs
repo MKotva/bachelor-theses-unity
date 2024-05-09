@@ -1,4 +1,5 @@
-﻿using Assets.Core.GameEditor.AIActions;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.AIActions;
 using Assets.Core.GameEditor.DTOS.Action;
 using System.Collections.Generic;
 using TMPro;
@@ -15,6 +16,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         [SerializeField] TMP_InputField HorizontalForceMin;
         [SerializeField] TMP_InputField HorizontalForceMax;
         [SerializeField] TMP_InputField JumpTimeCap;
+        [SerializeField] TMP_InputField SpeedCap;
 
         /// <summary>
         /// Retrievs data from source panel and saves them to corresponding ActionDTO.
@@ -23,42 +25,12 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <returns></returns>
         public override ActionDTO GetAction()
         {
-            float verticalForceMin = 1;
-            if (TryParse(VerticalForceMin.text, out var vertMin))
-                verticalForceMin = vertMin;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Vertical min force was setted to 1");
-
-            float verticalForceMax = 1;
-            if (TryParse(VerticalForceMax.text, out var vertMax))
-                verticalForceMax = vertMax;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Vertical max force was setted to 1");
-
-            float horizontalForceMin = 1;
-            if (TryParse(HorizontalForceMin.text, out var horMin))
-                horizontalForceMin = horMin;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Horizontal min force was setted to 1");
-
-            float horizontalForceMax = 1;
-            if (TryParse(HorizontalForceMax.text, out var horMax))
-                horizontalForceMax = horMax;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Horizontal max force was setted to 1");
-
-            float jumpTimeCap = 1;
-            if (TryParse(JumpTimeCap.text, out var jumpTime))
-            {
-                if (jumpTime <= 0)
-                {
-                    OutputManager.Instance.ShowMessage("Invalid max time setting! Setted to default = 1.");
-                }
-                else
-                {
-                    jumpTimeCap = jumpTime;
-                }
-            }
+            float verticalForceMin = MathHelper.GetPositiveFloat(VerticalForceMin.text, 0, "vertical min force");
+            float verticalForceMax = MathHelper.GetPositiveFloat(VerticalForceMax.text, 0, "vertical max force");
+            float horizontalForceMin = MathHelper.GetPositiveFloat(HorizontalForceMin.text, 0, "horizontal min force");
+            float horizontalForceMax = MathHelper.GetPositiveFloat(HorizontalForceMax.text, 0, "horizontal max force");
+            float jumpTimeCap = MathHelper.GetPositiveFloat(JumpTimeCap.text, 0, "jump max time setting");
+            float jumpSpeedCap = MathHelper.GetPositiveFloat(SpeedCap.text, 0, "jump speed cap");
 
             if (verticalForceMin > verticalForceMax)
             {
@@ -72,7 +44,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 OutputManager.Instance.ShowMessage("Invalid setting of horizontal min and max. Min > Max! Setted to default.");
             }
 
-            return new ChargeJumpDTO(verticalForceMin, verticalForceMax, horizontalForceMin, horizontalForceMax, jumpTimeCap, GroundedOnly.isOn);
+            return new ChargeJumpDTO(verticalForceMin, verticalForceMax, horizontalForceMin, horizontalForceMax, jumpTimeCap, jumpSpeedCap, GroundedOnly.isOn);
 
         }
 
@@ -91,6 +63,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 HorizontalForceMin.text = jumpAction.HorizontalForceMin.ToString();
                 HorizontalForceMax.text = jumpAction.HorizontalForceMax.ToString();
                 JumpTimeCap.text = jumpAction.JumpTimeCap.ToString();
+                SpeedCap.text = jumpAction.JumpSpeedCap.ToString();
+                GroundedOnly.isOn = jumpAction.OnlyGrounded;
                 return;
             }
             OutputManager.Instance.ShowMessage("Chargeable jump action panel faield to set stored action setting! Parsing error", "ObjectCreate");

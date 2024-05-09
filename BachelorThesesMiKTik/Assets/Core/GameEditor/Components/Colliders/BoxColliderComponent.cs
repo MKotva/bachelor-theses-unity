@@ -35,7 +35,7 @@ namespace Assets.Core.GameEditor.Components.Colliders
                     return;
             }
 
-            if(Colliders.Count != 0) 
+            if(Colliders.Count != 0 || IsTrigger) 
             {
                 return;
             }

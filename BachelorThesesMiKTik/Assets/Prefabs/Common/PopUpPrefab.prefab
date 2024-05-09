@@ -213,6 +213,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f8ab358d5df3b043b118cfcedd64228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Info: 
+  InfoPanel: {fileID: 3728185945272438124, guid: 3c3c7cc43c440cc48a445b2f252843ad, type: 3}
+  InfoText: {fileID: 0}
 --- !u!1001 &7926460274570303386
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -220,6 +223,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5178400347432823019}
     m_Modifications:
+    - target: {fileID: 1146510357100291108, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146510357100291108, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146510357100291108, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: -3864917594369360949}
+    - target: {fileID: 1146510357100291108, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146510357100291108, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnShowHelp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146510357100291108, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PopUpController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146510357100291108, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3762777227548090719, guid: 51afb04685e660147bebe8bdfa76ef70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

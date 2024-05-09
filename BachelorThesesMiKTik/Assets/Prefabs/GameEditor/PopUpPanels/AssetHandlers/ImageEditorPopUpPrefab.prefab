@@ -498,12 +498,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
+  m_fontSize: 18
   m_fontSizeBase: 14
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 18
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -993,6 +993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08cb256cbde40c44acb93732c01c08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WasCreatedFromCode: 0
 --- !u!1 &7692963973469361342
 GameObject:
   m_ObjectHideFlags: 0
@@ -1500,6 +1501,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 150
       objectReference: {fileID: 0}
+    - target: {fileID: 7055250039236916158, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3657695924468811864}
     - target: {fileID: 9217928428494547916, guid: 7f4c48a6e8dd77b4c96ee39af84bc6bf, type: 3}
       propertyPath: m_text
       value: Image editor
@@ -1528,6 +1533,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba0e6d26a74f4034ab0ac1da4da7d747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InfoPanel: {fileID: 3728185945272438124, guid: 3c3c7cc43c440cc48a445b2f252843ad, type: 3}
+  Info: 'In this panel, you can replace existing image with new one loaded with HTTP
+    protocol or from folder/subfolder of SteamingAssets.               For loading
+    via HTTP, set URL with .png or .jpg on end.  For loading from Streaming assets
+    use following format : SubFolder\SubFolder\name(.jpg\.png)'
   URLSource: {fileID: 6894035375942919094}
   NameSource: {fileID: 1565093954764399482}
   ImageSource: {fileID: 6843315995884250764}

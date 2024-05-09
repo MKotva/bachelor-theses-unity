@@ -2,63 +2,107 @@
 using Assets.Core.GameEditor.Attributes;
 using Assets.Core.SimpleCompiler.Exceptions;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
-using System;
+using Assets.Scripts.GameEditor.ObjectInstancesController.Components.Entiti;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
 {
     class ObjectControl : EnviromentObject
     {
-        private Rigidbody2D rigid;
+        private PhysicsController physics;
         private ObjectController controller;
         private GameObject instance;
+        private ActionsAgent actionsAgent;
 
 
-        [CodeEditorAttribute("Returns value, which represents actual object velocity in horizontal direction.")]
-        public float HP { get; set; }
+        [CodeEditorAttribute("Stores value, which represents objects HP."
+            + "Default value is 100")]
+        public float HP
+        {
+            get
+            {
+                if (controller == null)
+                    return 0;
+                return controller.HP;
+            }
+            set
+            {
+                if (controller != null)
+                    controller.HP = value;
+            }
+        }
 
-        [CodeEditorAttribute("Returns value, which represents actual object velocity in horizontal direction.")]
-        public float Score { get; set; }
+        [CodeEditorAttribute("Stores value, which represents earned score."
+            + "Default value is 0")]
+        public float Score
+        {
+            get
+            {
+                if (controller == null)
+                    return 0;
+                return controller.Score;
+            }
+            set
+            {
+                if (controller != null)
+                    controller.Score = value;
+            }
+        }
 
-        public override bool SetInstance(GameObject instance) 
+        public override bool SetInstance(GameObject instance)
         {
             controller = instance.GetComponent<ObjectController>();
-            if (controller == null) 
+            if (controller == null)
             {
                 return false;
             }
 
             this.instance = instance;
 
-            instance.TryGetComponent(out rigid);
-            return true; 
+            instance.TryGetComponent(out physics);
+            instance.TryGetComponent(out actionsAgent);
+            return true;
         }
 
         [CodeEditorAttribute("Returns value, which represents actual object velocity in horizontal direction.")]
         public float GetXVelocity()
         {
-             if (rigid == null)
+            if (physics == null)
                 throw new RuntimeException($"\"Exception in method \\\"GetXVelocity\\\"! Object is missing Physics Component!");
 
-             return rigid.velocity.x;
+            if (actionsAgent != null)
+                if (actionsAgent.PerformingTask != null)
+                    return actionsAgent.Velocity.x;
+
+            return physics.GetVelocityX();
         }
 
         [CodeEditorAttribute("Returns value, which represents actual object velocity in vertical direction.")]
         public float GetYVelocity()
         {
-            if (rigid == null)
+            if (physics == null)
                 throw new RuntimeException($"\"Exception in method \\\"GetYVelocity\\\"! Object is missing Physics Component!");
 
-            return rigid.velocity.y;
+            if (actionsAgent != null)
+                if (actionsAgent.PerformingTask != null)
+                    return actionsAgent.Velocity.y;
+
+            return physics.GetVelocityY();
         }
 
         [CodeEditorAttribute("If players velocity is aproximately equal to zero, returns true. Otherwise returns false.")]
         public bool CheckIfIsMoving()
         {
-            if (rigid == null)
+            if (physics == null)
                 throw new RuntimeException($"\"Exception in method \\\"CheckIfIsMoving\\\"! Object is missing Physics Component!");
 
-            if (rigid.velocity.magnitude > float.Epsilon * 2)
+            if (actionsAgent != null)
+                if (actionsAgent.PerformingTask != null)
+                    if (actionsAgent.Velocity.magnitude > float.Epsilon)
+                        return true;
+
+
+            if (physics.Rigid.velocity.magnitude > float.Epsilon * 2)
                 return true;
 
             return false;
@@ -78,16 +122,29 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentObjects
             controller.Kill(finishAnimation, finishAudio);
         }
 
-        [CodeEditorAttribute("Freezes actual object -> ")]
-        public void Freeze()
+        [CodeEditorAttribute("Deactivates physics for actual object. Usefull for moving objects like"
+           + "elevators.")]
+        public void DeactivatePhysics()
         {
-            controller.Pause();
+            if (physics == null)
+                throw new RuntimeException($"\"Exception in method \\\"ActivatePhysics\\\"! Object is missing Physics Component!");
+            physics.Deactivate();
         }
 
-        [CodeEditorAttribute("Finds created animation by given name and sets it for this object.")]
-        public void UnFreeze()
+        [CodeEditorAttribute("Activates physics for actual object if exists.")]
+        public void ActivatePhysics()
         {
-            controller.Play();
+            if (physics == null)
+                throw new RuntimeException($"\"Exception in method \\\"ActivatePhysics\\\"! Object is missing Physics Component!");
+            physics.Activate();
+        }
+
+        [CodeEditorAttribute("Adds force to object", "(num xDirection, num yDirection)")]
+        public void AddForceInDirection(float x, float y)
+        {
+            if (physics == null)
+                throw new RuntimeException($"\"Exception in method \\\"AddForceInDirection\\\"! Object is missing Physics Component!");
+            physics.Rigid.AddForce(new Vector2(x, y));
         }
     }
 }

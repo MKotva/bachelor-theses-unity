@@ -28,6 +28,10 @@ namespace Assets.Core.GameEditor.AnimationControllers
             Scale(renderer, xSize, ySize);
         }
 
+        /// <summary>
+        /// Changes actual animation to given one.
+        /// </summary>
+        /// <param name="newAnimation"></param>
         public void EditAnimation(CustomAnimation newAnimation)
         {
             if (newAnimation.Frames.Count != 0)
@@ -40,6 +44,10 @@ namespace Assets.Core.GameEditor.AnimationControllers
             index = 0;
         }
 
+        /// <summary>
+        /// Changes actual animation frame to next one, if frame was diplayed for setted time.
+        /// </summary>
+        /// <param name="timeDelta"></param>
         public void Animate(float timeDelta)
         {
             if (!IsAnimating || !spriteRenderer.isVisible)
@@ -52,30 +60,46 @@ namespace Assets.Core.GameEditor.AnimationControllers
             }
         }
 
+        /// <summary>
+        /// Pauses actual animation
+        /// </summary>
         public void PauseAnimation()
         {
             IsAnimating = false;
         }
 
+        /// <summary>
+        /// Resumes actual animation
+        /// </summary>
         public void ResumeAnimation()
         {
             IsAnimating = true;
         }
 
+        /// <summary>
+        /// Reset actual animation to initial state
+        /// </summary>
         public void ResetAnimation()
         {
             timeSinceLastFrame = 0;
             actualFrame = Animation.Frames[0];
             index = 0;
+            IsFinished = false;
             IsAnimating = true;
         }
 
+        /// <summary>
+        /// Removes actual animation
+        /// </summary>
         public void RemoveAnimation()
         {
             IsAnimating = false;
             spriteRenderer.sprite = null;
         }
 
+        /// <summary>
+        /// Reset actual animation to initial state and stops animation.
+        /// </summary>
         public void Stop()
         {
             timeSinceLastFrame = 0;
@@ -84,29 +108,19 @@ namespace Assets.Core.GameEditor.AnimationControllers
             IsAnimating = false;
         }
 
+        /// <summary>
+        /// Checks if animation is finished.
+        /// </summary>
+        /// <returns></returns>
         public bool HasFinished()
         {
             return IsFinished;
         }
 
+        //Checks if is animating.
         public bool Animating()
         {
             return IsAnimating;
-        }
-
-        public CustomAnimation GetAnimation()
-        {
-            return Animation;
-        }
-
-        public float GetXScaling()
-        {
-            return XScaling;
-        }
-
-        public float GetYScaling()
-        {
-            return YScaling;
         }
 
         #region PRIVATE

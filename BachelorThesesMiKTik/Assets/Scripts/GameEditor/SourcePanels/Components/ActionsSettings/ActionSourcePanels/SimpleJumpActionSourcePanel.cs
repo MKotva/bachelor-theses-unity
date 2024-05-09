@@ -1,4 +1,5 @@
-﻿using Assets.Core.GameEditor.DTOS.Action;
+﻿using Assets.Core.GameEditor;
+using Assets.Core.GameEditor.DTOS.Action;
 using Assets.Scripts.GameEditor.AI;
 using System.Collections.Generic;
 using TMPro;
@@ -12,6 +13,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         [SerializeField] Toggle GroundedOnly;
         [SerializeField] TMP_InputField VerticalForce;
         [SerializeField] TMP_InputField HorizontalForce;
+        [SerializeField] TMP_InputField SpeedCap;
         /// <summary>
         /// Retrievs data from source panel and saves them to corresponding ActionDTO.
         /// If there is any parsing error or value should be positive, default value is used.
@@ -19,19 +21,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
         /// <returns></returns>
         public override ActionDTO GetAction()
         {
-            float verticalForce = 1;
-            if (TryParse(VerticalForce.text, out var vertForce))
-                verticalForce = vertForce;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Vertical force was setted to 1");
+            float verticalForce = MathHelper.GetPositiveFloat(VerticalForce.text, 2, "vertical force");
+            float horizontalForce = MathHelper.GetPositiveFloat(HorizontalForce.text, 2, "horizontal force");
+            float speedCap = MathHelper.GetPositiveFloat(SpeedCap.text, 5, "Speed cap");
 
-            float horizontalForce = 1;
-            if (TryParse(HorizontalForce.text, out var horizForce))
-                horizontalForce = horizForce;
-            else
-                OutputManager.Instance.ShowMessage("Move action parsing error! Horizontal force was setted to 1");
-
-            return new SimpleJumpActionDTO(verticalForce, horizontalForce, GroundedOnly.isOn);
+            return new SimpleJumpActionDTO(verticalForce, horizontalForce, speedCap, GroundedOnly.isOn);
         }
 
         /// <summary>
@@ -46,6 +40,8 @@ namespace Assets.Scripts.GameEditor.SourcePanels.Components.ActionsSettings
                 SimpleJumpActionDTO simpleJumpAction = (SimpleJumpActionDTO) action;
                 VerticalForce.text = simpleJumpAction.VerticalForce.ToString();
                 HorizontalForce.text = simpleJumpAction.HorizontalForce.ToString();
+                SpeedCap.text = simpleJumpAction.SpeedCap.ToString();
+                GroundedOnly.isOn = simpleJumpAction.OnlyGrounded;
                 return;
             }
             OutputManager.Instance.ShowMessage("Simple jump action panel faield to set stored action setting! Parsing error", "ObjectCreate");

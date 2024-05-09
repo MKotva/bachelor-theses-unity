@@ -26,16 +26,32 @@ namespace Assets.Core.GameEditor.Components.Colliders
         {
             ComponentName = "Collider";
             Colliders = new List<CollisionDTO>();
-            Scale = scale;
             IsTrigger = false;
+
+            if (scale == Vector2.zero)
+            {
+                Scale = new Vector2(1f / 100f, 1f / 100f);
+            }
+            else
+            {
+                Scale = scale;
+            }
         }
 
         public ColliderComponent(List<CollisionDTO> colliders, Vector2 scale) 
         {
             ComponentName = "Collider";
             Colliders = colliders;
-            Scale = scale;
             IsTrigger = false;
+
+            if(scale == Vector2.zero) 
+            {
+                Scale = new Vector2(1f / 100f, 1f / 100f);
+            }
+            else
+            {
+                Scale = scale;
+            }
         }
 
         public override async Task Initialize()

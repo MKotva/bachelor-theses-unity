@@ -50,16 +50,16 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         /// </summary>
         /// <param name="binding"></param>
         /// <param name="option"></param>
-        public void Set(ActionBindDTO binding) 
+        public void Set(ActionBindDTO binding)
         {
             SetBinding(binding.Binding);
-            
+
             if (binding.ActionCode != null)
                 actionCode = binding.ActionCode;
 
-            for(int i  = 0; i < ActionSelection.options.Count; i++) 
+            for (int i = 0; i < ActionSelection.options.Count; i++)
             {
-                if(ActionSelection.options[i].text == binding.ActionType)
+                if (ActionSelection.options[i].text == binding.ActionType)
                 {
                     ActionSelection.value = i;
                 }
@@ -75,18 +75,9 @@ namespace Assets.Scripts.GameEditor.SourcePanels
         public bool TryGet(out ActionBindDTO actionBindDTO)
         {
             actionBindDTO = null;
-            if(BindingKeys.Count != 0 && Action != "None")
+            if (BindingKeys.Count != 0 && Action != "None")
             {
-                if (Action == "Create code")
-                {
-                    if (actionCode == null)
-                        return false;
-                    actionBindDTO = new ActionBindDTO(BindingKeys, Action, actionCode);
-                }
-                else
-                {
-                    actionBindDTO = new ActionBindDTO(BindingKeys, Action);
-                }
+                actionBindDTO = new ActionBindDTO(BindingKeys, Action, actionCode);
                 return true;
             }
             return false;
@@ -113,7 +104,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
 
         private void Update()
         {
-            if (IsClicked) 
+            if (IsClicked)
             {
                 GetBinding();
             }
@@ -153,7 +144,7 @@ namespace Assets.Scripts.GameEditor.SourcePanels
                     if (!BindingSet.Invoke(binding, ID))
                     {
                         ButtonText.text = "Used keycode!";
-                        
+
                     }
                     else
                     {
@@ -167,34 +158,24 @@ namespace Assets.Scripts.GameEditor.SourcePanels
 
         /// <summary>
         /// This method is onActionChange handler of dropdown menu.
-        /// If changed value is "Create code", the code editor is Instanciated.
-        /// Else if action is already assinged, error will raise.
+        //  If selected action is already assinged, error will raise.
         /// </summary>
-        private void OnActionChange() 
+        private void OnActionChange()
         {
             if (ActionSelection.value == 0)
             {
                 Action = "None";
             }
-            
+
             var valueAction = ActionSelection.options[ActionSelection.value].text;
             Action = valueAction;
-            if (valueAction == "Create code")
+
+            if (!ActionChange.Invoke(valueAction, ID))
             {
-                EditButton.SetActive(true);
-                CreateEditor();
+                ActionSelection.value = 0;
+                ButtonText.text = "Assingned action!";
             }
-            else
-            {
-                if(EditButton.activeInHierarchy)
-                    EditButton.SetActive(false);
-                
-                if (!ActionChange.Invoke(valueAction, ID))
-                {
-                    ActionSelection.value = 0;
-                    ButtonText.text = "Assingned action!";
-                }
-            }
+
         }
 
         /// <summary>
@@ -211,11 +192,11 @@ namespace Assets.Scripts.GameEditor.SourcePanels
             }
             else
             {
-                for(int i = 0; i < bindings.Count - 1; i++)
+                for (int i = 0; i < bindings.Count - 1; i++)
                 {
                     newText += $"{bindings[i]} +";
                 }
-                newText += $"{bindings[bindings.Count -1]}";
+                newText += $"{bindings[bindings.Count - 1]}";
             }
             ButtonText.text = newText;
             BindingKeys = bindings;

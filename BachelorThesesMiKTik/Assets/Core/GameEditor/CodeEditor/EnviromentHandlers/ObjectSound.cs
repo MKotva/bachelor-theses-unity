@@ -5,6 +5,7 @@ using Assets.Core.GameEditor.Enums;
 using Assets.Core.SimpleCompiler.Exceptions;
 using Assets.Scripts.GameEditor.Audio;
 using Assets.Scripts.GameEditor.Managers;
+using Assets.Scripts.GameEditor.ObjectInstancesController;
 using UnityEngine;
 
 namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
@@ -19,6 +20,7 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             if (!instance.TryGetComponent(out audioController))
             {
                 audioController = instance.AddComponent<AudioController>();
+                audioController.WasCreatedFromCode = true;
             }
 
             audioManager = AudioManager.Instance;
@@ -44,6 +46,25 @@ namespace Assets.Core.GameEditor.CodeEditor.EnviromentHandlers
             var sourceReference = new SourceReference(name, SourceType.Sound);
             audioManager.SetAudioClip(audioController, sourceReference, playAfterSet);
         }
+
+        [CodeEditorAttribute("Returns name of actual audioclip, setted on this object. Returns empty string if no clip" +
+            "is set.")]
+        public string GetNameOfAudioClip()
+        {
+            if (audioController.AudioSourceDTO != null)
+            {
+                return audioController.AudioSourceDTO.Name;
+            }
+            return "";
+        }
+
+        [CodeEditorAttribute("If audio clip has finished returns true. WARNING: If you set audio for loop, this " +
+            "method will always return false.")]
+        public bool HasFinished()
+        {
+            return audioController.HasFinished();
+        }
+
 
         [CodeEditorAttribute("Plays setted audio clip if it is not already running, otherwise nothing happens.")]
         public void PlayClip()

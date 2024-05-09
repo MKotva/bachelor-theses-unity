@@ -18,8 +18,10 @@ public class EditorCanvas : Singleton<EditorCanvas>
 
     public ItemData ActualPrefab
     {
-        get { return ItemManager.Instance.ActualSelectedItem; }
+        get { return PrototypeManager.Instance.ActualSelectedItem; }
     }
+
+    public bool IsDisabled { get; set; }
 
     public Dictionary<Vector3, (GameObject, bool)> Selected;
     public Dictionary<int, Dictionary<Vector3, GameObject>> Data;
@@ -284,7 +286,7 @@ public class EditorCanvas : Singleton<EditorCanvas>
 
     private void Update()
     {
-        if (_isActionAllowed)
+        if (_isActionAllowed && !IsDisabled)
             actualAction.OnUpdate(GetWorldMousePosition());
     }
 
@@ -330,6 +332,9 @@ public class EditorCanvas : Singleton<EditorCanvas>
 
     private void OnMousePress()
     {
+        if (IsDisabled)
+            return;
+
         if (Input.mousePosition.y < 830 && Input.mousePosition.y > 0
             && Input.mousePosition.x > 0 && Input.mousePosition.x < 1920)
         {
@@ -340,6 +345,9 @@ public class EditorCanvas : Singleton<EditorCanvas>
 
     private void OnMouseRelease()
     {
+        if (IsDisabled)
+            return;
+
         if (_isActionAllowed)
         {
             _isActionAllowed = false;
@@ -349,12 +357,18 @@ public class EditorCanvas : Singleton<EditorCanvas>
 
     private void OnKeyPress()
     {
+        if (IsDisabled)
+            return;
+
         _isActionAllowed = true;
         actualAction.OnKeyDown(Key.LeftShift);
     }
 
     private void OnKeyRelease()
     {
+        if (IsDisabled)
+            return;
+
         _isActionAllowed = false;
         actualAction.OnKeyUp();
     }

@@ -1,3 +1,4 @@
+using Assets.Core.GameEditor.Components;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using Assets.Scripts.GameEditor.SourcePanels.Components;
@@ -13,7 +14,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
         var newItem = CreateNewPrefab (components);
         if (hasPassed)
         {
-            ItemManager.Instance.AddItem(newItem);
+            PrototypeManager.Instance.AddItem(newItem);
             return true;
         }
 
@@ -27,7 +28,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
         var newItem = CreateEditingPrefab(components);
         if (hasPassed)
         {
-            ItemManager.Instance.EditActualSelectedItem(ItemManager.Instance.ActualSelectedItem, newItem);
+            PrototypeManager.Instance.EditActualSelectedItem(PrototypeManager.Instance.ActualSelectedItem, newItem);
             return true;
         }  
 
@@ -90,10 +91,15 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// <returns></returns>
     private void ApplyComponents(ItemData item, List<ObjectComponent> components)
     {
+        var customComponents = new List<CustomComponent>();
         foreach (var component in components)
-            GetComponent(item, component);
+        {
+            var customComponent = GetComponent(item, component);
+            if (customComponent != null)
+                customComponents.Add(customComponent);
+        }
 
-        foreach (var component in item.Components)
+        foreach (var component in customComponents)
             component.Set(item);
     }
 
@@ -102,14 +108,16 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// </summary>
     /// <param name="item"></param>
     /// <param name="component"></param>
-    /// <returns></returns>
-    private void GetComponent(ItemData item, ObjectComponent component)
+    /// <returns>Extraxted component</returns>
+    private CustomComponent GetComponent(ItemData item, ObjectComponent component)
     {
         var comp = component.GetComponent();
         if (comp != null) 
         {
             item.Components.Add(comp);
+            return comp;
         }
+        return null;
     }
 
     /// <summary>
@@ -119,7 +127,7 @@ public class ObjectCreatorSourcePanelController : MonoBehaviour
     /// <returns></returns>
     private bool CheckName(ItemData item)
     {
-        if (ItemManager.Instance.ItemsNameIdPair.ContainsKey(item.ShownName))
+        if (PrototypeManager.Instance.ItemsNameIdPair.ContainsKey(item.ShownName))
         {
             OutputManager.Instance.ShowMessage($"Invalid item name {item.ShownName}, name is already used!", "ObjectCreate");
             return false;

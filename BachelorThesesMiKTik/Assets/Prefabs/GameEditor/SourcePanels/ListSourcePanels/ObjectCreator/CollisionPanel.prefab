@@ -1743,6 +1743,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8286395010540129507, guid: 5698abac888210a4488875e5cd27ca96, type: 3}
+      propertyPath: Parent
+      value: 
+      objectReference: {fileID: 735777228983419218}
     - target: {fileID: 8484145901919687314, guid: 5698abac888210a4488875e5cd27ca96, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -1766,9 +1770,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8286395010540129507, guid: 5698abac888210a4488875e5cd27ca96, type: 3}
   m_PrefabInstance: {fileID: 8449601810773839200}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 735777228983419218}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 147a9d11f6be78c47b49d4d22496cf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &735777228983419218 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9184252967779093554, guid: 5698abac888210a4488875e5cd27ca96, type: 3}
+  m_PrefabInstance: {fileID: 8449601810773839200}
+  m_PrefabAsset: {fileID: 0}

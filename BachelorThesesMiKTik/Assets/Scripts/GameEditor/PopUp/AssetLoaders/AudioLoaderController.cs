@@ -61,21 +61,17 @@ namespace Assets.Scripts.GameEditor.Audio
 
         public async void OnSavePress()
         {
-            if (actualAudioSource == null)
+
+            if (!CheckName(NameField.text))
             {
-                if (!CheckName(NameField.text))
-                {
-                    return;
-                }
-
-                var audioDTO = CreateAudioDTO();
-                if (audioDTO == null)
-                    return;
-
-
-                actualAudioSource = audioDTO;
+                return;
             }
 
+            var audioDTO = CreateAudioDTO();
+            if (audioDTO == null)
+                return;
+
+            actualAudioSource = audioDTO;
             var instance = AudioManager.Instance;
             if (instance != null)
             {
@@ -118,7 +114,7 @@ namespace Assets.Scripts.GameEditor.Audio
             return true;
         }
 
-        private void InvokeListeners() 
+        private void InvokeListeners()
         {
             if (OnSave != null)
                 OnSave.Invoke(new SourceReference(actualAudioSource.Name, SourceType.Sound));

@@ -2061,6 +2061,14 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8152997147797236336, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
+      propertyPath: Info
+      value: 'In this panel, you can iteract with existing audio clips, edit or delete
+        them and alsocreate new one.                           Existing audio clips
+        are displayed in scroll view.                WARNING: Interaction work only
+        on items, that are actualy using selected audio clip! If you will change
+        audio via code, interaction won''t prevail.'
+      objectReference: {fileID: 0}
     - target: {fileID: 8981604773831702864, guid: d475a20dd1ae0b041a6c4944e37b1cc9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.SimpleCompiler.Compilation.CodeBase;
 using Assets.Core.SimpleCompiler.Compilation.ExpressionEvaluator;
@@ -34,6 +33,46 @@ namespace Assets.Core.SimpleCompiler.Compilation
         {
             context = codeContext;
             var lines = await interpreter.AnalyzeCodeAsync(textLines);
+
+            var code = new List<ICodeLine>();
+            for (int index = 0; index < lines.Length; index++)
+            {
+                ICodeLine codeLine;
+                try
+                {
+                    codeLine = CompileLine(lines, index, out index);
+                }
+                catch (CompilerException ex)
+                {
+                    exceptions += $"Compilation error on line {index} : {ex.Message}\n";
+                    continue;
+                }
+
+                if (codeLine != null)
+                {
+                    code.Add(codeLine);
+                    codeLine.LineNumber = index;
+                }
+            }
+
+            if (exceptions != null && exceptions != "")
+                throw new CompilationException(exceptions);
+
+            return code;
+        }
+
+        /// <summary>
+        /// Runs syntax analyze on code and the based on results will try to build
+        /// code segments composed of expression trees from assign and simple lines (compilation).
+        /// </summary>
+        /// <param name="codeContext"></param>
+        /// <param name="textLines"></param>
+        /// <returns></returns>
+        /// <exception cref="CompilationException"> If there was any error during the compilation</exception>
+        public List<ICodeLine> CompileCode(CodeContext codeContext, string[] textLines)
+        {
+            context = codeContext;
+            var lines = interpreter.AnalyzeCode(textLines);
 
             var code = new List<ICodeLine>();
             for (int index = 0; index < lines.Length; index++)

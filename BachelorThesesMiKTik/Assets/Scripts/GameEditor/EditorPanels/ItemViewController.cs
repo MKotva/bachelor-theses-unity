@@ -18,7 +18,7 @@ namespace Assets.Scripts.GameEditor.EditorPanels
         public Dictionary<string, ItemGroupViewController> GroupViews {  get; private set; }
 
         private ItemGroupViewController activeGroup;
-        private ItemManager manager;
+        private PrototypeManager manager;
 
         /// <summary>
         /// Adds new item to group view.
@@ -64,7 +64,7 @@ namespace Assets.Scripts.GameEditor.EditorPanels
         {
             GroupViewSelector.onValueChanged.AddListener(OnSelectorValueChanged);
             GroupViews = new Dictionary<string, ItemGroupViewController>();
-            manager = ItemManager.Instance;
+            manager = PrototypeManager.Instance;
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Assets.Scripts.GameEditor.EditorPanels
         /// <returns></returns>
         public UnityAction ViewPlanelButtonClick(ItemData item)
         {
-            ItemManager.Instance.ActualSelectedItem = item;
+            PrototypeManager.Instance.ActualSelectedItem = item;
             ChangeActualItemView(item);
             return null;
         }
