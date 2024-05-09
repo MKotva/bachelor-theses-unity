@@ -1,8 +1,6 @@
 ﻿using Assets.Core.GameEditor.AssetLoaders;
 using Assets.Core.GameEditor.DTOS;
-using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor.Managers;
-using Assets.Scripts.GameEditor.OutputControllers;
 using TMPro;
 using UnityEngine;
 

@@ -20,6 +20,7 @@ namespace Assets.Scripts.GameEditor
 
         public string LoadedLevel { get; set; } = "";
         public CameraController Camera { get; set; }
+        public BackgroundController Background { get; set; }
         public Dictionary<int, IObjectController> ActiveObjects { get; set; }
         public Dictionary<int, GameObject> ActivePlayers { get; set; }
         public bool IsInPlayMode { get; set; }
@@ -160,6 +161,9 @@ namespace Assets.Scripts.GameEditor
 
             Camera.Enter();
             LoadedIngame = false;
+
+            if (Background != null)
+                Background.Enter();
         }
 
         public void StartGame()
@@ -173,12 +177,18 @@ namespace Assets.Scripts.GameEditor
                 OutputManager.Instance.ShowMessage("Warning! No active player present.");
 
             FindLowestPoint();
+
+            if (Background != null)
+                Background.Play();
         }
 
         public void PauseGame()
         {
             foreach (var obj in ActiveObjects.Values)
                 obj.Pause();
+
+            if (Background != null)
+                Background.Pause();
         }
 
         public void ExitGame()
@@ -190,6 +200,9 @@ namespace Assets.Scripts.GameEditor
 
             ActivePlayers.Clear();
             ClearMessages();
+
+            if (Background != null)
+                Background.Exit();
 
             if (LoadedIngame && LoadedLevel != null)
             {

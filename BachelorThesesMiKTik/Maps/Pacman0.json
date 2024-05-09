@@ -7,13 +7,8 @@
       "Sources": [
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "thor",
-          "URL": "Thor.jpg"
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "GreyWall",
-          "URL": "GreyWall.png"
+          "Name": "nebula",
+          "URL": "NebulaBlue.png"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
@@ -22,14 +17,36 @@
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "nebula",
-          "URL": "NebulaBlue.png"
+          "Name": "GreyWall",
+          "URL": "GreyWall.png"
         }
       ]
     },
     "AnimationManager": {
       "$type": "ManagerDTO, Assembly-CSharp",
       "Sources": [
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Pacman\\monster1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Pacman\\monster2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Pacman\\monster3.png"
+            }
+          ],
+          "Name": "monster",
+          "URL": ""
+        },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
           "AnimationData": [
@@ -56,34 +73,23 @@
           ],
           "Name": "pacman",
           "URL": ""
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
-          "AnimationData": [
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Pacman\\monster1.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Pacman\\monster2.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Pacman\\monster3.png"
-            }
-          ],
-          "Name": "monster",
-          "URL": ""
         }
       ]
     },
     "AudioManager": {
       "$type": "ManagerDTO, Assembly-CSharp",
-      "Sources": []
+      "Sources": [
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": true,
+          "Name": "background",
+          "URL": "BackgroundMusic\\handsome_tent.mp3"
+        }
+      ]
     }
   },
   "Prototypes": [
@@ -130,7 +136,7 @@
               "GroupsNames": [],
               "Handler": {
                 "$type": "Assets.Core.SimpleCompiler.SimpleCode, Assembly-CSharp",
-                "Code": "ob.Score = ob.Score + 20 \nout.PrintTest (\"Yam yam\")\nout.PrintTest (ob.Score)",
+                "Code": "ob.Score = ob.Score + 20 \nout.Print (\"Yam yam\")\nout.PrintNum (ob.Score)",
                 "EnviromentObjects": [
                   {
                     "$type": "Assets.Core.GameEditor.DTOS.EnviromentObjectDTO, Assembly-CSharp",
@@ -13671,7 +13677,7 @@
     ],
     "AudioSource": {
       "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
-      "Name": "None",
+      "Name": "background",
       "Type": 2,
       "XSize": 30.0,
       "YSize": 30.0

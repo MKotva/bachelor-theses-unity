@@ -1,8 +1,10 @@
+using Assets.Core.GameEditor.AnimationControllers;
 using Assets.Core.GameEditor.DTOS.Assets;
 using Assets.Core.GameEditor.DTOS.Background;
 using Assets.Core.GameEditor.Enums;
 using Assets.Scripts.GameEditor;
 using Assets.Scripts.GameEditor.Audio;
+using Assets.Scripts.GameEditor.Controllers;
 using Assets.Scripts.GameEditor.Managers;
 using Assets.Scripts.GameEditor.ObjectInstancesController;
 using System.Collections.Generic;
@@ -121,7 +123,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
         Sources.RemoveAt(layerId);
     }
     #endregion
-     
+
     #region RuntimeControl
 
     /// <summary>
@@ -129,12 +131,18 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     /// </summary>
     public void Play()
     {
-        var names = GetAnimationNames();
-        if (names.Count != 0)
-            AnimationsManager.Instance.OnPlay(names);
+        foreach (var layer in BackgroundLayers)
+        {
+            if (layer.TryGetComponent<AnimationsController>(out var animator))
+            {
+                if (!animator.IsManualyPaused)
+                    animator.Play();
+            }
+        }
 
-        if (AudioSource != null)
-            AudioManager.Instance.OnPlay(new List<string> { AudioSource.Name });
+        if (AudioController != null)
+            if (!AudioController.IsManualyPaused)
+                AudioController.Play();
     }
 
     /// <summary>
@@ -142,27 +150,63 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
     /// </summary>
     public void Pause()
     {
-        var names = GetAnimationNames();
-        if (names.Count != 0)
-            AnimationsManager.Instance.OnPause(names);
+        foreach (var layer in BackgroundLayers)
+        {
+            if (layer.TryGetComponent<AnimationsController>(out var animator))
+            {
+                animator.Pause();
+            }
 
-        if (AudioSource != null)
-            AudioManager.Instance.OnPause(new List<string> { AudioSource.Name });
+            if (layer.TryGetComponent<SpriteController>(out var controller))
+            {
+                controller.Pause();
+            }
+        }
+
+        if (AudioController != null)
+            AudioController.Pause();
     }
 
-    public void Enter() { }
+    public void Enter()
+    {
+        foreach (var layer in BackgroundLayers)
+        {
+            if (layer.TryGetComponent<AnimationsController>(out var animator))
+            {
+                 animator.Enter();
+            }
+
+            if (layer.TryGetComponent<SpriteController>(out var controller))
+            {
+                controller.Enter();
+            }
+        }
+
+        if (AudioController != null)
+            AudioController.Enter();
+    }
 
     /// <summary>
     /// This method will stop(reset and pause) animations and audiosource present in bacground.
     /// </summary>
     public void Exit()
     {
-        var names = GetAnimationNames();
-        if (names.Count != 0)
-            AnimationsManager.Instance.OnStop(names);
+        foreach (var layer in BackgroundLayers)
+        {
+            if (layer.TryGetComponent<AnimationsController>(out var animator))
+            {
+                animator.Exit();
+            }
 
-        if (AudioSource != null)
-            AudioManager.Instance.OnStop(new List<string> { AudioSource.Name });
+            if(layer.TryGetComponent<SpriteController>(out var controller))
+            {
+                controller.Exit();
+            }
+
+        }
+
+        if (AudioController != null)
+            AudioController.Exit();
     }
     #endregion
 
@@ -172,7 +216,7 @@ public class BackgroundController : Singleton<BackgroundController>, IObjectCont
         BackgroundLayers = new List<GameObject>();
         Sources = new List<BackgroundReference>();
         SetDefault();
-        GameManager.Instance.AddActiveObject(gameObject.GetInstanceID(), this);
+        GameManager.Instance.Background = this;
     }
 
     /// <summary>

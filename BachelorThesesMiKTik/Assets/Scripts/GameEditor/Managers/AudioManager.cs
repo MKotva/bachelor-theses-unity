@@ -267,8 +267,11 @@ namespace Assets.Scripts.GameEditor.Managers
             {
                 foreach (var controllerGroup in AudioControllers.Values)
                 {
-                    foreach(var controller in controllerGroup.Values)
+                    foreach (var controller in controllerGroup.Values)
+                    {
+                        controller.IsManualyPaused = true;
                         controller.Pause();
+                    }
                 }
                 return true;
             }
@@ -278,9 +281,12 @@ namespace Assets.Scripts.GameEditor.Managers
                 {
                     if (!AudioControllers.ContainsKey(name))
                         return false;
-                    
+
                     foreach (var controller in AudioControllers[name].Values)
+                    {
+                        controller.IsManualyPaused = true;
                         controller.Pause();
+                    }
                 }
                 return true;
             }

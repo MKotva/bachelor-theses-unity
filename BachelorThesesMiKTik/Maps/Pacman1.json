@@ -12,46 +12,19 @@
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "cookie",
-          "URL": "Pacman\\cookie.png"
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
           "Name": "GreyWall",
           "URL": "GreyWall.png"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "thor",
-          "URL": "Thor.jpg"
+          "Name": "cookie",
+          "URL": "Pacman\\cookie.png"
         }
       ]
     },
     "AnimationManager": {
       "$type": "ManagerDTO, Assembly-CSharp",
       "Sources": [
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
-          "AnimationData": [
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Pacman\\monster1.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Pacman\\monster2.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Pacman\\monster3.png"
-            }
-          ],
-          "Name": "monster",
-          "URL": ""
-        },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
           "AnimationData": [
@@ -78,12 +51,45 @@
           ],
           "Name": "pacman",
           "URL": ""
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AnimationSourceDTO, Assembly-CSharp",
+          "AnimationData": [
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Pacman\\monster1.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Pacman\\monster2.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Pacman\\monster3.png"
+            }
+          ],
+          "Name": "monster",
+          "URL": ""
         }
       ]
     },
     "AudioManager": {
       "$type": "ManagerDTO, Assembly-CSharp",
-      "Sources": []
+      "Sources": [
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": true,
+          "Name": "background",
+          "URL": "BackgroundMusic\\fierce_chalk.mp3"
+        }
+      ]
     }
   },
   "Prototypes": [
@@ -8019,7 +8025,7 @@
     ],
     "AudioSource": {
       "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
-      "Name": "None",
+      "Name": "background",
       "Type": 2,
       "XSize": 30.0,
       "YSize": 30.0

@@ -62,7 +62,6 @@ namespace Assets.Scripts.GameEditor.Audio
                 return;
 
             audioSource.Pause();
-            IsManualyPaused = false;
         }
 
         public void Resume()
@@ -123,6 +122,7 @@ namespace Assets.Scripts.GameEditor.Audio
         public void Exit()
         {
             IsManualyPaused = false;
+            StopClip();
 
             if (WasCreatedFromCode)
             {

@@ -7,18 +7,8 @@
       "Sources": [
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "platform",
-          "URL": "Mario\\platform.png"
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "box",
-          "URL": "Mario\\box.png"
-        },
-        {
-          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "dirt",
-          "URL": "Mario\\dirt.png"
+          "Name": "cookie",
+          "URL": "Mario\\cookie.png"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
@@ -27,8 +17,18 @@
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
-          "Name": "cookie",
-          "URL": "Mario\\cookie.png"
+          "Name": "dirt",
+          "URL": "Mario\\dirt.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "box",
+          "URL": "Mario\\box.png"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
+          "Name": "platform",
+          "URL": "Mario\\platform.png"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.AssetSourceDTO, Assembly-CSharp",
@@ -60,36 +60,21 @@
           "AnimationData": [
             {
               "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.10000000149011612,
-              "URL": "Mario\\Player\\run1.png"
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava1.png"
             },
             {
               "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.10000000149011612,
-              "URL": "Mario\\Player\\run2.png"
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava2.png"
             },
             {
               "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.10000000149011612,
-              "URL": "Mario\\Player\\run3.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.10000000149011612,
-              "URL": "Mario\\Player\\run4.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.10000000149011612,
-              "URL": "Mario\\Player\\run5.png"
-            },
-            {
-              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.10000000149011612,
-              "URL": "Mario\\Player\\run6.png"
+              "DisplayTime": 0.20000000298023224,
+              "URL": "Lava3.png"
             }
           ],
-          "Name": "playerRun",
+          "Name": "lava",
           "URL": ""
         },
         {
@@ -159,21 +144,36 @@
           "AnimationData": [
             {
               "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava1.png"
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\Player\\run1.png"
             },
             {
               "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava2.png"
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\Player\\run2.png"
             },
             {
               "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
-              "DisplayTime": 0.20000000298023224,
-              "URL": "Lava3.png"
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\Player\\run3.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\Player\\run4.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\Player\\run5.png"
+            },
+            {
+              "$type": "Assets.Core.GameEditor.DTOS.AnimationFrameDTO, Assembly-CSharp",
+              "DisplayTime": 0.10000000149011612,
+              "URL": "Mario\\Player\\run6.png"
             }
           ],
-          "Name": "lava",
+          "Name": "playerRun",
           "URL": ""
         },
         {
@@ -452,8 +452,8 @@
           "Pitch": 1.0,
           "Volume": 0.2,
           "ShouldLoop": false,
-          "Name": "coin",
-          "URL": "Audio\\coin.mp3"
+          "Name": "collision",
+          "URL": "Audio\\collision.mp3"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
@@ -462,8 +462,8 @@
           "Pitch": 1.0,
           "Volume": 0.2,
           "ShouldLoop": false,
-          "Name": "collision",
-          "URL": "Audio\\collision.mp3"
+          "Name": "coin",
+          "URL": "Audio\\coin.mp3"
         },
         {
           "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
@@ -494,6 +494,16 @@
           "ShouldLoop": false,
           "Name": "star",
           "URL": "Audio\\showWin.mp3"
+        },
+        {
+          "$type": "Assets.Core.GameEditor.DTOS.Assets.AudioSourceDTO, Assembly-CSharp",
+          "Priority": 0,
+          "StereoPan": 0.0,
+          "Pitch": 1.0,
+          "Volume": 0.2,
+          "ShouldLoop": true,
+          "Name": "background",
+          "URL": "BackgroundMusic\\straightforward_concept.mp3"
         }
       ]
     }
@@ -15605,7 +15615,7 @@
     ],
     "AudioSource": {
       "$type": "Assets.Core.GameEditor.DTOS.Assets.SourceReference, Assembly-CSharp",
-      "Name": "None",
+      "Name": "background",
       "Type": 2,
       "XSize": 30.0,
       "YSize": 30.0
